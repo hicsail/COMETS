@@ -26,7 +26,8 @@ let JobService = class JobService {
         return createdJob.save();
     }
     async findAll() {
-        return this.jobModel.find().exec();
+        const jobs = await this.jobModel.find();
+        return jobs;
     }
 };
 exports.JobService = JobService;

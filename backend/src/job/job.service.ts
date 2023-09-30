@@ -14,7 +14,8 @@ export class JobService {
     }
 
     async findAll(): Promise<Job[]> {
-        return this.jobModel.find().exec();
+        const jobs = await this.jobModel.find();
+        return jobs;
     }
 
 
