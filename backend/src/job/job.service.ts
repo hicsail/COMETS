@@ -2,15 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Job } from './schemas/job.schema';
-import { CreateJobDto } from './dto/job.dto';
+import { CreateJobDto } from './dto/create-job.dto';
 
 @Injectable()
 export class JobService {
     constructor(@InjectModel(Job.name) private jobModel: Model<Job>) {}
 
     async create(createJobDto: CreateJobDto) : Promise<Job> {
-        const createdJob = new this.jobModel(createJobDto);
-        return createdJob.save();
+        const res = await this.jobModel.create(createJobDto);
+        return res;
     }
 
     async findAll(): Promise<Job[]> {
@@ -18,5 +18,8 @@ export class JobService {
         return jobs;
     }
 
+    async purge(): Promise<void> {
+        await this.jobModel.deleteMany({});
+    }
 
 }

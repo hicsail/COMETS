@@ -22,12 +22,15 @@ let JobService = class JobService {
         this.jobModel = jobModel;
     }
     async create(createJobDto) {
-        const createdJob = new this.jobModel(createJobDto);
-        return createdJob.save();
+        const res = await this.jobModel.create(createJobDto);
+        return res;
     }
     async findAll() {
         const jobs = await this.jobModel.find();
         return jobs;
+    }
+    async purge() {
+        await this.jobModel.deleteMany({});
     }
 };
 exports.JobService = JobService;

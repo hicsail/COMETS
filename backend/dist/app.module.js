@@ -7,17 +7,29 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
+const bull_1 = require("@nestjs/bull");
 const common_1 = require("@nestjs/common");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const mongoose_1 = require("@nestjs/mongoose");
 const job_module_1 = require("./job/job.module");
+const queue_module_1 = require("./queue/queue.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [mongoose_1.MongooseModule.forRoot('mongodb://127.0.0.1:27017/comets'), job_module_1.JobModule],
+        imports: [
+            mongoose_1.MongooseModule.forRoot('mongodb://127.0.0.1:27017/comets'),
+            bull_1.BullModule.forRoot({
+                redis: {
+                    host: 'localhost',
+                    port: 6379,
+                },
+            }),
+            job_module_1.JobModule,
+            queue_module_1.QueueModule
+        ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })
