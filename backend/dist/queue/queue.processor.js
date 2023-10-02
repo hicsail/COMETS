@@ -20,11 +20,11 @@ let QueueProcessor = QueueProcessor_1 = class QueueProcessor {
     async handleAddJob(job) {
         try {
             const { id } = job.data;
-            this.logger.debug(`Adding job with ID: ${id} to queue`);
+            this.logger.debug(`Processing job with ID: ${id}`);
         }
         catch (error) {
             const { id } = job.data;
-            this.logger.error(`Failed to add job with ID: ${id}`);
+            this.logger.error(`Failed to process job with ID: ${id}`);
             this.logger.error(error.message, error.stack);
             throw error;
         }

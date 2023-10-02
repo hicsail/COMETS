@@ -5,6 +5,9 @@ import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JobModule } from './job/job.module';
 import { QueueModule } from './queue/queue.module';
+import { BullBoardModule } from '@bull-board/nestjs';
+import { ExpressAdapter } from '@bull-board/express';
+import Bull from 'bull';
 
 @Module({
   imports: [
@@ -14,6 +17,10 @@ import { QueueModule } from './queue/queue.module';
         host: 'localhost',
         port: 6379,
       },
+    }),
+    BullBoardModule.forRoot({
+      route: '/queues',
+      adapter: ExpressAdapter 
     }),
     JobModule,
     QueueModule
