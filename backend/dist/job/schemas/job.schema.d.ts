@@ -26,6 +26,16 @@ import { HydratedDocument } from 'mongoose';
 export type JobDocument = HydratedDocument<Job>;
 export declare class Job {
     name: string;
+    defaultVmax: number;
+    defaultKm: number;
+    maxCycles: number;
+    timeStep: number;
+    spaceWidth: number;
+    maxSpaceBiomass: number;
+    minSpaceBiomass: number;
+    writeMediaLog: boolean;
+    writeFluxLog: boolean;
+    fluxLogRate: number;
 }
 export declare const JobSchema: import("mongoose").Schema<Job, import("mongoose").Model<Job, any, any, any, import("mongoose").Document<unknown, any, Job> & Job & {
     _id: import("mongoose").Types.ObjectId;
