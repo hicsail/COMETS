@@ -11,9 +11,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from './config/configuration';
 import Bull from 'bull';
 
+
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb:// +jobs_database  :27017/comets_job'), 
+    MongooseModule.forRoot(`mongodb://${process.env.DATABASE_HOST}:${process.env.DATABASE_PORT}/${process.env.DATABASE_COLLECTION}`), 
     BullModule.forRoot({
       redis: {
         host: 'localhost',
