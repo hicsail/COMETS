@@ -1,7 +1,5 @@
 import { Job as BullJob } from 'bull';
+import { CreateJobDto } from '../job/dto/create-job.dto';
 export declare class QueueProcessor {
-    private readonly logger;
-    handleAddJob(job: BullJob<{
-        id: string;
-    }>): Promise<void>;
+    run(job: BullJob<CreateJobDto>): Promise<string>;
 }

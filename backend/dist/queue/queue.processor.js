@@ -8,36 +8,34 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var QueueProcessor_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.QueueProcessor = void 0;
 const bull_1 = require("@nestjs/bull");
-const common_1 = require("@nestjs/common");
-let QueueProcessor = QueueProcessor_1 = class QueueProcessor {
-    constructor() {
-        this.logger = new common_1.Logger(QueueProcessor_1.name);
-    }
-    async handleAddJob(job) {
+const axios_1 = require("axios");
+let QueueProcessor = class QueueProcessor {
+    async run(job) {
         try {
-            const { id } = job.data;
-            this.logger.debug(`Processing job with ID: ${id}`);
+            const response = await axios_1.default.get('http://127.0.0.1:5000/run', {
+                params: job.data,
+                responseType: 'arraybuffer'
+            });
+            const imageBase64 = Buffer.from(response.data, 'binary').toString('base64');
+            return `data:image/jpeg;base64,${imageBase64}`;
         }
         catch (error) {
-            const { id } = job.data;
-            this.logger.error(`Failed to process job with ID: ${id}`);
-            this.logger.error(error.message, error.stack);
+            console.error('Error occurred while making GET request:', error);
             throw error;
         }
     }
 };
 exports.QueueProcessor = QueueProcessor;
 __decorate([
-    (0, bull_1.Process)('job'),
+    (0, bull_1.Process)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], QueueProcessor.prototype, "handleAddJob", null);
-exports.QueueProcessor = QueueProcessor = QueueProcessor_1 = __decorate([
+], QueueProcessor.prototype, "run", null);
+exports.QueueProcessor = QueueProcessor = __decorate([
     (0, bull_1.Processor)('queue')
 ], QueueProcessor);
 //# sourceMappingURL=queue.processor.js.map

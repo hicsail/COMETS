@@ -1,6 +1,7 @@
 import { InjectQueue } from '@nestjs/bull';
 import { Controller, Body, Post } from '@nestjs/common';
 import { Queue } from 'bull';
+import { CreateJobDto } from '../job/dto/create-job.dto'; 
 
 @Controller('queue')
 export class QueueController {
@@ -8,8 +9,8 @@ export class QueueController {
 
     @Post('add')
     async add(
-        @Body('id') jobId: string 
+        @Body() jobDto: CreateJobDto 
     ): Promise<void> {
-        await this.queue.add('job', { id: jobId }); 
+        await this.queue.add('job', jobDto); 
     }
 }

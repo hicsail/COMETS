@@ -9,7 +9,12 @@ export class JobService {
     constructor(@InjectModel(Job.name) private jobModel: Model<Job>) {}
 
     async create(createJobDto: CreateJobDto) : Promise<Job> {
+        // TODO: handle not creating duplicate jobs
         const res = await this.jobModel.create(createJobDto);
+
+        // add job to queue
+
+
         return res;
     }
 

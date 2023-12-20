@@ -15,20 +15,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.QueueController = void 0;
 const bull_1 = require("@nestjs/bull");
 const common_1 = require("@nestjs/common");
+const create_job_dto_1 = require("../job/dto/create-job.dto");
 let QueueController = class QueueController {
     constructor(queue) {
         this.queue = queue;
     }
-    async add(jobId) {
-        await this.queue.add('job', { id: jobId });
+    async add(jobDto) {
+        await this.queue.add('job', jobDto);
     }
 };
 exports.QueueController = QueueController;
 __decorate([
     (0, common_1.Post)('add'),
-    __param(0, (0, common_1.Body)('id')),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [create_job_dto_1.CreateJobDto]),
     __metadata("design:returntype", Promise)
 ], QueueController.prototype, "add", null);
 exports.QueueController = QueueController = __decorate([

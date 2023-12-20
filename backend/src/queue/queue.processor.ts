@@ -1,22 +1,24 @@
-import { Injectable } from '@nestjs/common';
 import { Process, Processor } from '@nestjs/bull';
-import { Logger } from '@nestjs/common';
 import { Job as BullJob } from 'bull';
+import { CreateJobDto } from '../job/dto/create-job.dto'; 
+import axios from 'axios';
+
 
 @Processor('queue')
 export class QueueProcessor {
-    private readonly logger = new Logger(QueueProcessor.name)
 
-    @Process('job')
-    async handleAddJob(job: BullJob<{id: string}>): Promise<void> {
+    @Process()
+    async run(job: BullJob<CreateJobDto>): Promise<string> { 
         try {
-            const { id } = job.data;
-            this.logger.debug(`Processing job with ID: ${id}`);
+            const response = await axios.get('http://127.0.0.1:5000/run', {
+                params: job.data, 
+                responseType: 'arraybuffer' 
+            });
+            const imageBase64 = Buffer.from(response.data, 'binary').toString('base64');
+            return `data:image/jpeg;base64,${imageBase64}`;
         } catch (error) {
-            const { id } = job.data;
-            this.logger.error(`Failed to process job with ID: ${id}`);
-            this.logger.error(error.message, error.stack);
-            throw error;
+            console.error('Error occurred while making GET request:', error);
+            throw error; 
         }
     }
 }
