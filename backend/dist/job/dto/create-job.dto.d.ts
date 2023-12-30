@@ -10,4 +10,5 @@ export declare class CreateJobDto {
     readonly writeMediaLog: boolean;
     readonly writeFluxLog: boolean;
     readonly fluxLogRate: number;
+    readonly email: string;
 }

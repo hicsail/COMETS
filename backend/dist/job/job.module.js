@@ -12,12 +12,16 @@ const mongoose_1 = require("@nestjs/mongoose");
 const job_schema_1 = require("./schemas/job.schema");
 const job_controller_1 = require("./job.controller");
 const job_service_1 = require("./job.service");
+const queue_module_1 = require("../queue/queue.module");
 let JobModule = class JobModule {
 };
 exports.JobModule = JobModule;
 exports.JobModule = JobModule = __decorate([
     (0, common_1.Module)({
-        imports: [mongoose_1.MongooseModule.forFeature([{ name: job_schema_1.Job.name, schema: job_schema_1.JobSchema }])],
+        imports: [
+            queue_module_1.QueueModule,
+            mongoose_1.MongooseModule.forFeature([{ name: job_schema_1.Job.name, schema: job_schema_1.JobSchema }])
+        ],
         controllers: [job_controller_1.JobController],
         providers: [job_service_1.JobService],
     })

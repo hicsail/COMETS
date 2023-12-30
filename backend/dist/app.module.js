@@ -12,10 +12,11 @@ const common_1 = require("@nestjs/common");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const mongoose_1 = require("@nestjs/mongoose");
-const job_module_1 = require("./job/job.module");
 const queue_module_1 = require("./queue/queue.module");
+const job_module_1 = require("./job/job.module");
 const nestjs_1 = require("@bull-board/nestjs");
 const express_1 = require("@bull-board/express");
+const dispatcher_module_1 = require("./dispatcher/dispatcher.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -33,8 +34,9 @@ exports.AppModule = AppModule = __decorate([
                 route: '/queues',
                 adapter: express_1.ExpressAdapter
             }),
+            queue_module_1.QueueModule,
             job_module_1.JobModule,
-            queue_module_1.QueueModule
+            dispatcher_module_1.DispatcherModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

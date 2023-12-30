@@ -3,11 +3,11 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { JobModule } from './job/job.module';
 import { QueueModule } from './queue/queue.module';
+import { JobModule } from './job/job.module';
 import { BullBoardModule } from '@bull-board/nestjs';
 import { ExpressAdapter } from '@bull-board/express';
-import Bull from 'bull';
+import { DispatcherModule } from './dispatcher/dispatcher.module';
 
 @Module({
   imports: [
@@ -22,8 +22,9 @@ import Bull from 'bull';
       route: '/queues',
       adapter: ExpressAdapter 
     }),
+    QueueModule,
     JobModule,
-    QueueModule
+    DispatcherModule,
   ],
   controllers: [AppController],
   providers: [AppService],

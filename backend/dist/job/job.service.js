@@ -17,12 +17,15 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const job_schema_1 = require("./schemas/job.schema");
+const bull_1 = require("@nestjs/bull");
 let JobService = class JobService {
-    constructor(jobModel) {
+    constructor(jobModel, queue) {
         this.jobModel = jobModel;
+        this.queue = queue;
     }
     async create(createJobDto) {
         const res = await this.jobModel.create(createJobDto);
+        await this.queue.add('job', createJobDto);
         return res;
     }
     async findAll() {
@@ -37,6 +40,7 @@ exports.JobService = JobService;
 exports.JobService = JobService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(job_schema_1.Job.name)),
-    __metadata("design:paramtypes", [mongoose_2.Model])
+    __param(1, (0, bull_1.InjectQueue)('queue')),
+    __metadata("design:paramtypes", [mongoose_2.Model, Object])
 ], JobService);
 //# sourceMappingURL=job.service.js.map

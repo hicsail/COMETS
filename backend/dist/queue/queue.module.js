@@ -8,10 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.QueueModule = void 0;
 const bull_1 = require("@nestjs/bull");
+const nestjs_1 = require("@bull-board/nestjs");
+const bullAdapter_1 = require("@bull-board/api/bullAdapter");
 const common_1 = require("@nestjs/common");
-const queue_processor_1 = require("./queue.processor");
-const queue_controller_1 = require("./queue.controller");
-const job_module_1 = require("../job/job.module");
 let QueueModule = class QueueModule {
 };
 exports.QueueModule = QueueModule;
@@ -21,10 +20,12 @@ exports.QueueModule = QueueModule = __decorate([
             bull_1.BullModule.registerQueue({
                 name: 'queue',
             }),
-            job_module_1.JobModule
+            nestjs_1.BullBoardModule.forFeature({
+                name: 'queue',
+                adapter: bullAdapter_1.BullAdapter,
+            })
         ],
-        providers: [queue_processor_1.QueueProcessor],
-        controllers: [queue_controller_1.QueueController]
+        exports: [bull_1.BullModule]
     })
 ], QueueModule);
 //# sourceMappingURL=queue.module.js.map
