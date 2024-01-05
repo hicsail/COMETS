@@ -1,0 +1,29 @@
+version:  '3.8.0'
+
+services:
+  comets_app:
+    container_name: nest_server
+    platform: linux/amd64
+    restart: always
+    depends_on:
+      - jobs_db
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+  models_db:
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+    ports:
+      - 27014:27014
+  jobs_db:
+    container_name: jobs_database
+    image: jobs-mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
