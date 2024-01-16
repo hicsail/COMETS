@@ -8,10 +8,14 @@ import { JobModule } from './job/job.module';
 import { BullBoardModule } from '@bull-board/nestjs';
 import { ExpressAdapter } from '@bull-board/express';
 import { DispatcherModule } from './dispatcher/dispatcher.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import configuration from './config/configuration';
+import Bull from 'bull';
+
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://127.0.0.1:27017/comets'), 
+    MongooseModule.forRoot(`mongodb://${process.env.DATABASE_HOST}:${process.env.DATABASE_PORT}/${process.env.DATABASE_COLLECTION}`), 
     BullModule.forRoot({
       redis: {
         host: 'localhost',
@@ -25,6 +29,9 @@ import { DispatcherModule } from './dispatcher/dispatcher.module';
     QueueModule,
     JobModule,
     DispatcherModule,
+    ConfigModule.forRoot({
+      load: [configuration]
+    })
   ],
   controllers: [AppController],
   providers: [AppService],
