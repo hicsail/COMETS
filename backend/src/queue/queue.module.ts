@@ -1,16 +1,18 @@
 import { BullModule } from '@nestjs/bull';
+import { BullBoardModule } from "@bull-board/nestjs";
+import { BullAdapter } from "@bull-board/api/bullAdapter";
 import { Module } from '@nestjs/common';
-import { QueueProcessor } from './queue.processor';
-import { QueueController } from './queue.controller';
-import { JobModule } from '../job/job.module'
 
 @Module({
   imports: [
     BullModule.registerQueue({
       name: 'queue',
     }),
-    JobModule],
-  providers: [QueueProcessor],
-  controllers: [QueueController]
+    BullBoardModule.forFeature({
+      name: 'queue',
+      adapter: BullAdapter, 
+    }) 
+  ],
+  exports: [BullModule]
 })
 export class QueueModule {}

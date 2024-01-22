@@ -3,10 +3,11 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { JobModule } from './job/job.module';
 import { QueueModule } from './queue/queue.module';
+import { JobModule } from './job/job.module';
 import { BullBoardModule } from '@bull-board/nestjs';
 import { ExpressAdapter } from '@bull-board/express';
+import { DispatcherModule } from './dispatcher/dispatcher.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from './config/configuration';
 import Bull from 'bull';
@@ -25,8 +26,9 @@ import Bull from 'bull';
       route: '/queues',
       adapter: ExpressAdapter 
     }),
-    JobModule,
     QueueModule,
+    JobModule,
+    DispatcherModule,
     ConfigModule.forRoot({
       load: [configuration]
     })
