@@ -8,6 +8,7 @@ from matplotlib.figure import Figure
 import io
 import matplotlib.pyplot as plt
 import matplotlib
+import requests
 
 app = Flask(__name__)
 
@@ -74,7 +75,29 @@ def process():
 
     # Run the simulation
     experiment.run()
-    print('Done running!')
+
+    # Send email notification to user
+    url = "https://notification.sail.codes/email/send"
+
+    # Email data
+    data = {
+        "from": "noreply@mail.sail.codes",
+        "to": ["shahrishi108@gmail.com"],  # replace with params
+        "subject": "COMETS Simulation Update",
+        "message": "Your comets simulation has finished running!",
+    }
+
+    # Headers 
+    headers = {
+        "Content-Type": "application/json", 
+    }
+
+    # Sending the request
+    response = requests.post(url, json=data, headers=headers)
+    if response.status_code == 200:
+        print("Email sent successfully.")
+    else:
+        print("Failed to send email. Status code:", response.status_code)
 
     return 'Done'
 
