@@ -1,11 +1,12 @@
-import { AppBar, Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from '@mui/material';
+import { AppBar, Link, Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from '@mui/material';
 import { Outlet, NavLink } from 'react-router-dom';
 import { Footer } from '../components/Footer';
 import HomeIcon from '@mui/icons-material/Home';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
-import InfoIcon from '@mui/icons-material/Info';
 import CallIcon from '@mui/icons-material/Call';
+import React from 'react';
+// import CometsLogo from '../assets/comets_logo.svg';
 
 export function RootLayout() {
     
@@ -15,6 +16,9 @@ export function RootLayout() {
         <Toolbar>
           <NavLink to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
             <Typography variant="h6" component="div">
+            {/* <Link>
+              <img src={CometsLogo} alt="FHS logo" style={{ width: '55px', marginRight: '10px', shapeRendering: 'geometricPrecision' }} />
+            </Link> */}
               COMETS: Computation of Microbial Ecosystem in Time and Space
             </Typography>
           </NavLink>
@@ -24,6 +28,7 @@ export function RootLayout() {
         <Toolbar />
         <Box sx={{ width: 300 }}>
           <List>
+
             <ListItem disablePadding>
               <ListItemButton component={NavLink} to="/">
                 <ListItemIcon>
@@ -34,6 +39,7 @@ export function RootLayout() {
               </ListItemButton>
             </ListItem>
           </List>
+
           <Divider />
           <List>
             <ListItem disablePadding>
@@ -47,31 +53,20 @@ export function RootLayout() {
             </ListItem>
           </List>
           <Divider />
+
           <List>
             <ListItem disablePadding>
-              <ListItemButton component={NavLink} to="about">
-                <ListItemIcon>
-                  <InfoIcon />
-                </ListItemIcon>
-                <ListItemText primary="About" />
-                <ChevronRightIcon />
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
-              <ListItemButton component={NavLink} to="contact">
+              <ListItemButton component={NavLink} to="experimentSetup">
                 <ListItemIcon>
                   <CallIcon />
                 </ListItemIcon>
-                <ListItemText primary="Contact" />
+                <ListItemText primary="Experiment Setup" />
                 <ChevronRightIcon />
               </ListItemButton>
             </ListItem>
           </List>
         </Box>
       </Drawer>
-      <Box position="absolute" bottom={0} right={0} height={20} width="90%" marginTop={20} zIndex={10}>
-          <Footer />
-        </Box>
       <Box
         component="main"
         sx={{
