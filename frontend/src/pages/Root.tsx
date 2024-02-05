@@ -16,6 +16,7 @@ export function RootLayout() {
         <Toolbar>
           <NavLink to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
             <Typography variant="h6" component="div">
+            {/* Include link to the SVG */}
             {/* <Link>
               <img src={CometsLogo} alt="FHS logo" style={{ width: '55px', marginRight: '10px', shapeRendering: 'geometricPrecision' }} />
             </Link> */}

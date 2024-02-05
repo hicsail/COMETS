@@ -9,6 +9,7 @@ const router = createBrowserRouter([
     path: '/',
     element: <RootLayout />,
     children: [
+      // put name of page and the corresponding components here to add to Sidebar navigation
       { path: 'experimentSetup', element: <ExperimentSetupPage /> }
     ]
   }
