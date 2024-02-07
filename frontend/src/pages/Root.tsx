@@ -1,101 +1,87 @@
-import { AppBar, Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from '@mui/material';
+import { AppBar, Link, Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from '@mui/material';
 import { Outlet, NavLink } from 'react-router-dom';
+import { Footer } from '../components/Footer';
 import HomeIcon from '@mui/icons-material/Home';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-
-const navbarTheme = createTheme({
-  typography: {
-    fontFamily: 'Inter', 
-    fontSize: 20,
-  },
-});
-
-const sidebarTheme = createTheme ({
-  typography: {
-    fontFamily: 'Inter',
-    fontSize: 13,
-  }
-})
-
-
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
+import CallIcon from '@mui/icons-material/Call';
+import React from 'react';
+// import CometsLogo from '../assets/comets_logo.svg';
 
 export function RootLayout() {
-
+    
     return (
-      <Box sx = {{ display: 'flex'}}>
-      <Box sx = {{ display: 'flex'}}>
-        <ThemeProvider theme={navbarTheme}>
-        <AppBar component="nav" color="default" position="fixed" elevation={0} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, backgroundColor: "#FEFEFE"}} >
-          <Toolbar>
+        <>
+    <AppBar component="nav" color="default" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+        <Toolbar>
           <NavLink to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <Box
-              component="img"
-              src="../../public/comets-logo.jpeg" // Replace with your image path
-              alt="Comets Logo"
-              sx={{
-                width: 63, // width in pixels
-                height: 60, // height in pixels
-                position: 'left', 
-                top: 16, // top position in pixels
-                left: 20, // left position in pixels
-              }}
-            />
-            </NavLink>
-            <NavLink to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-              <Typography sx={{ fontWeight: 700, paddingLeft: 2}}>
-                COMETS Smart Interface
-              </Typography>
-            </NavLink>
-          </Toolbar>
-        </AppBar>
-      </ThemeProvider>
-      </Box>
+            <Typography variant="h6" component="div">
+            {/* Include link to the SVG */}
+            {/* <Link>
+              <img src={CometsLogo} alt="FHS logo" style={{ width: '55px', marginRight: '10px', shapeRendering: 'geometricPrecision' }} />
+            </Link> */}
+              COMETS: Computation of Microbial Ecosystem in Time and Space
+            </Typography>
+          </NavLink>
+        </Toolbar>
+      </AppBar>
+      <Drawer variant="permanent" anchor="left" PaperProps={{ sx: { backgroundColor: '#e9ecef' } }}>
+        <Toolbar />
+        <Box sx={{ width: 300 }}>
+          <List>
 
-      <Box sx = {{ display: 'flex' }}>
-          <ThemeProvider theme={sidebarTheme}>
-          <Drawer
-          variant="permanent"
-          sx={{
-            width: 200,
-            '& .MuiDrawer-paper': {
-              width: 200,
-              boxSizing: 'border-box',
-              borderColor: 'purple', // Adjust the border color to match your theme
-              backgroundColor: '#F4F4F9', // Adjust the background color to match your theme
-            },
-          }}
-        >
-          <Box sx = {{ paddingTop: 10}}>
-            <List>
-              {['Dashboard', 'About Comets', 'Documentation', 'Contact Us'].map((text, index) => (
-                <ListItemButton 
-                key={text}
-                sx={{
-                  '&:hover': {
-                    backgroundColor: '#6B68FF1F',
-                  },
-                }}>
-                  <ListItemIcon>
-                    {/* You can switch these out for the specific icons you need */}
-                    {index === 0 && <HomeIcon />}
-                    {index === 1 && <HomeIcon />}
-                    {index === 2 && <HomeIcon />}
-                    {index === 3 && <HomeIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItemButton>
-              ))}
-            </List>
-          </Box>
-        </Drawer>
-        </ThemeProvider>
-      </Box>
+            <ListItem disablePadding>
+              <ListItemButton component={NavLink} to="/">
+                <ListItemIcon>
+                  <HomeIcon />
+                </ListItemIcon>
+                <ListItemText primary="Home" />
+                <ChevronRightIcon />
+              </ListItemButton>
+            </ListItem>
+          </List>
 
-      <Box>
-        <Typography>Build and run microbial simulations in space and time</Typography>
-      </Box>
+          <Divider />
+          <List>
+            <ListItem disablePadding>
+              <ListItemButton component={NavLink} to="#">
+                <ListItemIcon>
+                  <OndemandVideoIcon />
+                </ListItemIcon>
+                <ListItemText primary="Demo" />
+                <ChevronRightIcon />
+              </ListItemButton>
+            </ListItem>
+          </List>
+          <Divider />
 
+          <List>
+            <ListItem disablePadding>
+              <ListItemButton component={NavLink} to="experimentSetup">
+                <ListItemIcon>
+                  <CallIcon />
+                </ListItemIcon>
+                <ListItemText primary="Experiment Setup" />
+                <ChevronRightIcon />
+              </ListItemButton>
+            </ListItem>
+          </List>
+        </Box>
+      </Drawer>
+      <Box
+        component="main"
+        sx={{
+          position: 'fixed',
+          top: 65,
+          left: 300,
+          padding: '3rem',
+          width: 'calc(100vw - 6rem - 300px)',
+          height: 'calc(100% - 180px)',
+          overflow: 'auto'
+        }}
+      >
+        <Outlet />
       </Box>
-       
+        </>
     )
 }
