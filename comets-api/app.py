@@ -31,6 +31,8 @@ def home():
 def process():
     print('Started Processing!')
 
+    email = 'shahrishi108@gmail.com' # set email to be a var (will read this from api call when params are finalized)
+
     # Create empty 1x1 layout
     test_tube = c.layout()
 
@@ -73,19 +75,35 @@ def process():
     # Create the experiment
     experiment = c.comets(test_tube, sim_params)
 
-    # Run the simulation
-    experiment.run()
+    success=False
 
-    # Send email notification to user
+    # Run the simulation
+    try:
+        experiment.run()
+        success=True
+
+    except:
+        print('Errors with experiment')
+
+
     url = "https://notification.sail.codes/email/send"
 
-    # Email data
-    data = {
-        "from": "noreply@mail.sail.codes",
-        "to": ["shahrishi108@gmail.com"],  # replace with params
-        "subject": "COMETS Simulation Update",
-        "message": "Your comets simulation has finished running!",
-    }
+    if success:
+        data = {
+            "from": "noreply@mail.sail.codes",
+            "to": [email],  
+            "subject": "COMETS Simulation Success",
+            "message": "Your comets simulation has finished running!",
+        }
+
+    else:
+        data = {
+            "from": "noreply@mail.sail.codes",
+            "to": [email],  
+            "subject": "COMETS Simulation Failure",
+            "message": "Your comets simulation has failed",
+        }
+
 
     # Headers 
     headers = {
