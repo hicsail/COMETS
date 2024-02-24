@@ -3,7 +3,6 @@ import { RootLayout } from './pages/Root';
 import { LandingPage } from './pages/Landing';
 import './App.css';
 import { ExperimentSetupPage } from './pages/ExperimentSetup';
-import React from 'react';
 
 const router = createBrowserRouter([
   {

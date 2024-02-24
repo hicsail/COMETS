@@ -1,20 +1,64 @@
-import { Typography, Box, Card, TextField, Radio } from '@mui/material';
-import React, { FC, useState } from 'react';
+import {Box, 
+        TextField,
+        Checkbox,
+        FormGroup,
+        FormControlLabel,
+        Divider
+     } from '@mui/material';
+import { FC, useState, ChangeEvent } from 'react';
+import { Layout } from '../types/Layout';
 
 interface LayoutComponentProps {
-    name: string;
-    desc: string;
-    metabolite: string;
-    hidden: boolean
+    layoutOptions: Layout[]
+    value: Layout
 }
 
-export const MediaComponent: FC<LayoutComponentProps> = (props) => {
-    
+export const LayoutComponent: FC<LayoutComponentProps> = (props) => {
+    const [selectedOption, setSelectedOption] = useState<Layout>(props.layoutOptions[0]);
+    const [mediaVol, setMediaVol] = useState('');
+    const [textfieldError, setTextfieldError] = useState(false)
+    const handleCheckboxChange = (option: Layout) => {
+        setSelectedOption(option);
+    };
+    const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
+        if (event.target) {
+             if((/^\d*$/.test(event.target.value))){
+                setMediaVol(event.target.value)
+                setTextfieldError(false)
+                props.value.mediaVolume = parseInt(event.target.value)
+            }else{
+                setTextfieldError(true)
+            }
+            
+        }
+    }
     return (
         <>
-            <Box component="form" noValidate autoComplete="off" hidden={props.hidden} width={"100%"}>
-                {/* Input needs to be validated that it's within range and is strictly a number */}
-                <TextField label={props.metabolite + ' concentration (mmol)'} variant='filled'/>
+            <Box component="form" noValidate autoComplete="off" width={"100%"}>
+                <FormGroup>
+                    {
+                        props.layoutOptions.map((option, index) => {
+                            return(
+                                <>
+                                    <FormControlLabel sx={{marginTop:2}} key={index} label={option.name} control={<Checkbox value={props.value} onChange={() => handleCheckboxChange(option)} checked={selectedOption === option}/>}/>
+                                    {
+                                        selectedOption === option &&
+                                        <TextField 
+                                            variant='filled' 
+                                            label='Volume of media (ml)' 
+                                            value={mediaVol} 
+                                            onChange={handleTextChange} 
+                                            defaultValue={''}
+                                            error={textfieldError}
+                                            helperText={textfieldError ? 'Please input numbers only' : ''}
+                                        />
+                                    }
+                                    <Divider/>
+                                </>
+                            )
+                            })
+                    }
+                </FormGroup>
             </Box>
         </>
     )
