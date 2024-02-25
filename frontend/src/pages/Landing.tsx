@@ -37,7 +37,7 @@ export function LandingPage() {
                   height: 60,
                   position: "left",
                   top: 16,
-                  left: 20, 
+                  left: 20,
                 }}
               />
             </NavLink>
@@ -134,35 +134,9 @@ export function LandingPage() {
                 sx={{
                   display: "flex",
                   justifyContent: "space-between",
-                  width: "100%", 
+                  width: "100%",
                 }}
               >
-                <Button
-                  variant="contained"
-                  sx={{
-                    borderRadius: "20px",
-                    backgroundColor: "white", 
-                    color: "primary.main",
-                    border: "none", 
-                    height: "10vh", 
-                    width: "18vw",
-                    textTransform: "none",
-                    "&:hover": {
-                      backgroundColor: "white", 
-                    },
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      fontFamily: "Work Sans",
-                      fontWeight: 600,
-                      fontSize: "16px",
-                      color: "black",
-                    }}
-                  >
-                    About COMETS
-                  </Typography>
-                </Button>
                 <Button
                   variant="contained"
                   sx={{
@@ -186,9 +160,38 @@ export function LandingPage() {
                       color: "black",
                     }}
                   >
-                    COMETS Smart Interface
+                    About COMETS
                   </Typography>
                 </Button>
+                <NavLink to="/dashboard">
+                  <Button
+                    variant="contained"
+                    href="/"
+                    sx={{
+                      borderRadius: "20px",
+                      backgroundColor: "white",
+                      color: "primary.main",
+                      border: "none",
+                      height: "10vh",
+                      width: "18vw",
+                      textTransform: "none",
+                      "&:hover": {
+                        backgroundColor: "white",
+                      },
+                    }}
+                  >
+                    <Typography
+                      sx={{
+                        fontFamily: "Work Sans",
+                        fontWeight: 600,
+                        fontSize: "16px",
+                        color: "black",
+                      }}
+                    >
+                      COMETS Smart Interface
+                    </Typography>
+                  </Button>
+                </NavLink>
               </Box>
             </Box>
           </Grid>

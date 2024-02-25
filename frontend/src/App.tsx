@@ -1,23 +1,24 @@
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import { RootLayout } from './pages/Root';
-import { LandingPage } from './pages/Landing';
-import './App.css';
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { RootLayout } from "./pages/Root";
+import { LandingPage } from "./pages/Landing";
+import "./App.css";
+import { DashboardPage } from "./pages/Dashboard";
 
 const router = createBrowserRouter([
   {
-    path: '/',
-    element: <RootLayout />,
-    children: [
-   
-    ]
+    path: "/",
+    element: <LandingPage />,
+    children: [],
   },
   {
-    path: '/landing',
-    element: <LandingPage />,
+    element: <RootLayout />,
     children: [
-
-    ]
-  }
+      {
+        path: "/dashboard",
+        element: <DashboardPage />,
+      },
+    ],
+  },
 ]);
 
 function App() {
