@@ -1,142 +1,76 @@
-// DashboardPage.js
-import { NavbarComponent } from "../components/Navbar";
-import {
-  Box,
-  Button,
-  Drawer,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Typography,
-  createTheme,
-  ThemeProvider,
-} from "@mui/material";
-import HomeIcon from "@mui/icons-material/Home";
-
-const sidebarTheme = createTheme({
-  typography: {
-    fontFamily: "Inter",
-    fontSize: 13,
-  },
-});
+import { Box, Button, Grid, Typography } from "@mui/material";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 export function DashboardPage() {
   return (
-    <div>
-      <NavbarComponent />
-      <Box sx={{ display: "flex" }}>
-        <ThemeProvider theme={sidebarTheme}>
-          <Drawer
-            variant="permanent"
-            sx={{
-              width: "13vw",
-              "& .MuiDrawer-paper": {
-                width: "13vw",
-                boxSizing: "border-box",
-                backgroundColor: "#FEFEFE", // Adjust the background color to match your theme
-              },
-            }}
-          >
-            <Box sx={{ paddingTop: "80px" }}>
-              <List>
-                {[
-                  "Dashboard",
-                  "About Comets",
-                  "Documentation",
-                  "Contact Us",
-                ].map((text, index) => (
-                  <ListItemButton
-                    key={text}
-                    sx={{
-                      "&:hover": {
-                        backgroundColor: "#6B68FF1F",
-                      },
-                    }}
-                  >
-                    <ListItemIcon>
-                      {index === 0 && <HomeIcon />}
-                      {index === 1 && <HomeIcon />}
-                      {index === 2 && <HomeIcon />}
-                      {index === 3 && <HomeIcon />}
-                    </ListItemIcon>
-                    <ListItemText primary={text} />
-                  </ListItemButton>
-                ))}
-              </List>
-            </Box>
-          </Drawer>
-        </ThemeProvider>
-      </Box>
-
+    <Box>
       <Box
+        overflow={"clip"}
+        component="img"
+        src="../../dashboard.svg"
+        alt="Dashboard Image"
         sx={{
-          pt: "64px",
-          height: "calc(100vh - 64px)",
-          width: "87vw",
-          overflow: "hidden",
-          paddingTop: "64px",
-          paddingLeft: "13vw",
+          width: "100vw",
+          height: "30vh",
+          objectFit: "cover",
+          objectPosition: "center",
+        }}
+      />
+
+      <Grid
+        container
+        direction={"column"}
+        spacing={2}
+        overflow={"-moz-hidden-unscrollable"}
+        sx={{
+          width: "100%",
+          paddingLeft: 5,
+          paddingRight: 5,
+          paddingTop: "2.5%",
+          maxHeight: "40%",
+          justifyContent: "space-between",
         }}
       >
-        <Box
-          component="img"
-          src="../../dashboard.svg"
-          alt="Dashboard Image"
-          sx={{
-            width: "87vw",
-            height: "30vh",
-            objectFit: "cover",
-            objectPosition: "center",
-          }}
-        />
-
-        <Box
-          sx={{
-            width: "83vw",
-            paddingLeft: "5%",
-            paddingRight: "5%",
-            paddingTop: "2.5%",
-          }}
-        >
+        <Grid item>
           <Typography
+            variant="h3"
             sx={{
               textAlign: "left",
-              paddingBottom: "2.5%",
               fontFamily: "Inter",
-              fontSize: "16px",
               color: "black",
               fontWeight: "400",
-              paddingRight: "5%",
+              paddingRight: "15%",
             }}
           >
             Build and run microbial growth simulations in space and time
           </Typography>
+        </Grid>
 
+        <Grid item>
           <Typography
+            variant="h1"
+            textOverflow={"initial"}
             sx={{
               textAlign: "left",
               fontFamily: "Open Sans",
-              fontSize: "46px",
               color: "black",
               fontWeight: "700",
-              lineHeight: "110%",
-              paddingBottom: "2.5%",
-              paddingRight: "5%",
+              paddingRight: "15%",
             }}
           >
-            COMETS SMART INTERFACE
+            WELCOME TO COMETS LAYOUT BUILDER
           </Typography>
+        </Grid>
 
+        <Grid item>
           <Typography
+            variant="h4"
             sx={{
               textAlign: "left",
               fontFamily: "Inter",
-              fontSize: "14px",
               color: "black",
               fontWeight: "500",
-              paddingBotton: "1.5%",
-              paddingRight: "5%",
+              paddingRight: "15%",
               opacity: "45%",
             }}
           >
@@ -146,47 +80,56 @@ export function DashboardPage() {
             power and time to complete but COMETS Layout builder allows you to
             make lightweight simulations within the web application.
           </Typography>
+        </Grid>
 
+        <Grid item>
           <Typography
+            variant="h4"
             sx={{
               textAlign: "left",
               fontFamily: "Inter",
-              fontSize: "14px",
               color: "black",
               fontWeight: "500",
-              paddingTop: "3.5%",
-              paddingRight: "5%",
+              paddingRight: "15%",
               opacity: "45%",
             }}
           >
             Just chose your Model, Setup, and Metabolites. Set Your parameters.
             Then, you are done!
           </Typography>
+        </Grid>
 
+        <Grid item>
           <Typography
+            variant="h4"
             sx={{
               textAlign: "left",
               fontFamily: "Inter",
-              fontSize: "14px",
               color: "black",
               fontWeight: "500",
-              paddingTop: "3.5%",
               paddingRight: "5%",
               opacity: "45%",
             }}
           >
             To start your layout, click continue.
           </Typography>
+        </Grid>
 
-          <Box
-            display="flex"
-            justifyContent="flex-end"
-            sx={{ paddingTop: "5%", paddingRight: "5%" }}
-          >
-            <Button variant="contained">CONTINUE TO LAYOUT BUILDER</Button>
+        <Grid item>
+          <Box>
+            <Button
+              variant="contained"
+              endIcon={<ChevronRightIcon />}
+              sx={{
+                height: "7.5vh",
+                width: "25vw",
+              }}
+            >
+              <Typography variant="h5">CONTINUE TO LAYOUT BUILDER</Typography>
+            </Button>
           </Box>
-        </Box>
-      </Box>
-    </div>
+        </Grid>
+      </Grid>
+    </Box>
   );
 }

@@ -37,7 +37,7 @@ export function LandingPage() {
                   height: 60,
                   position: "left",
                   top: 16,
-                  left: 20, 
+                  left: 20,
                 }}
               />
             </NavLink>
@@ -134,21 +134,21 @@ export function LandingPage() {
                 sx={{
                   display: "flex",
                   justifyContent: "space-between",
-                  width: "100%", 
+                  width: "100%",
                 }}
               >
                 <Button
                   variant="contained"
                   sx={{
                     borderRadius: "20px",
-                    backgroundColor: "white", 
+                    backgroundColor: "white",
                     color: "primary.main",
-                    border: "none", 
-                    height: "10vh", 
+                    border: "none",
+                    height: "10vh",
                     width: "18vw",
                     textTransform: "none",
                     "&:hover": {
-                      backgroundColor: "white", 
+                      backgroundColor: "white",
                     },
                   }}
                 >
