@@ -1,25 +1,25 @@
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import { RootLayout } from './pages/Root';
-import { LandingPage } from './pages/Landing';
-import './App.css';
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { RootLayout } from "./pages/Root";
+import { LandingPage } from "./pages/Landing";
+import "./App.css";
+import { DashboardPage } from "./pages/Dashboard";
 import { ExperimentSetupPage } from './pages/ExperimentSetup';
 
 const router = createBrowserRouter([
   {
-    path: '/',
-    element: <RootLayout />,
-    children: [
-      // put name of page and the corresponding components here to add to Sidebar navigation
-      { path: 'experimentSetup', element: <ExperimentSetupPage /> }
-    ]
+    path: "/",
+    element: <LandingPage />,
+    children: [],
   },
   {
-    path: '/landing',
-    element: <LandingPage />,
+    element: <RootLayout />,
     children: [
-
-    ]
-  }
+      {
+        path: "/dashboard",
+        element: <DashboardPage />,
+      },
+    ],
+  },
 ]);
 
 function App() {
