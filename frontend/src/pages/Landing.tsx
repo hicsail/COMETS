@@ -163,32 +163,35 @@ export function LandingPage() {
                     About COMETS
                   </Typography>
                 </Button>
-                <Button
-                  variant="contained"
-                  sx={{
-                    borderRadius: "20px",
-                    backgroundColor: "white",
-                    color: "primary.main",
-                    border: "none",
-                    height: "10vh",
-                    width: "18vw",
-                    textTransform: "none",
-                    "&:hover": {
-                      backgroundColor: "white",
-                    },
-                  }}
-                >
-                  <Typography
+                <NavLink to="/dashboard">
+                  <Button
+                    variant="contained"
+                    href="/"
                     sx={{
-                      fontFamily: "Work Sans",
-                      fontWeight: 600,
-                      fontSize: "16px",
-                      color: "black",
+                      borderRadius: "20px",
+                      backgroundColor: "white",
+                      color: "primary.main",
+                      border: "none",
+                      height: "10vh",
+                      width: "18vw",
+                      textTransform: "none",
+                      "&:hover": {
+                        backgroundColor: "white",
+                      },
                     }}
                   >
-                    COMETS Smart Interface
-                  </Typography>
-                </Button>
+                    <Typography
+                      sx={{
+                        fontFamily: "Work Sans",
+                        fontWeight: 600,
+                        fontSize: "16px",
+                        color: "black",
+                      }}
+                    >
+                      COMETS Smart Interface
+                    </Typography>
+                  </Button>
+                </NavLink>
               </Box>
             </Box>
           </Grid>

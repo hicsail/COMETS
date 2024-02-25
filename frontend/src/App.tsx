@@ -7,6 +7,10 @@ import { DashboardPage } from "./pages/Dashboard";
 const router = createBrowserRouter([
   {
     path: "/",
+    element: <LandingPage />,
+    children: [],
+  },
+  {
     element: <RootLayout />,
     children: [
       {
@@ -14,11 +18,6 @@ const router = createBrowserRouter([
         element: <DashboardPage />,
       },
     ],
-  },
-  {
-    path: "/landing",
-    element: <LandingPage />,
-    children: [],
   },
 ]);
 
