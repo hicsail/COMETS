@@ -9,7 +9,7 @@ services:
       context: ../frontend
       dockerfile: Dockerfile
     ports:
-      - 5137:5137
+      - 5174:5173
   # comets_backend:
   #   container_name: comets_backend
   #   platform: linux/amd64
