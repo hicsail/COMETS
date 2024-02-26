@@ -137,6 +137,7 @@ export function LandingPage() {
                   width: "100%",
                 }}
               >
+                <NavLink to="https://www.runcomets.org/about" target="_blank">
                 <Button
                   variant="contained"
                   sx={{
@@ -163,6 +164,7 @@ export function LandingPage() {
                     About COMETS
                   </Typography>
                 </Button>
+                </NavLink>
                 <NavLink to="/dashboard">
                   <Button
                     variant="contained"
