@@ -5,6 +5,6 @@ services:
     container_name: comets_frontend
     platform: linux/amd64
     restart:  always
-    image: hicsail/COMETS
+    image: hicsail/comets:staging
     ports:
       - 5174:5173

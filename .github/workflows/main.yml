@@ -36,4 +36,4 @@ jobs:
           context: .
           file: ./frontend/Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
-          tags: hicsail/COMETS
+          tags: hicsail/comets:staging
