@@ -5,8 +5,6 @@ services:
     container_name: comets_frontend
     platform: linux/amd64
     restart:  always
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+    image: hicsail/COMETS
     ports:
       - 5174:5173
