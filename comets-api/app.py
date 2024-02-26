@@ -8,6 +8,7 @@ from matplotlib.figure import Figure
 import io
 import matplotlib.pyplot as plt
 import matplotlib
+import requests
 
 app = Flask(__name__)
 
@@ -29,6 +30,8 @@ def home():
 @app.route('/process')
 def process():
     print('Started Processing!')
+
+    email = 'shahrishi108@gmail.com' # set email to be a var (will read this from api call when params are finalized)
 
     # Create empty 1x1 layout
     test_tube = c.layout()
@@ -72,9 +75,47 @@ def process():
     # Create the experiment
     experiment = c.comets(test_tube, sim_params)
 
+    success=False
+
     # Run the simulation
-    experiment.run()
-    print('Done running!')
+    try:
+        experiment.run()
+        success=True
+
+    except:
+        print('Errors with experiment')
+
+
+    url = "https://notification.sail.codes/email/send"
+
+    if success:
+        data = {
+            "from": "noreply@mail.sail.codes",
+            "to": [email],  
+            "subject": "COMETS Simulation Success",
+            "message": "Your comets simulation has finished running!",
+        }
+
+    else:
+        data = {
+            "from": "noreply@mail.sail.codes",
+            "to": [email],  
+            "subject": "COMETS Simulation Failure",
+            "message": "Your comets simulation has failed",
+        }
+
+
+    # Headers 
+    headers = {
+        "Content-Type": "application/json", 
+    }
+
+    # Sending the request
+    response = requests.post(url, json=data, headers=headers)
+    if response.status_code == 200:
+        print("Email sent successfully.")
+    else:
+        print("Failed to send email. Status code:", response.status_code)
 
     return 'Done'
 
