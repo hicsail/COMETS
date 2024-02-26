@@ -1,0 +1,30 @@
+version: '3.8.0'
+
+services:
+  comets_frontend:
+    container_name: comets_frontend
+    platform: linux/amd64
+    restart:  always
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    ports:
+      - 5137:5137
+  # comets_backend:
+  #   container_name: comets_backend
+  #   platform: linux/amd64
+  #   restart:  always
+  #   build: 
+  #     context:  ../backend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - 3014:3000
+  # comets_flask:
+  #   container_name: python_flask
+  #   platform: linux/amd64
+  #   restart: always
+  #   build:
+  #     context: ../comets-api
+  #     dockerfile: Dockerfile
+    
+
