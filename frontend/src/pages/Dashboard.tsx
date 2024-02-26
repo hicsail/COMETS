@@ -1,5 +1,6 @@
 import { Box, Button, Grid, Typography } from "@mui/material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { NavLink } from "react-router-dom";
 
 export function DashboardPage() {
   return (
@@ -117,16 +118,18 @@ export function DashboardPage() {
 
         <Grid item>
           <Box>
-            <Button
-              variant="contained"
-              endIcon={<ChevronRightIcon />}
-              sx={{
-                height: "7.5vh",
-                width: "25vw",
-              }}
-            >
-              <Typography variant="h5">CONTINUE TO LAYOUT BUILDER</Typography>
-            </Button>
+            <NavLink to="/experimentSetup">
+              <Button
+                variant="contained"
+                endIcon={<ChevronRightIcon />}
+                sx={{
+                  height: "7.5vh",
+                  width: "25vw",
+                }}
+              >
+                <Typography variant="h5">CONTINUE TO LAYOUT BUILDER</Typography>
+              </Button>
+            </NavLink>
           </Box>
         </Grid>
       </Grid>

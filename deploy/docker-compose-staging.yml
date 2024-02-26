@@ -1,0 +1,10 @@
+version: '3.8.0'
+
+services:
+  comets_frontend:
+    container_name: comets_frontend
+    platform: linux/amd64
+    restart:  always
+    image: hicsail/COMETS
+    ports:
+      - 5174:5173
