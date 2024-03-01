@@ -11,8 +11,8 @@ import {
   Grid,
   Divider,
 } from "@mui/material";
-import { FC, useState, ChangeEvent } from "react";
-import { MetabolicModel, ModelParams } from "../types/Model";
+import { FC, useState } from "react";
+import { MetabolicModel } from "../types/Model";
 
 interface ModelComponentProps {
   modelOptions: MetabolicModel[];
@@ -20,25 +20,25 @@ interface ModelComponentProps {
   modelLimit: number;
 }
 
-const defaultParams: ModelParams = {
+const defaultParams: MetabolicModel['params'] = {
   demographicNoise: false,
-  demographicNoiseAmplitude: "0",
-  uptakeVMax: "0",
-  uptakeKm: "0",
-  deathRate: "0",
-  biomassLinearDiffusivity: "0",
-  biomassNonlinearDiffusivity: "0",
+  demographicNoiseAmplitude: 0,
+  uptakeVMax: 0,
+  uptakeKm: 0,
+  deathRate: 0,
+  biomassLinearDiffusivity: 0,
+  biomassNonlinearDiffusivity: 0,
 };
 
 export const ModelComponent: FC<ModelComponentProps> = (props) => {
   const [selectedOption, setSelectedOption] = useState<MetabolicModel | null>(
     props.modelOptions[0],
   );
-  const [modelParams, setModelParams] = useState<ModelParams>(defaultParams);
+  const [modelParams, setModelParams] = useState<MetabolicModel['params']>(defaultParams);
   const [textfieldError, setTextfieldError] = useState(false);
-  const [chosenModels, setChosenModels] = useState<
-    { name: string; params: ModelParams }[]
-  >([]);
+  // const [chosenModels, setChosenModels] = useState<
+  //   { name: string; params: ModelParams }[]
+  // >([]);
   const handleCheckboxChange = (option: MetabolicModel) => {
     if (selectedOption === option) {
       setSelectedOption(null);
@@ -48,7 +48,7 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
   };
   const handleTextChange = (field: string, value: string) => {
     if (/^\d*$/.test(value)) {
-      setModelParams({ ...modelParams, [field]: value });
+      setModelParams({ ...modelParams, [field]: parseInt(value) });
       setTextfieldError(false);
     } else {
       setTextfieldError(true);
@@ -59,13 +59,11 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
     setModelParams({ ...modelParams, demographicNoise: value });
   };
 
-  const handleAddModel = (params: ModelParams, name: string) => {
-    const model = {
-      name: name,
-      params: params,
-    };
-    console.log(model);
-    setChosenModels([...chosenModels, model]);
+  const handleAddModel = (params: MetabolicModel['params'], model: MetabolicModel) => {
+    model.params = params
+    console.log(model.params);
+    // setChosenModels([...chosenModels, model]);
+    props.value.push(model)
   };
 
   return (
@@ -102,7 +100,7 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
                       <Grid item xs={6}>
                         <RadioGroup>
                           <FormControlLabel
-                            key={index}
+                            key={index + 1}
                             label="Yes"
                             control={
                               <Radio
@@ -134,6 +132,7 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
                     <TextField
                       variant="filled"
                       label="Demographic Noise Amplitude"
+                      type="number"
                       disabled={!modelParams.demographicNoise}
                       value={modelParams.demographicNoiseAmplitude}
                       onChange={(event) =>
@@ -151,6 +150,7 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
                     <TextField
                       variant="filled"
                       label="Uptake Vmax"
+                      type="number"
                       value={modelParams.uptakeVMax}
                       onChange={(event) =>
                         handleTextChange("uptakeVMax", event.target.value)
@@ -164,6 +164,7 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
                     <TextField
                       variant="filled"
                       label="Uptake Km"
+                      type="number"
                       value={modelParams.uptakeKm}
                       onChange={(event) =>
                         handleTextChange("uptakeKm", event.target.value)
@@ -177,6 +178,7 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
                     <TextField
                       variant="filled"
                       label="Death Rate"
+                      type="number"
                       value={modelParams.deathRate}
                       onChange={(event) =>
                         handleTextChange("deathRate", event.target.value)
@@ -190,6 +192,7 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
                     <TextField
                       variant="filled"
                       label="Biomass Linear Diffusivity"
+                      type="number"
                       value={modelParams.biomassLinearDiffusivity}
                       onChange={(event) =>
                         handleTextChange(
@@ -206,6 +209,7 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
                     <TextField
                       variant="filled"
                       label="Biomass Non-Linear Diffusivity"
+                      type="number"
                       value={modelParams.biomassNonlinearDiffusivity}
                       onChange={(event) =>
                         handleTextChange(
@@ -222,8 +226,8 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
                     <Button
                       sx={{ marginTop: 2 }}
                       variant="outlined"
-                      disabled={chosenModels.length >= props.modelLimit}
-                      onClick={() => handleAddModel(modelParams, option.name)}
+                      disabled={props.value.length >= props.modelLimit}
+                      onClick={() => handleAddModel(modelParams, option)}
                     >
                       ADD MODEL
                     </Button>

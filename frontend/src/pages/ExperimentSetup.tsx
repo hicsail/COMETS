@@ -18,6 +18,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Layout } from "../types/Layout";
 import { Media } from "../types/Media";
 import { MetabolicModel } from "../types/Model";
+import { SummaryCard, SummaryCardArray } from "../types/SummaryCard";
 import { ModelComponent } from "../components/ModelObject";
 import { SidebarCard, SidebarcardProps } from "../components/SidebarObject";
 
@@ -150,7 +151,7 @@ export function ExperimentSetupPage() {
     nutrientDiffusivity: "",
     logFrequency: "",
   });
-  const [sidebarItems, setSidebarItems] = useState<SidebarcardProps[]>([]);
+  const [sidebarItems, setSidebarItems] = useState<SummaryCard[]>([]);
 
   const [modelChoice, setModelChoice] = useState<MetabolicModel[]>([]);
   const [layoutChoice, setLayoutChoice] = useState<Layout>(layoutOptions[0]);
@@ -177,7 +178,29 @@ export function ExperimentSetupPage() {
     };
 
   const handleSubmit = () => {
-    console.log(layoutChoice);
+    const sidebarItems: SummaryCard[] = [
+      {
+        "label": layoutChoice.name,
+        "desc": layoutChoice.desc,
+        "info": layoutChoice
+      },
+      {
+        "label": mediaChoice.name,
+        "desc": mediaChoice.desc,
+        "info": mediaChoice
+      }
+    ]
+
+    modelChoice.forEach(model => {
+      const sidebar = {
+        "label": model.name,
+        "desc": model.desc,
+        "info": model
+      }
+      sidebarItems.push(sidebar)
+    })
+    
+    setSidebarItems(sidebarItems)
   };
 
   return (
@@ -392,7 +415,9 @@ export function ExperimentSetupPage() {
           Modal Selection
         </Typography>
         <Box sx={{ width: "100%" }}>
-          <SidebarCard />
+          {sidebarItems.map((item) => 
+            <SidebarCard item={item}/>
+          )}
         </Box>
       </Drawer>
     </Box>
