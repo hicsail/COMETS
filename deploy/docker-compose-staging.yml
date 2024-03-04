@@ -6,4 +6,4 @@ services:
     restart:  always
     image: hicsail/comets:staging
     ports:
-      - 5174:5173
+      - 5174:4173
