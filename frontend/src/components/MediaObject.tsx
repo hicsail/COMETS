@@ -26,7 +26,7 @@ export const MediaComponent: FC<MediaComponentProps> = (props) => {
       setSelectedOption(null);
     } else {
       setSelectedOption(option);
-      props.onChange(option)
+      props.onChange(option);
       props.value = option;
     }
   };

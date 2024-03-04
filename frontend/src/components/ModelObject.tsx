@@ -4,7 +4,6 @@ import {
   Checkbox,
   FormGroup,
   FormControlLabel,
-  Button,
   RadioGroup,
   Radio,
   FormLabel,
@@ -21,7 +20,7 @@ interface ModelComponentProps {
   onChange: (arg0: MetabolicModel) => void;
 }
 
-const defaultParams: MetabolicModel['params'] = {
+const defaultParams: MetabolicModel["params"] = {
   demographicNoise: false,
   demographicNoiseAmplitude: 0,
   uptakeVMax: 0,
@@ -33,20 +32,21 @@ const defaultParams: MetabolicModel['params'] = {
 
 export const ModelComponent: FC<ModelComponentProps> = (props) => {
   const [selectedOption, setSelectedOption] = useState<MetabolicModel | null>();
-  const [modelParams, setModelParams] = useState<MetabolicModel['params']>(defaultParams);
+  const [modelParams, setModelParams] =
+    useState<MetabolicModel["params"]>(defaultParams);
   const [textfieldError, setTextfieldError] = useState(false);
   const handleCheckboxChange = (option: MetabolicModel) => {
     if (selectedOption === option) {
       setSelectedOption(null);
     } else {
       setSelectedOption(option);
-      props.onChange(option)
+      props.onChange(option);
     }
   };
   const handleTextChange = (field: string, value: string) => {
     if (/^\d*$/.test(value)) {
       setModelParams({ ...modelParams, [field]: parseInt(value) });
-      props.value.params = { ...modelParams, [field]: parseInt(value) }
+      props.value.params = { ...modelParams, [field]: parseInt(value) };
       setTextfieldError(false);
     } else {
       setTextfieldError(true);

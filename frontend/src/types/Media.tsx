@@ -7,6 +7,5 @@ export type Media = {
   params: {
     [key: string]: number;
     mediaConcentration: number;
-  }
-  
+  };
 };

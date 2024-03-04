@@ -100,8 +100,7 @@ export function DashboardPage() {
           </Typography>
         </Grid>
 
-        <Grid item flexDirection={'column'}>
-          
+        <Grid item flexDirection={"column"}>
           <Typography
             variant="h4"
             sx={{
@@ -115,20 +114,19 @@ export function DashboardPage() {
           >
             To start your layout, click continue.
           </Typography>
-          
-            <NavLink to="/experimentSetup">
-              <Button
-                variant="contained"
-                endIcon={<ChevronRightIcon />}
-                sx={{
-                  height: "7.5vh",
-                  width: "25vw"
-                }}
-              >
-                <Typography variant="h5">CONTINUE TO LAYOUT BUILDER</Typography>
-              </Button>
-            </NavLink>
-          
+
+          <NavLink to="/experimentSetup">
+            <Button
+              variant="contained"
+              endIcon={<ChevronRightIcon />}
+              sx={{
+                height: "7.5vh",
+                width: "25vw",
+              }}
+            >
+              <Typography variant="h5">CONTINUE TO LAYOUT BUILDER</Typography>
+            </Button>
+          </NavLink>
         </Grid>
       </Grid>
     </Box>

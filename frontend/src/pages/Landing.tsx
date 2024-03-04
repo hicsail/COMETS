@@ -138,32 +138,32 @@ export function LandingPage() {
                 }}
               >
                 <NavLink to="https://www.runcomets.org/about" target="_blank">
-                <Button
-                  variant="contained"
-                  sx={{
-                    borderRadius: "20px",
-                    backgroundColor: "white",
-                    color: "primary.main",
-                    border: "none",
-                    height: "10vh",
-                    width: "18vw",
-                    textTransform: "none",
-                    "&:hover": {
-                      backgroundColor: "white",
-                    },
-                  }}
-                >
-                  <Typography
+                  <Button
+                    variant="contained"
                     sx={{
-                      fontFamily: "Work Sans",
-                      fontWeight: 600,
-                      fontSize: "16px",
-                      color: "black",
+                      borderRadius: "20px",
+                      backgroundColor: "white",
+                      color: "primary.main",
+                      border: "none",
+                      height: "10vh",
+                      width: "18vw",
+                      textTransform: "none",
+                      "&:hover": {
+                        backgroundColor: "white",
+                      },
                     }}
                   >
-                    About COMETS
-                  </Typography>
-                </Button>
+                    <Typography
+                      sx={{
+                        fontFamily: "Work Sans",
+                        fontWeight: 600,
+                        fontSize: "16px",
+                        color: "black",
+                      }}
+                    >
+                      About COMETS
+                    </Typography>
+                  </Button>
                 </NavLink>
                 <NavLink to="/dashboard">
                   <Button

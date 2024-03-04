@@ -24,8 +24,7 @@ export const LayoutComponent: FC<LayoutComponentProps> = (props) => {
       setSelectedOption(null);
     } else {
       setSelectedOption(option);
-      props.onChange(option)
-      
+      props.onChange(option);
     }
   };
   const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
