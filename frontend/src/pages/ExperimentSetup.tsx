@@ -8,19 +8,16 @@ import {
   AccordionDetails,
   Button,
   Box,
-  FormGroup,
   TextField,
 } from "@mui/material";
 import React, { useState } from "react";
 import { MediaComponent } from "../components/MediaObject";
 import { LayoutComponent } from "../components/LayoutObject";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { Layout } from "../types/Layout";
-import { Media } from "../types/Media";
-import { MetabolicModel } from "../types/Model";
-import { SummaryCard, SummaryCardArray } from "../types/SummaryCard";
+import DeleteIcon from '@mui/icons-material/Delete';
 import { ModelComponent } from "../components/ModelObject";
-import { SidebarCard, SidebarcardProps } from "../components/SidebarObject";
+import { SidebarCard } from "../components/SidebarObject";
+import { MetabolicModel, Layout, Media, SummaryCard, GlobalParameters, cometsType } from "../types/ExperimentTypes";
 
 const mediaOptions: Media[] = [
   {
@@ -29,6 +26,9 @@ const mediaOptions: Media[] = [
     mainMetabolites: "Glucose",
     min: 1,
     max: 3,
+    params:{
+      mediaConcentration: 0
+    }
   },
   {
     name: "Core Acetate",
@@ -36,6 +36,9 @@ const mediaOptions: Media[] = [
     mainMetabolites: "Acetate",
     min: 1,
     max: 3,
+    params:{
+      mediaConcentration: 0
+    }
   },
   {
     name: "M9 Minimal Glucose",
@@ -43,6 +46,9 @@ const mediaOptions: Media[] = [
     mainMetabolites: "Glucose",
     min: 1,
     max: 3,
+    params:{
+      mediaConcentration: 0
+    }
   },
   {
     name: "M9 Minimal Acetate",
@@ -50,6 +56,9 @@ const mediaOptions: Media[] = [
     mainMetabolites: "Acetate",
     min: 1,
     max: 3,
+    params:{
+      mediaConcentration: 0
+    }
   },
   {
     name: "LB Rich",
@@ -57,6 +66,9 @@ const mediaOptions: Media[] = [
     mainMetabolites: "Acetate",
     min: 1,
     max: 3,
+    params:{
+      mediaConcentration: 0
+    }
   },
 ];
 
@@ -66,24 +78,36 @@ const layoutOptions: Layout[] = [
     desc: "Example description for center colony",
     min: 1,
     max: 12,
+    params: {
+      mediaVolume: 0
+    }
   },
   {
     name: "9 cm Petri Dish (Random Lawn)",
     desc: "Example description for random lawn",
     min: 1,
     max: 50,
+    params: {
+      mediaVolume: 0
+    }
   },
   {
     name: "10 ml Test Tube",
     desc: "Example description for test tube",
     min: 1,
     max: 50,
+    params: {
+      mediaVolume: 0
+    }
   },
   {
     name: "EcoFab",
     desc: "Example description for EcoFab",
     min: 1,
     max: 50,
+    params: {
+      mediaVolume: 0
+    }
   },
 ];
 
@@ -93,12 +117,12 @@ const modelOptions: MetabolicModel[] = [
     desc: "Example description for E. Coli Core model",
     params: {
       demographicNoise: false,
-      demographicNoiseAmplitude: 1,
-      uptakeVMax: 1,
-      uptakeKm: 1,
-      deathRate: 1,
-      biomassLinearDiffusivity: 1,
-      biomassNonlinearDiffusivity: 1,
+      demographicNoiseAmplitude: 0,
+      uptakeVMax: 0,
+      uptakeKm: 0,
+      deathRate: 0,
+      biomassLinearDiffusivity: 0,
+      biomassNonlinearDiffusivity: 0
     },
   },
   {
@@ -106,12 +130,12 @@ const modelOptions: MetabolicModel[] = [
     desc: "Example description for E. Coli model",
     params: {
       demographicNoise: false,
-      demographicNoiseAmplitude: 1,
-      uptakeVMax: 1,
-      uptakeKm: 1,
-      deathRate: 1,
-      biomassLinearDiffusivity: 1,
-      biomassNonlinearDiffusivity: 1,
+      demographicNoiseAmplitude: 0,
+      uptakeVMax: 0,
+      uptakeKm: 0,
+      deathRate: 0,
+      biomassLinearDiffusivity: 0,
+      biomassNonlinearDiffusivity: 0
     },
   },
   {
@@ -119,12 +143,12 @@ const modelOptions: MetabolicModel[] = [
     desc: "Example description for S. Enterica model",
     params: {
       demographicNoise: false,
-      demographicNoiseAmplitude: 1,
-      uptakeVMax: 1,
-      uptakeKm: 1,
-      deathRate: 1,
-      biomassLinearDiffusivity: 1,
-      biomassNonlinearDiffusivity: 1,
+      demographicNoiseAmplitude: 0,
+      uptakeVMax: 0,
+      uptakeKm: 0,
+      deathRate: 0,
+      biomassLinearDiffusivity: 0,
+      biomassNonlinearDiffusivity: 0
     },
   },
 ];
@@ -139,28 +163,64 @@ export function ExperimentSetupPage() {
   const [modelExpanded, setModelExpanded] = React.useState<string | false>(
     false,
   );
-  const [globalParams, setGlobalParams] = useState<{
-    [key: string]: string;
-    simulatedTime: string;
-    timeSteps: string;
-    nutrientDiffusivity: string;
-    logFrequency: string;
-  }>({
-    simulatedTime: "",
-    timeSteps: "",
-    nutrientDiffusivity: "",
-    logFrequency: "",
+  const [globalParams, setGlobalParams] = useState<GlobalParameters>({
+    name: "Global Parameters",
+    desc: "Desc of global parameters",
+    params: {
+      simulatedTime: 0,
+      timeSteps: 0,
+      nutrientDiffusivity: 0,
+      logFrequency: 0
+    }
   });
   const [sidebarItems, setSidebarItems] = useState<SummaryCard[]>([]);
-
-  const [modelChoice, setModelChoice] = useState<MetabolicModel[]>([]);
+  const [modelChoice, setModelChoice] = useState<MetabolicModel>(modelOptions[0]);
   const [layoutChoice, setLayoutChoice] = useState<Layout>(layoutOptions[0]);
   const [mediaChoice, setMediaChoice] = useState<Media>(mediaOptions[0]);
   const [textfieldError, setTextfieldError] = useState(false);
+  const [isLayoutPicked, setIsLayoutPicked] = useState(false);
+  const [isMediaPicked, setIsMediaPicked] = useState(false);
+  const [isModelPicked, setIsModelPicked] = useState(false);
+  const [numOfModel, setNumOfModel] = useState(0);
+  const maxModel = 3;
+
+  const handleDelete = (index: number) => {
+    // Create a copy of the sidebarItems array
+    const updatedSidebarItems = [...sidebarItems];
+    switch ((updatedSidebarItems[index].type)){
+      case "MetabolicModel":
+        setNumOfModel(prevCount => prevCount - 1);
+        if(numOfModel <= 0){
+          setNumOfModel(0)
+          setIsModelPicked(false)
+        }
+        console.log(numOfModel)
+        break;
+      case "Media":
+        setIsMediaPicked(true);
+        break;
+      case "Layout":
+        setIsLayoutPicked(true);
+        
+    }
+    // Remove the item at the specified index
+    updatedSidebarItems.splice(index, 1);
+    // Update the state with the modified array
+    setSidebarItems(updatedSidebarItems);
+  };
+
 
   const handleTextChange = (field: string, value: string) => {
     if (/^\d*$/.test(value)) {
-      setGlobalParams({ ...globalParams, [field]: value });
+      const updatedParams = {
+        name: "Global Parameters",
+        desc: "Desc of global parameters",
+        params: {
+          ...globalParams['params'],
+          [field]: parseInt(value)
+        }
+      }
+      setGlobalParams(updatedParams);
       setTextfieldError(false);
     } else {
       setTextfieldError(true);
@@ -177,30 +237,34 @@ export function ExperimentSetupPage() {
       }
     };
 
-  const handleSubmit = () => {
-    const sidebarItems: SummaryCard[] = [
+  const handleSubmit = (item: MetabolicModel | Media | Layout | GlobalParameters) => {
+    if (item === null){
+      return
+    }
+    // make a shallow copy to pass by value
+    const i = {...item};
+    const sidebarItem: SummaryCard = 
       {
-        "label": layoutChoice.name,
-        "desc": layoutChoice.desc,
-        "info": layoutChoice
-      },
-      {
-        "label": mediaChoice.name,
-        "desc": mediaChoice.desc,
-        "info": mediaChoice
+        "label": i.name,
+        "desc": i.desc,
+        "info": i,
+        "type": cometsType(item)
       }
-    ]
-
-    modelChoice.forEach(model => {
-      const sidebar = {
-        "label": model.name,
-        "desc": model.desc,
-        "info": model
-      }
-      sidebarItems.push(sidebar)
-    })
     
-    setSidebarItems(sidebarItems)
+    setSidebarItems([...sidebarItems, sidebarItem])
+    switch (cometsType(item)){
+      case "MetabolicModel":
+        setNumOfModel(prevCount => prevCount + 1)
+        if(numOfModel > 0 && numOfModel >= maxModel){
+          setIsModelPicked(true)
+        }
+        break;
+      case "Media":
+        setIsMediaPicked(true);
+        break;
+      case "Layout":
+        setIsLayoutPicked(true);
+    }
   };
 
   return (
@@ -228,10 +292,7 @@ export function ExperimentSetupPage() {
 
       <Grid container spacing={2} sx={{ width: "80%" }}>
         <Grid item xs={6}>
-          <Accordion
-            expanded={layoutExpanded === "layoutPanel"}
-            onChange={handleAccordionChange("layoutPanel")}
-          >
+          <Accordion>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="layoutPanelbh-content"
@@ -245,8 +306,16 @@ export function ExperimentSetupPage() {
               <LayoutComponent
                 layoutOptions={layoutOptions}
                 value={layoutChoice}
+                onChange={setLayoutChoice}
               />
             </AccordionDetails>
+            <Button
+                sx={{ margin: 2, width:'90%' }}
+                variant="outlined"
+                onClick={() => handleSubmit(layoutChoice)}
+              >
+                ADD LAYOUT
+              </Button>
           </Accordion>
 
           <Accordion
@@ -264,8 +333,19 @@ export function ExperimentSetupPage() {
               <Divider variant="fullWidth" />
             </AccordionSummary>
             <AccordionDetails>
-              <MediaComponent mediaOptions={mediaOptions} value={mediaChoice} />
+              <MediaComponent 
+                mediaOptions={mediaOptions} 
+                value={mediaChoice}
+                onChange={setMediaChoice}
+               />
             </AccordionDetails>
+            <Button
+                sx={{ margin: 2, width:'90%' }}
+                variant="outlined"
+                onClick={() => handleSubmit(mediaChoice)}
+              >
+                ADD MEDIA
+              </Button>
           </Accordion>
 
           <Accordion
@@ -287,15 +367,24 @@ export function ExperimentSetupPage() {
                 value={modelChoice}
                 modelOptions={modelOptions}
                 modelLimit={3}
+                onChange={setModelChoice}
               />
             </AccordionDetails>
+            <Button
+                sx={{ margin: 2, width:'90%' }}
+                variant="outlined"
+                onClick={() => handleSubmit(modelChoice)}
+                disabled={numOfModel >= maxModel}
+              >
+                ADD MODEL
+              </Button>
           </Accordion>
         </Grid>
         <Grid item xs={6}>
           <Box
             display={"flex"}
             flexDirection={"row"}
-            sx={{ paddingLeft: "2%", paddingRight: "2%", maxWidth: "100%" }}
+            sx={{ paddingLeft: "2%", paddingRight: "2%", maxWidth: "80%" }}
           >
             <Box sx={{ width: "30%", alignSelf: "center" }}>
               <Typography textAlign={"left"} variant="h6" color="black">
@@ -305,8 +394,9 @@ export function ExperimentSetupPage() {
             <TextField
               label="Simulated Time"
               variant="filled"
+              type="number"
               fullWidth
-              value={String(globalParams.simulatedTime)}
+              value={(globalParams.params.simulatedTime)}
               onChange={(event) =>
                 handleTextChange("simulatedTime", event.target.value)
               }
@@ -320,7 +410,7 @@ export function ExperimentSetupPage() {
           <Box
             display={"flex"}
             flexDirection={"row"}
-            sx={{ paddingLeft: "2%", paddingRight: "2%", maxWidth: "100%" }}
+            sx={{ paddingLeft: "2%", paddingRight: "2%", maxWidth: "80%" }}
           >
             <Box sx={{ width: "30%", alignSelf: "center" }}>
               <Typography textAlign={"left"} variant="h6" color="black">
@@ -330,8 +420,9 @@ export function ExperimentSetupPage() {
             <TextField
               label="Number of steps"
               variant="filled"
+              type="number"
               fullWidth
-              value={String(globalParams.timeSteps)}
+              value={(globalParams.params.timeSteps)}
               onChange={(event) =>
                 handleTextChange("timeSteps", event.target.value)
               }
@@ -345,7 +436,7 @@ export function ExperimentSetupPage() {
           <Box
             display={"flex"}
             flexDirection={"row"}
-            sx={{ paddingLeft: "2%", paddingRight: "2%", maxWidth: "100%" }}
+            sx={{ paddingLeft: "2%", paddingRight: "2%", maxWidth: "80%" }}
           >
             <Box sx={{ width: "30%", alignSelf: "center" }}>
               <Typography textAlign={"left"} variant="h6" color="black">
@@ -355,8 +446,9 @@ export function ExperimentSetupPage() {
             <TextField
               label="Nutrient Diffusivity"
               variant="filled"
+              type="number"
               fullWidth
-              value={String(globalParams.nutrientDiffusivity)}
+              value={(globalParams.params.nutrientDiffusivity)}
               onChange={(event) =>
                 handleTextChange("nutrientDiffusivity", event.target.value)
               }
@@ -370,7 +462,7 @@ export function ExperimentSetupPage() {
           <Box
             display={"flex"}
             flexDirection={"row"}
-            sx={{ paddingLeft: "2%", paddingRight: "2%", maxWidth: "100%" }}
+            sx={{ paddingLeft: "2%", paddingRight: "2%", maxWidth: "80%" }}
           >
             <Box sx={{ width: "30%", alignSelf: "center" }}>
               <Typography textAlign={"left"} variant="h6" color="black">
@@ -380,8 +472,9 @@ export function ExperimentSetupPage() {
             <TextField
               label="Log Frequency"
               variant="filled"
+              type="number"
               fullWidth
-              value={String(globalParams.logFrequency)}
+              value={(globalParams.params.logFrequency)}
               onChange={(event) =>
                 handleTextChange("logFrequency", event.target.value)
               }
@@ -392,17 +485,22 @@ export function ExperimentSetupPage() {
               }}
             />
           </Box>
+          <Button
+            sx={{ margin: 2, maxWidth:'80%', paddingLeft:'2%' }}
+            variant="outlined"
+            onClick={() => handleSubmit(globalParams)}
+          >
+            ADD GLOBAL PARAMETERS
+          </Button>
         </Grid>
+        
       </Grid>
-
-      <Button onClick={handleSubmit}>Submit</Button>
-
       {/* Cart drawer on the right */}
       <Drawer
         variant="permanent"
         anchor="right"
         PaperProps={{
-          sx: { backgroundColor: "#e9ecef", width: "15%", height: "100%" },
+          sx: { backgroundColor: "#e9ecef", width: "20%", height: "100%" },
         }}
       >
         <Typography
@@ -414,9 +512,12 @@ export function ExperimentSetupPage() {
         >
           Modal Selection
         </Typography>
-        <Box sx={{ width: "100%" }}>
-          {sidebarItems.map((item) => 
-            <SidebarCard item={item}/>
+        <Box sx={{ width: "100%"}}>
+          {sidebarItems.map((item, index) => 
+          <Box display={'flex'} flexDirection={'row'} sx={{paddingRight:'0.5vw'}} >
+            <Button variant={'text'} startIcon={<DeleteIcon />} sx={{width:'10%'}} onClick={() => handleDelete(index)}/>
+            <SidebarCard item={item} key={index}/>
+          </Box>
           )}
         </Box>
       </Drawer>

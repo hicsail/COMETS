@@ -3,5 +3,9 @@ export type Layout = {
   desc: string;
   min: number;
   max: number;
-  mediaVolume?: number;
+  params: {
+    [key: string]: number;
+    mediaVolume: number;
+  }
+  
 };

@@ -12,12 +12,11 @@ import { Layout } from "../types/Layout";
 interface LayoutComponentProps {
   layoutOptions: Layout[];
   value: Layout;
+  onChange: (arg0: Layout) => void;
 }
 
 export const LayoutComponent: FC<LayoutComponentProps> = (props) => {
-  const [selectedOption, setSelectedOption] = useState<Layout | null>(
-    props.layoutOptions[0],
-  );
+  const [selectedOption, setSelectedOption] = useState<Layout | null>();
   const [mediaVol, setMediaVol] = useState("");
   const [textfieldError, setTextfieldError] = useState(false);
   const handleCheckboxChange = (option: Layout) => {
@@ -25,6 +24,8 @@ export const LayoutComponent: FC<LayoutComponentProps> = (props) => {
       setSelectedOption(null);
     } else {
       setSelectedOption(option);
+      props.onChange(option)
+      
     }
   };
   const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -32,7 +33,7 @@ export const LayoutComponent: FC<LayoutComponentProps> = (props) => {
       if (/^\d*$/.test(event.target.value)) {
         setMediaVol(event.target.value);
         setTextfieldError(false);
-        props.value.mediaVolume = parseInt(event.target.value);
+        props.value.params.mediaVolume = parseInt(event.target.value);
       } else {
         setTextfieldError(true);
       }

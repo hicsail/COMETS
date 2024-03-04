@@ -16,8 +16,9 @@ import { MetabolicModel } from "../types/Model";
 
 interface ModelComponentProps {
   modelOptions: MetabolicModel[];
-  value: MetabolicModel[];
+  value: MetabolicModel;
   modelLimit: number;
+  onChange: (arg0: MetabolicModel) => void;
 }
 
 const defaultParams: MetabolicModel['params'] = {
@@ -31,24 +32,21 @@ const defaultParams: MetabolicModel['params'] = {
 };
 
 export const ModelComponent: FC<ModelComponentProps> = (props) => {
-  const [selectedOption, setSelectedOption] = useState<MetabolicModel | null>(
-    props.modelOptions[0],
-  );
+  const [selectedOption, setSelectedOption] = useState<MetabolicModel | null>();
   const [modelParams, setModelParams] = useState<MetabolicModel['params']>(defaultParams);
   const [textfieldError, setTextfieldError] = useState(false);
-  // const [chosenModels, setChosenModels] = useState<
-  //   { name: string; params: ModelParams }[]
-  // >([]);
   const handleCheckboxChange = (option: MetabolicModel) => {
     if (selectedOption === option) {
       setSelectedOption(null);
     } else {
       setSelectedOption(option);
+      props.onChange(option)
     }
   };
   const handleTextChange = (field: string, value: string) => {
     if (/^\d*$/.test(value)) {
       setModelParams({ ...modelParams, [field]: parseInt(value) });
+      props.value.params = { ...modelParams, [field]: parseInt(value) }
       setTextfieldError(false);
     } else {
       setTextfieldError(true);
@@ -57,13 +55,6 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
 
   const handleRadioChange = (value: boolean) => {
     setModelParams({ ...modelParams, demographicNoise: value });
-  };
-
-  const handleAddModel = (params: MetabolicModel['params'], model: MetabolicModel) => {
-    model.params = params
-    console.log(model.params);
-    // setChosenModels([...chosenModels, model]);
-    props.value.push(model)
   };
 
   return (
@@ -113,7 +104,7 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
                             }
                           />
                           <FormControlLabel
-                            key={index}
+                            key={index + 2}
                             label="No"
                             control={
                               <Radio
@@ -223,14 +214,14 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
                       }
                       sx={{ marginTop: 2 }}
                     />
-                    <Button
+                    {/* <Button
                       sx={{ marginTop: 2 }}
                       variant="outlined"
                       disabled={props.value.length >= props.modelLimit}
                       onClick={() => handleAddModel(modelParams, option)}
                     >
                       ADD MODEL
-                    </Button>
+                    </Button> */}
                   </>
                 )}
                 <Divider />
