@@ -34,6 +34,5 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./frontend
-          file: ./Dockerfile
           push: ${{ github.event_name != 'pull_request' }}
           tags: hicsail/comets:staging
