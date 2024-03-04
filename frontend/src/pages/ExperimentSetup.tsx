@@ -235,6 +235,7 @@ export function ExperimentSetupPage() {
   };
   const handleAccordionChange =
     (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+      console.log(event)
       if (panel === "layoutPanel") {
         setLayoutExpanded(isExpanded ? panel : false);
       } else if (panel === "mediaPanel") {
