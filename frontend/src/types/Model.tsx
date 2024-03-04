@@ -13,13 +13,4 @@ export type MetabolicModel = {
   };
 };
 
-export type ModelParams = {
-  [key: string]: boolean | number | string;
-  demographicNoise: boolean;
-  demographicNoiseAmplitude: string;
-  uptakeVMax: string;
-  uptakeKm: string;
-  deathRate: string;
-  biomassLinearDiffusivity: string;
-  biomassNonlinearDiffusivity: string;
-};
+

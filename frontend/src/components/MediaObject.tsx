@@ -12,6 +12,7 @@ import { Media } from "../types/Media";
 interface MediaComponentProps {
   mediaOptions: Media[];
   value: Media;
+  onChange: (arg0: Media) => void;
 }
 
 export const MediaComponent: FC<MediaComponentProps> = (props) => {
@@ -25,6 +26,8 @@ export const MediaComponent: FC<MediaComponentProps> = (props) => {
       setSelectedOption(null);
     } else {
       setSelectedOption(option);
+      props.onChange(option)
+      props.value = option;
     }
   };
   const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -33,7 +36,7 @@ export const MediaComponent: FC<MediaComponentProps> = (props) => {
         console.log(event.target.value);
         setMediaVol(event.target.value);
         setTextfieldError(false);
-        props.value.mediaConcentration = parseInt(event.target.value);
+        props.value.params.mediaConcentration = parseInt(event.target.value);
       } else {
         setTextfieldError(true);
       }
