@@ -3,6 +3,7 @@ import { RootLayout } from "./pages/Root";
 import { LandingPage } from "./pages/Landing";
 import "./App.css";
 import { DashboardPage } from "./pages/Dashboard";
+import { ExperimentSetupPage } from "./pages/ExperimentSetup";
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,11 @@ const router = createBrowserRouter([
       {
         path: "/dashboard",
         element: <DashboardPage />,
+      },
+      {
+        path: "/experimentSetup",
+        element: <ExperimentSetupPage />,
+        children: [],
       },
     ],
   },
