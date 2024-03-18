@@ -194,7 +194,7 @@ export function ExperimentSetupPage() {
   const maxModel = 3;
 
   const handleDelete = (index: number) => {
-    // Create a copy of the sidebarItems array
+    // Create a shallow copy of the sidebarItems array
     const updatedSidebarItems = [...sidebarItems];
     switch (updatedSidebarItems[index].type) {
       case "MetabolicModel":
@@ -277,7 +277,7 @@ export function ExperimentSetupPage() {
   };
 
   return (
-    <Box sx={{ paddingTop: 10, paddingLeft: 5 }}>
+    <Box sx={{ paddingTop: 10, paddingLeft: '15vw' }}>
       <Box sx={{ width: "85vw", height: "10vh" }}>
         <Typography
           variant="h2"
@@ -299,7 +299,7 @@ export function ExperimentSetupPage() {
         </Typography>
       </Box>
 
-      <Grid container spacing={2} sx={{ width: "80%" }}>
+      <Grid container spacing={2} sx={{ width: 1000 }}>
         <Grid item xs={6}>
           <Accordion
             expanded={layoutExpanded === "layoutPanel"}
@@ -399,9 +399,9 @@ export function ExperimentSetupPage() {
           <Box
             display={"flex"}
             flexDirection={"row"}
-            sx={{ paddingLeft: "2%", paddingRight: "2%", maxWidth: "80%" }}
+            sx={{paddingLeft: 10}}
           >
-            <Box sx={{ width: "30%", alignSelf: "center" }}>
+            <Box sx={{ width: 400, alignSelf: "center" }}>
               <Typography textAlign={"left"} variant="h6" color="black">
                 Simulated Time
               </Typography>
@@ -425,9 +425,9 @@ export function ExperimentSetupPage() {
           <Box
             display={"flex"}
             flexDirection={"row"}
-            sx={{ paddingLeft: "2%", paddingRight: "2%", maxWidth: "80%" }}
+            sx={{paddingLeft: 10}}
           >
-            <Box sx={{ width: "30%", alignSelf: "center" }}>
+            <Box sx={{ width: 400, alignSelf: "center" }}>
               <Typography textAlign={"left"} variant="h6" color="black">
                 No. of steps
               </Typography>
@@ -451,9 +451,9 @@ export function ExperimentSetupPage() {
           <Box
             display={"flex"}
             flexDirection={"row"}
-            sx={{ paddingLeft: "2%", paddingRight: "2%", maxWidth: "80%" }}
+            sx={{paddingLeft: 10}}
           >
-            <Box sx={{ width: "30%", alignSelf: "center" }}>
+            <Box sx={{ width: 400, alignSelf: "center" }}>
               <Typography textAlign={"left"} variant="h6" color="black">
                 Nutrient Diffusivity
               </Typography>
@@ -477,9 +477,9 @@ export function ExperimentSetupPage() {
           <Box
             display={"flex"}
             flexDirection={"row"}
-            sx={{ paddingLeft: "2%", paddingRight: "2%", maxWidth: "80%" }}
+            sx={{paddingLeft: 10}}
           >
-            <Box sx={{ width: "30%", alignSelf: "center" }}>
+            <Box sx={{ width: 400, alignSelf: "center" }}>
               <Typography textAlign={"left"} variant="h6" color="black">
                 Log Frequency
               </Typography>
@@ -514,7 +514,7 @@ export function ExperimentSetupPage() {
         variant="permanent"
         anchor="right"
         PaperProps={{
-          sx: { backgroundColor: "#e9ecef", width: "20%", height: "100%" },
+          sx: { backgroundColor: "#e9ecef", height: '100vh', width:300 },
         }}
       >
         <Typography
