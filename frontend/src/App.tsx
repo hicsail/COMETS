@@ -3,6 +3,7 @@ import { RootLayout } from "./pages/Root";
 import { LandingPage } from "./pages/Landing";
 import "./App.css";
 import { DashboardPage } from "./pages/Dashboard";
+import { SummaryReviewPage } from "./pages/SummaryReview";
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,10 @@ const router = createBrowserRouter([
       {
         path: "/dashboard",
         element: <DashboardPage />,
+      },
+      {
+        path: "/summary-review",
+        element: <SummaryReviewPage />
       },
     ],
   },

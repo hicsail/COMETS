@@ -10,7 +10,8 @@ export function DashboardPage() {
         src="../../dashboard.svg"
         alt="Dashboard Image"
         sx={{
-          width: "100vw",
+          left: "18vw",
+          width: "82vw",
           height: "30vh",
           objectFit: "cover",
           objectPosition: "center",
@@ -33,7 +34,7 @@ export function DashboardPage() {
       >
         <Grid item>
           <Typography
-            variant="h3"
+            variant="h5"
             sx={{
               textAlign: "left",
               fontFamily: "Inter",
@@ -48,7 +49,7 @@ export function DashboardPage() {
 
         <Grid item>
           <Typography
-            variant="h1"
+            variant="h3"
             textOverflow={"initial"}
             sx={{
               textAlign: "left",
@@ -64,7 +65,7 @@ export function DashboardPage() {
 
         <Grid item>
           <Typography
-            variant="h4"
+            variant="h6"
             sx={{
               textAlign: "left",
               fontFamily: "Inter",
@@ -84,7 +85,7 @@ export function DashboardPage() {
 
         <Grid item>
           <Typography
-            variant="h4"
+            variant="h6"
             sx={{
               textAlign: "left",
               fontFamily: "Inter",
@@ -101,7 +102,7 @@ export function DashboardPage() {
 
         <Grid item>
           <Typography
-            variant="h4"
+            variant="h6"
             sx={{
               textAlign: "left",
               fontFamily: "Inter",
@@ -123,6 +124,7 @@ export function DashboardPage() {
               sx={{
                 height: "7.5vh",
                 width: "25vw",
+                alignContent: "center",
               }}
             >
               <Typography variant="h5">CONTINUE TO LAYOUT BUILDER</Typography>
