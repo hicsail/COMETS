@@ -508,11 +508,11 @@ export function ExperimentSetupPage() {
           color={"black"}
           marginTop={10}
           fontFamily={"sans-serif"}
-          sx={{ textDecoration: "underline" }}
+          fontWeight={"bold"}
         >
-          Modal Selection
+          Experiment Selection
         </Typography>
-        <Box sx={{ width: "100%"}}>
+        <Box sx={{ width: "100%"}} display={'flex'}>
           {sidebarItems.map((item, index) => 
           <Box display={'flex'} flexDirection={'row'} sx={{paddingRight:'0.5vw'}} >
             <Button variant={'text'} startIcon={<DeleteIcon />} sx={{width:'10%'}} onClick={() => handleDelete(index)}/>
@@ -520,6 +520,7 @@ export function ExperimentSetupPage() {
           </Box>
           )}
         </Box>
+        
       </Drawer>
     </Box>
   );
