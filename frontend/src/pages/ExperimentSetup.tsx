@@ -269,7 +269,7 @@ export function ExperimentSetupPage() {
 
   return (
     <Box sx={{ paddingTop: 10, paddingLeft: 5 }}>
-      <Box sx={{ width: "85vw", height: "10vh" }}>
+      <Box sx={{ width: "85vw", height: "10vh", marginBottom: 1 }}>
         <Typography
           variant="h2"
           fontWeight={"bold"}
@@ -290,7 +290,7 @@ export function ExperimentSetupPage() {
         </Typography>
       </Box>
 
-      <Grid container spacing={2} sx={{ width: "80%" }}>
+      <Grid container spacing={2} sx={{ minWidth: 900, width:1500, maxWidth: '100%', paddingBottom: 10}}>
         <Grid item xs={6}>
           <Accordion>
             <AccordionSummary
@@ -384,9 +384,9 @@ export function ExperimentSetupPage() {
           <Box
             display={"flex"}
             flexDirection={"row"}
-            sx={{ paddingLeft: "2%", paddingRight: "2%", maxWidth: "80%" }}
+            sx={{ paddingLeft: 10, paddingRight: "2%", maxWidth: "80%" }}
           >
-            <Box sx={{ width: "30%", alignSelf: "center" }}>
+            <Box sx={{ width: "30%", alignSelf: "center", marginRight: 3  }}>
               <Typography textAlign={"left"} variant="h6" color="black">
                 Simulated Time
               </Typography>
@@ -410,9 +410,9 @@ export function ExperimentSetupPage() {
           <Box
             display={"flex"}
             flexDirection={"row"}
-            sx={{ paddingLeft: "2%", paddingRight: "2%", maxWidth: "80%" }}
+            sx={{ paddingLeft: 10, paddingRight: "2%", maxWidth: "80%" }}
           >
-            <Box sx={{ width: "30%", alignSelf: "center" }}>
+            <Box sx={{ width: "30%", alignSelf: "center", marginRight: 3  }}>
               <Typography textAlign={"left"} variant="h6" color="black">
                 No. of steps
               </Typography>
@@ -436,9 +436,9 @@ export function ExperimentSetupPage() {
           <Box
             display={"flex"}
             flexDirection={"row"}
-            sx={{ paddingLeft: "2%", paddingRight: "2%", maxWidth: "80%" }}
+            sx={{ paddingLeft: 10, paddingRight: "2%", maxWidth: "80%" }}
           >
-            <Box sx={{ width: "30%", alignSelf: "center" }}>
+            <Box sx={{ width: "30%", alignSelf: "center", marginRight: 3  }}>
               <Typography textAlign={"left"} variant="h6" color="black">
                 Nutrient Diffusivity
               </Typography>
@@ -462,9 +462,9 @@ export function ExperimentSetupPage() {
           <Box
             display={"flex"}
             flexDirection={"row"}
-            sx={{ paddingLeft: "2%", paddingRight: "2%", maxWidth: "80%" }}
+            sx={{ paddingLeft: 10, paddingRight: "2%", maxWidth: "80%" }}
           >
-            <Box sx={{ width: "30%", alignSelf: "center" }}>
+            <Box sx={{ width: "30%", alignSelf: "center", marginRight: 3 }}>
               <Typography textAlign={"left"} variant="h6" color="black">
                 Log Frequency
               </Typography>
@@ -500,7 +500,7 @@ export function ExperimentSetupPage() {
         variant="permanent"
         anchor="right"
         PaperProps={{
-          sx: { backgroundColor: "#e9ecef", width: "20%", height: "100%" },
+          sx: { backgroundColor: "#e9ecef", width: 350, minWidth:'10%', height: "100%" },
         }}
       >
         <Typography

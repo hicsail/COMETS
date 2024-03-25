@@ -4,15 +4,17 @@ import {
   Checkbox,
   FormGroup,
   FormControlLabel,
-  Button,
   RadioGroup,
   Radio,
   FormLabel,
   Grid,
   Divider,
+  Tooltip,
+  IconButton,
 } from "@mui/material";
 import { FC, useState } from "react";
 import { MetabolicModel } from "../types/Model";
+import InfoIcon from '@mui/icons-material/Info';
 
 interface ModelComponentProps {
   modelOptions: MetabolicModel[];
@@ -69,11 +71,18 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
                   key={index}
                   label={option.name}
                   control={
+                    <>
+                    <Tooltip title={option.desc}>
+                      <IconButton onClick={() => {navigator.clipboard.writeText(option.desc)}}>
+                        <InfoIcon />
+                      </IconButton>
+                    </Tooltip>
                     <Checkbox
                       value={selectedOption}
                       onChange={() => handleCheckboxChange(option)}
                       checked={selectedOption === option}
                     />
+                    </>
                   }
                 />
                 {selectedOption === option && (

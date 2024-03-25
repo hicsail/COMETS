@@ -21,20 +21,17 @@ export function DashboardPage() {
       <Grid
         container
         direction={"column"}
-        spacing={2}
         overflow={"-moz-hidden-unscrollable"}
         sx={{
           width: "100%",
           paddingLeft: 5,
           paddingRight: 5,
-          paddingTop: "2%",
-          maxHeight: "40%",
-          justifyContent: "space-between",
+          paddingTop: "1%"
         }}
       >
         <Grid item>
           <Typography
-            variant="h3"
+            variant="h4"
             sx={{
               textAlign: "left",
               fontFamily: "Inter",
@@ -49,7 +46,7 @@ export function DashboardPage() {
 
         <Grid item>
           <Typography
-            variant="h1"
+            variant="h2"
             textOverflow={"initial"}
             sx={{
               textAlign: "left",
@@ -65,7 +62,7 @@ export function DashboardPage() {
 
         <Grid item>
           <Typography
-            variant="h4"
+            variant="h5"
             sx={{
               textAlign: "left",
               fontFamily: "Inter",
@@ -85,7 +82,7 @@ export function DashboardPage() {
 
         <Grid item>
           <Typography
-            variant="h4"
+            variant="h5"
             sx={{
               textAlign: "left",
               fontFamily: "Inter",

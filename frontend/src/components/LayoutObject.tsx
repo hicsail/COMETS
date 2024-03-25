@@ -5,10 +5,12 @@ import {
   FormGroup,
   FormControlLabel,
   Divider,
+  IconButton,
+  Tooltip
 } from "@mui/material";
 import { FC, useState, ChangeEvent } from "react";
 import { Layout } from "../types/Layout";
-
+import InfoIcon from '@mui/icons-material/Info';
 interface LayoutComponentProps {
   layoutOptions: Layout[];
   value: Layout;
@@ -51,11 +53,18 @@ export const LayoutComponent: FC<LayoutComponentProps> = (props) => {
                   key={index}
                   label={option.name}
                   control={
+                    <>
+                    <Tooltip title={option.desc}>
+                      <IconButton onClick={() => {navigator.clipboard.writeText(option.desc)}}>
+                        <InfoIcon />
+                      </IconButton>
+                    </Tooltip>
                     <Checkbox
                       value={props.value}
                       onChange={() => handleCheckboxChange(option)}
                       checked={selectedOption === option}
                     />
+                </>
                   }
                 />
                 {selectedOption === option && (
