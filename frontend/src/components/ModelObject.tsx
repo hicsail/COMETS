@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { FC, useState } from "react";
 import { MetabolicModel } from "../types/Model";
-import InfoIcon from '@mui/icons-material/Info';
+import InfoIcon from "@mui/icons-material/Info";
 
 interface ModelComponentProps {
   modelOptions: MetabolicModel[];
@@ -23,7 +23,7 @@ interface ModelComponentProps {
   onChange: (arg0: MetabolicModel) => void;
 }
 
-const defaultParams: MetabolicModel['params'] = {
+const defaultParams: MetabolicModel["params"] = {
   demographicNoise: false,
   demographicNoiseAmplitude: 0,
   uptakeVMax: 0,
@@ -35,20 +35,21 @@ const defaultParams: MetabolicModel['params'] = {
 
 export const ModelComponent: FC<ModelComponentProps> = (props) => {
   const [selectedOption, setSelectedOption] = useState<MetabolicModel | null>();
-  const [modelParams, setModelParams] = useState<MetabolicModel['params']>(defaultParams);
+  const [modelParams, setModelParams] =
+    useState<MetabolicModel["params"]>(defaultParams);
   const [textfieldError, setTextfieldError] = useState(false);
   const handleCheckboxChange = (option: MetabolicModel) => {
     if (selectedOption === option) {
       setSelectedOption(null);
     } else {
       setSelectedOption(option);
-      props.onChange(option)
+      props.onChange(option);
     }
   };
   const handleTextChange = (field: string, value: string) => {
     if (/^\d*$/.test(value)) {
       setModelParams({ ...modelParams, [field]: parseInt(value) });
-      props.value.params = { ...modelParams, [field]: parseInt(value) }
+      props.value.params = { ...modelParams, [field]: parseInt(value) };
       setTextfieldError(false);
     } else {
       setTextfieldError(true);
@@ -72,16 +73,20 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
                   label={option.name}
                   control={
                     <>
-                    <Tooltip title={option.desc}>
-                      <IconButton onClick={() => {navigator.clipboard.writeText(option.desc)}}>
-                        <InfoIcon />
-                      </IconButton>
-                    </Tooltip>
-                    <Checkbox
-                      value={selectedOption}
-                      onChange={() => handleCheckboxChange(option)}
-                      checked={selectedOption === option}
-                    />
+                      <Tooltip title={option.desc}>
+                        <IconButton
+                          onClick={() => {
+                            navigator.clipboard.writeText(option.desc);
+                          }}
+                        >
+                          <InfoIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Checkbox
+                        value={selectedOption}
+                        onChange={() => handleCheckboxChange(option)}
+                        checked={selectedOption === option}
+                      />
                     </>
                   }
                 />

@@ -12,5 +12,3 @@ export type MetabolicModel = {
     biomassNonlinearDiffusivity: number;
   };
 };
-
-

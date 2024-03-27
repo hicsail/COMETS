@@ -14,10 +14,18 @@ import React, { useState } from "react";
 import { MediaComponent } from "../components/MediaObject";
 import { LayoutComponent } from "../components/LayoutObject";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from "@mui/icons-material/Delete";
 import { ModelComponent } from "../components/ModelObject";
 import { SidebarCard } from "../components/SidebarObject";
-import { MetabolicModel, Layout, Media, SummaryCard, GlobalParameters, cometsType } from "../types/ExperimentTypes";
+import {
+  MetabolicModel,
+  Layout,
+  Media,
+  SummaryCard,
+  GlobalParameters,
+  cometsType,
+} from "../types/ExperimentTypes";
+import { Footer } from "../components/Footer";
 
 const mediaOptions: Media[] = [
   {
@@ -26,9 +34,9 @@ const mediaOptions: Media[] = [
     mainMetabolites: "Glucose",
     min: 1,
     max: 3,
-    params:{
-      mediaConcentration: 0
-    }
+    params: {
+      mediaConcentration: 0,
+    },
   },
   {
     name: "Core Acetate",
@@ -36,9 +44,9 @@ const mediaOptions: Media[] = [
     mainMetabolites: "Acetate",
     min: 1,
     max: 3,
-    params:{
-      mediaConcentration: 0
-    }
+    params: {
+      mediaConcentration: 0,
+    },
   },
   {
     name: "M9 Minimal Glucose",
@@ -46,9 +54,9 @@ const mediaOptions: Media[] = [
     mainMetabolites: "Glucose",
     min: 1,
     max: 3,
-    params:{
-      mediaConcentration: 0
-    }
+    params: {
+      mediaConcentration: 0,
+    },
   },
   {
     name: "M9 Minimal Acetate",
@@ -56,9 +64,9 @@ const mediaOptions: Media[] = [
     mainMetabolites: "Acetate",
     min: 1,
     max: 3,
-    params:{
-      mediaConcentration: 0
-    }
+    params: {
+      mediaConcentration: 0,
+    },
   },
   {
     name: "LB Rich",
@@ -66,9 +74,9 @@ const mediaOptions: Media[] = [
     mainMetabolites: "Acetate",
     min: 1,
     max: 3,
-    params:{
-      mediaConcentration: 0
-    }
+    params: {
+      mediaConcentration: 0,
+    },
   },
 ];
 
@@ -79,8 +87,8 @@ const layoutOptions: Layout[] = [
     min: 1,
     max: 12,
     params: {
-      mediaVolume: 0
-    }
+      mediaVolume: 0,
+    },
   },
   {
     name: "9 cm Petri Dish (Random Lawn)",
@@ -88,8 +96,8 @@ const layoutOptions: Layout[] = [
     min: 1,
     max: 50,
     params: {
-      mediaVolume: 0
-    }
+      mediaVolume: 0,
+    },
   },
   {
     name: "10 ml Test Tube",
@@ -97,8 +105,8 @@ const layoutOptions: Layout[] = [
     min: 1,
     max: 50,
     params: {
-      mediaVolume: 0
-    }
+      mediaVolume: 0,
+    },
   },
   {
     name: "EcoFab",
@@ -106,8 +114,8 @@ const layoutOptions: Layout[] = [
     min: 1,
     max: 50,
     params: {
-      mediaVolume: 0
-    }
+      mediaVolume: 0,
+    },
   },
 ];
 
@@ -122,7 +130,7 @@ const modelOptions: MetabolicModel[] = [
       uptakeKm: 0,
       deathRate: 0,
       biomassLinearDiffusivity: 0,
-      biomassNonlinearDiffusivity: 0
+      biomassNonlinearDiffusivity: 0,
     },
   },
   {
@@ -135,7 +143,7 @@ const modelOptions: MetabolicModel[] = [
       uptakeKm: 0,
       deathRate: 0,
       biomassLinearDiffusivity: 0,
-      biomassNonlinearDiffusivity: 0
+      biomassNonlinearDiffusivity: 0,
     },
   },
   {
@@ -148,7 +156,7 @@ const modelOptions: MetabolicModel[] = [
       uptakeKm: 0,
       deathRate: 0,
       biomassLinearDiffusivity: 0,
-      biomassNonlinearDiffusivity: 0
+      biomassNonlinearDiffusivity: 0,
     },
   },
 ];
@@ -170,11 +178,13 @@ export function ExperimentSetupPage() {
       simulatedTime: 0,
       timeSteps: 0,
       nutrientDiffusivity: 0,
-      logFrequency: 0
-    }
+      logFrequency: 0,
+    },
   });
   const [sidebarItems, setSidebarItems] = useState<SummaryCard[]>([]);
-  const [modelChoice, setModelChoice] = useState<MetabolicModel>(modelOptions[0]);
+  const [modelChoice, setModelChoice] = useState<MetabolicModel>(
+    modelOptions[0],
+  );
   const [layoutChoice, setLayoutChoice] = useState<Layout>(layoutOptions[0]);
   const [mediaChoice, setMediaChoice] = useState<Media>(mediaOptions[0]);
   const [textfieldError, setTextfieldError] = useState(false);
@@ -187,21 +197,20 @@ export function ExperimentSetupPage() {
   const handleDelete = (index: number) => {
     // Create a copy of the sidebarItems array
     const updatedSidebarItems = [...sidebarItems];
-    switch ((updatedSidebarItems[index].type)){
+    switch (updatedSidebarItems[index].type) {
       case "MetabolicModel":
-        setNumOfModel(prevCount => prevCount - 1);
-        if(numOfModel <= 0){
-          setNumOfModel(0)
-          setIsModelPicked(false)
+        setNumOfModel((prevCount) => prevCount - 1);
+        if (numOfModel <= 0) {
+          setNumOfModel(0);
+          setIsModelPicked(false);
         }
-        console.log(numOfModel)
+        console.log(numOfModel);
         break;
       case "Media":
         setIsMediaPicked(true);
         break;
       case "Layout":
         setIsLayoutPicked(true);
-        
     }
     // Remove the item at the specified index
     updatedSidebarItems.splice(index, 1);
@@ -209,17 +218,16 @@ export function ExperimentSetupPage() {
     setSidebarItems(updatedSidebarItems);
   };
 
-
   const handleTextChange = (field: string, value: string) => {
     if (/^\d*$/.test(value)) {
       const updatedParams = {
         name: "Global Parameters",
         desc: "Desc of global parameters",
         params: {
-          ...globalParams['params'],
-          [field]: parseInt(value)
-        }
-      }
+          ...globalParams["params"],
+          [field]: parseInt(value),
+        },
+      };
       setGlobalParams(updatedParams);
       setTextfieldError(false);
     } else {
@@ -237,26 +245,27 @@ export function ExperimentSetupPage() {
       }
     };
 
-  const handleSubmit = (item: MetabolicModel | Media | Layout | GlobalParameters) => {
-    if (item === null){
-      return
+  const handleSubmit = (
+    item: MetabolicModel | Media | Layout | GlobalParameters,
+  ) => {
+    if (item === null) {
+      return;
     }
     // make a shallow copy to pass by value
-    const i = {...item};
-    const sidebarItem: SummaryCard = 
-      {
-        "label": i.name,
-        "desc": i.desc,
-        "info": i,
-        "type": cometsType(item)
-      }
-    
-    setSidebarItems([...sidebarItems, sidebarItem])
-    switch (cometsType(item)){
+    const i = { ...item };
+    const sidebarItem: SummaryCard = {
+      label: i.name,
+      desc: i.desc,
+      info: i,
+      type: cometsType(item),
+    };
+
+    setSidebarItems([...sidebarItems, sidebarItem]);
+    switch (cometsType(item)) {
       case "MetabolicModel":
-        setNumOfModel(prevCount => prevCount + 1)
-        if(numOfModel > 0 && numOfModel >= maxModel){
-          setIsModelPicked(true)
+        setNumOfModel((prevCount) => prevCount + 1);
+        if (numOfModel > 0 && numOfModel >= maxModel) {
+          setIsModelPicked(true);
         }
         break;
       case "Media":
@@ -290,7 +299,11 @@ export function ExperimentSetupPage() {
         </Typography>
       </Box>
 
-      <Grid container spacing={2} sx={{ minWidth: 900, width:1500, maxWidth: '100%', paddingBottom: 10}}>
+      <Grid
+        container
+        spacing={2}
+        sx={{ minWidth: 900, width: 1500, maxWidth: "100%", paddingBottom: 30 }}
+      >
         <Grid item xs={6}>
           <Accordion>
             <AccordionSummary
@@ -310,12 +323,12 @@ export function ExperimentSetupPage() {
               />
             </AccordionDetails>
             <Button
-                sx={{ margin: 2, width:'90%' }}
-                variant="outlined"
-                onClick={() => handleSubmit(layoutChoice)}
-              >
-                ADD LAYOUT
-              </Button>
+              sx={{ margin: 2, width: "90%" }}
+              variant="outlined"
+              onClick={() => handleSubmit(layoutChoice)}
+            >
+              ADD LAYOUT
+            </Button>
           </Accordion>
 
           <Accordion
@@ -333,19 +346,19 @@ export function ExperimentSetupPage() {
               <Divider variant="fullWidth" />
             </AccordionSummary>
             <AccordionDetails>
-              <MediaComponent 
-                mediaOptions={mediaOptions} 
+              <MediaComponent
+                mediaOptions={mediaOptions}
                 value={mediaChoice}
                 onChange={setMediaChoice}
-               />
+              />
             </AccordionDetails>
             <Button
-                sx={{ margin: 2, width:'90%' }}
-                variant="outlined"
-                onClick={() => handleSubmit(mediaChoice)}
-              >
-                ADD MEDIA
-              </Button>
+              sx={{ margin: 2, width: "90%" }}
+              variant="outlined"
+              onClick={() => handleSubmit(mediaChoice)}
+            >
+              ADD MEDIA
+            </Button>
           </Accordion>
 
           <Accordion
@@ -371,13 +384,13 @@ export function ExperimentSetupPage() {
               />
             </AccordionDetails>
             <Button
-                sx={{ margin: 2, width:'90%' }}
-                variant="outlined"
-                onClick={() => handleSubmit(modelChoice)}
-                disabled={numOfModel >= maxModel}
-              >
-                ADD MODEL
-              </Button>
+              sx={{ margin: 2, width: "90%" }}
+              variant="outlined"
+              onClick={() => handleSubmit(modelChoice)}
+              disabled={numOfModel >= maxModel}
+            >
+              ADD MODEL
+            </Button>
           </Accordion>
         </Grid>
         <Grid item xs={6}>
@@ -386,7 +399,7 @@ export function ExperimentSetupPage() {
             flexDirection={"row"}
             sx={{ paddingLeft: 10, paddingRight: "2%", maxWidth: "80%" }}
           >
-            <Box sx={{ width: "30%", alignSelf: "center", marginRight: 3  }}>
+            <Box sx={{ width: "30%", alignSelf: "center", marginRight: 3 }}>
               <Typography textAlign={"left"} variant="h6" color="black">
                 Simulated Time
               </Typography>
@@ -396,7 +409,7 @@ export function ExperimentSetupPage() {
               variant="filled"
               type="number"
               fullWidth
-              value={(globalParams.params.simulatedTime)}
+              value={globalParams.params.simulatedTime}
               onChange={(event) =>
                 handleTextChange("simulatedTime", event.target.value)
               }
@@ -412,7 +425,7 @@ export function ExperimentSetupPage() {
             flexDirection={"row"}
             sx={{ paddingLeft: 10, paddingRight: "2%", maxWidth: "80%" }}
           >
-            <Box sx={{ width: "30%", alignSelf: "center", marginRight: 3  }}>
+            <Box sx={{ width: "30%", alignSelf: "center", marginRight: 3 }}>
               <Typography textAlign={"left"} variant="h6" color="black">
                 No. of steps
               </Typography>
@@ -422,7 +435,7 @@ export function ExperimentSetupPage() {
               variant="filled"
               type="number"
               fullWidth
-              value={(globalParams.params.timeSteps)}
+              value={globalParams.params.timeSteps}
               onChange={(event) =>
                 handleTextChange("timeSteps", event.target.value)
               }
@@ -438,7 +451,7 @@ export function ExperimentSetupPage() {
             flexDirection={"row"}
             sx={{ paddingLeft: 10, paddingRight: "2%", maxWidth: "80%" }}
           >
-            <Box sx={{ width: "30%", alignSelf: "center", marginRight: 3  }}>
+            <Box sx={{ width: "30%", alignSelf: "center", marginRight: 3 }}>
               <Typography textAlign={"left"} variant="h6" color="black">
                 Nutrient Diffusivity
               </Typography>
@@ -448,7 +461,7 @@ export function ExperimentSetupPage() {
               variant="filled"
               type="number"
               fullWidth
-              value={(globalParams.params.nutrientDiffusivity)}
+              value={globalParams.params.nutrientDiffusivity}
               onChange={(event) =>
                 handleTextChange("nutrientDiffusivity", event.target.value)
               }
@@ -474,7 +487,7 @@ export function ExperimentSetupPage() {
               variant="filled"
               type="number"
               fullWidth
-              value={(globalParams.params.logFrequency)}
+              value={globalParams.params.logFrequency}
               onChange={(event) =>
                 handleTextChange("logFrequency", event.target.value)
               }
@@ -486,21 +499,25 @@ export function ExperimentSetupPage() {
             />
           </Box>
           <Button
-            sx={{ margin: 2, maxWidth:'80%', paddingLeft:'2%' }}
+            sx={{ margin: 2, maxWidth: "80%", paddingLeft: "2%" }}
             variant="outlined"
             onClick={() => handleSubmit(globalParams)}
           >
             ADD GLOBAL PARAMETERS
           </Button>
         </Grid>
-        
       </Grid>
       {/* Cart drawer on the right */}
       <Drawer
         variant="permanent"
         anchor="right"
         PaperProps={{
-          sx: { backgroundColor: "#e9ecef", width: 350, minWidth:'10%', height: "100%" },
+          sx: {
+            backgroundColor: "#e9ecef",
+            width: 350,
+            minWidth: "10%",
+            height: "100%",
+          },
         }}
       >
         <Typography
@@ -512,15 +529,37 @@ export function ExperimentSetupPage() {
         >
           Experiment Selection
         </Typography>
-        <Box sx={{ width: "100%"}} display={'flex'}>
-          {sidebarItems.map((item, index) => 
-          <Box display={'flex'} flexDirection={'row'} sx={{paddingRight:'0.5vw'}} >
-            <Button variant={'text'} startIcon={<DeleteIcon />} sx={{width:'10%'}} onClick={() => handleDelete(index)}/>
-            <SidebarCard item={item} key={index}/>
-          </Box>
-          )}
+        <Box sx={{ width: "100%" }} display={"flex"}>
+          {sidebarItems.map((item, index) => (
+            <Box
+              display={"flex"}
+              flexDirection={"row"}
+              sx={{ paddingRight: "0.5vw" }}
+            >
+              <Button
+                variant={"text"}
+                startIcon={<DeleteIcon />}
+                sx={{ width: "10%" }}
+                onClick={() => handleDelete(index)}
+              />
+              <SidebarCard item={item} key={index} />
+            </Box>
+          ))}
         </Box>
-        
+      </Drawer>
+      <Drawer
+        variant="permanent"
+        anchor="bottom"
+        PaperProps={{
+          sx: {
+            background: "#e9ecef",
+            height: 150,
+            width: "100vw",
+            zIndex: 99,
+          },
+        }}
+      >
+        {/* Insert the stepper here */}
       </Drawer>
     </Box>
   );

@@ -6,11 +6,11 @@ import {
   FormControlLabel,
   Divider,
   IconButton,
-  Tooltip
+  Tooltip,
 } from "@mui/material";
 import { FC, useState, ChangeEvent } from "react";
 import { Layout } from "../types/Layout";
-import InfoIcon from '@mui/icons-material/Info';
+import InfoIcon from "@mui/icons-material/Info";
 interface LayoutComponentProps {
   layoutOptions: Layout[];
   value: Layout;
@@ -26,16 +26,24 @@ export const LayoutComponent: FC<LayoutComponentProps> = (props) => {
       setSelectedOption(null);
     } else {
       setSelectedOption(option);
-      props.onChange(option)
-      
+      props.onChange(option);
     }
   };
-  const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleTextChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    min: number,
+    max: number,
+  ) => {
     if (event.target) {
       if (/^\d*$/.test(event.target.value)) {
+        const vol = parseInt(event.target.value);
+        // if(vol >= min && vol <= max){
         setMediaVol(event.target.value);
         setTextfieldError(false);
         props.value.params.mediaVolume = parseInt(event.target.value);
+        // }else{
+        //   setTextfieldError(true);
+        // }
       } else {
         setTextfieldError(true);
       }
@@ -54,17 +62,21 @@ export const LayoutComponent: FC<LayoutComponentProps> = (props) => {
                   label={option.name}
                   control={
                     <>
-                    <Tooltip title={option.desc}>
-                      <IconButton onClick={() => {navigator.clipboard.writeText(option.desc)}}>
-                        <InfoIcon />
-                      </IconButton>
-                    </Tooltip>
-                    <Checkbox
-                      value={props.value}
-                      onChange={() => handleCheckboxChange(option)}
-                      checked={selectedOption === option}
-                    />
-                </>
+                      <Tooltip title={option.desc}>
+                        <IconButton
+                          onClick={() => {
+                            navigator.clipboard.writeText(option.desc);
+                          }}
+                        >
+                          <InfoIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Checkbox
+                        value={props.value}
+                        onChange={() => handleCheckboxChange(option)}
+                        checked={selectedOption === option}
+                      />
+                    </>
                   }
                 />
                 {selectedOption === option && (
@@ -72,7 +84,9 @@ export const LayoutComponent: FC<LayoutComponentProps> = (props) => {
                     variant="filled"
                     label="Volume of media (ml)"
                     value={mediaVol}
-                    onChange={handleTextChange}
+                    onChange={(e) =>
+                      handleTextChange(e, option.min, option.max)
+                    }
                     defaultValue={""}
                     error={textfieldError}
                     helperText={

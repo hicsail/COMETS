@@ -6,6 +6,5 @@ export type Layout = {
   params: {
     [key: string]: number;
     mediaVolume: number;
-  }
-  
+  };
 };
