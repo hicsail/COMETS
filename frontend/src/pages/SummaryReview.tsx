@@ -36,8 +36,7 @@ const bodyTheme = createTheme({
 
 export function SummaryReviewPage() {
   const [activeStep, setActiveStep] = useState(2);
-  return ( <
-     div >
+  return ( 
      <
      ThemeProvider theme = {
         bodyTheme
@@ -49,7 +48,7 @@ export function SummaryReviewPage() {
            position: "relative",
            // width: "82vw",
            height: "100vh",
-           display: 'flex',
+
         }
      } >
      <
@@ -174,18 +173,19 @@ export function SummaryReviewPage() {
      /Grid>
 
 
-     <
-     /Box>
+     
 
      <
-     Drawer variant = "permanent"
+     Drawer 
+     variant = "permanent"
      anchor = "bottom"
      PaperProps = {
         {
            sx: {
               background: "white",
               height: 100,
-              width: "100vw",
+              width: "90vw",
+              left:'15vw',
               zIndex: 99,
               alignItems: "center",
 
@@ -196,13 +196,15 @@ export function SummaryReviewPage() {
      FooterStepper activeStep = {
         activeStep
      }
-     /> <
-     /Drawer>
+     /> 
+     
+     </Drawer>
+
+     </Box>
 
 
      <
-     /ThemeProvider> <
-     /div>
+     /ThemeProvider> 
 
   );
 }
