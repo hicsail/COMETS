@@ -80,7 +80,7 @@ export function SummaryReviewPage() {
                   width: '100%',
                   p: 2,
                   boxSizing: 'border-box',
-                  borderRadius: '16px'
+                  borderRadius: '16px',
                 }}
               >
                 <Typography 
@@ -118,6 +118,19 @@ export function SummaryReviewPage() {
                   Continue
                 </Button>
               </Card>
+
+              <Box
+               sx={{
+                  paddingTop:"5%"
+               }} >
+               <Button 
+                     variant="contained"
+                     fullWidth
+                  >
+                     Download CometsPY
+               </Button>
+              </Box>
+
             </Grid>
           </Grid>
 
