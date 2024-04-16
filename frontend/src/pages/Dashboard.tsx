@@ -1,5 +1,6 @@
 import { Box, Button, Grid, Typography } from "@mui/material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { NavLink } from "react-router-dom";
 
 export function DashboardPage() {
   return (
@@ -21,15 +22,12 @@ export function DashboardPage() {
       <Grid
         container
         direction={"column"}
-        spacing={2}
         overflow={"-moz-hidden-unscrollable"}
         sx={{
           width: "100%",
           paddingLeft: 5,
           paddingRight: 5,
-          paddingTop: "2.5%",
-          maxHeight: "40%",
-          justifyContent: "space-between",
+          paddingTop: "1%",
         }}
       >
         <Grid item>
@@ -100,7 +98,7 @@ export function DashboardPage() {
           </Typography>
         </Grid>
 
-        <Grid item>
+        <Grid item flexDirection={"column"}>
           <Typography
             variant="h6"
             sx={{
@@ -114,10 +112,8 @@ export function DashboardPage() {
           >
             To start your layout, click continue.
           </Typography>
-        </Grid>
 
-        <Grid item>
-          <Box>
+          <NavLink to="/experimentSetup">
             <Button
               variant="contained"
               endIcon={<ChevronRightIcon />}
@@ -129,7 +125,7 @@ export function DashboardPage() {
             >
               <Typography variant="h5">CONTINUE TO LAYOUT BUILDER</Typography>
             </Button>
-          </Box>
+          </NavLink>
         </Grid>
       </Grid>
     </Box>
