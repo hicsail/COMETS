@@ -4,6 +4,7 @@ import { LandingPage } from "./pages/Landing";
 import "./App.css";
 import { DashboardPage } from "./pages/Dashboard";
 import { SummaryReviewPage } from "./pages/SummaryReview";
+import { ResultsPage } from "./pages/Results";
 import { ExperimentSubmittedPage } from "./pages/ExperimentSubmitted";
 
 const router = createBrowserRouter([
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: "/experiment-submitted",
         element: <ExperimentSubmittedPage />
+      },
+      {
+        path: "/results",
+        element: <ResultsPage />
       }
     ],
   },
