@@ -1,6 +1,8 @@
 import { AppBar, Box, Button, Grid, Toolbar, Typography } from "@mui/material";
 import { NavLink } from "react-router-dom";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { Link } from 'react-router-dom';
+
 
 const navbarTheme = createTheme({
   typography: {
@@ -138,6 +140,8 @@ export function LandingPage() {
                 }}
               >
                 <Button
+                  component={Link}
+                  to="https://www.runcomets.org/about"
                   variant="contained"
                   sx={{
                     borderRadius: "20px",
