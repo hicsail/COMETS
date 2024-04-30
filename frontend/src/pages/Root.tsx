@@ -45,7 +45,7 @@ export function RootLayout() {
           <Divider />
           <List>
             <ListItem disablePadding>
-              <ListItemButton component={NavLink} to="#">
+              <ListItemButton component={NavLink} to="https://www.runcomets.org/about">
                 <ListItemIcon>
                   <HomeIcon />
                 </ListItemIcon>
@@ -58,7 +58,7 @@ export function RootLayout() {
 
           <List>
             <ListItem disablePadding>
-              <ListItemButton component={NavLink} to="experimentSetup">
+              <ListItemButton component={NavLink} to="https://segrelab.github.io/comets-manual/">
                 <ListItemIcon>
                   <HomeIcon />
                 </ListItemIcon>
@@ -71,7 +71,7 @@ export function RootLayout() {
 
           <List>
             <ListItem disablePadding>
-              <ListItemButton component={NavLink} to="experimentSetup">
+              <ListItemButton component={NavLink} to="https://www.runcomets.org/collaborate">
                 <ListItemIcon>
                   <HomeIcon />
                 </ListItemIcon>
