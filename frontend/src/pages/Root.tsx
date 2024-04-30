@@ -14,8 +14,6 @@ import {
 import { Outlet, NavLink } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
-import CallIcon from "@mui/icons-material/Call";
 import { NavbarComponent } from "../components/Navbar";
 // import CometsLogo from '../assets/comets_logo.svg';
 
