@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { CometsRequestsService } from './comets_requests.service';
 import { CreateCometsRequestDto } from './dto/create-comets_request.dto';
+import { User } from 'src/schemas/users.schema';
 
 @Controller('comets-requests')
 export class CometsRequestsController {
@@ -16,9 +17,8 @@ export class CometsRequestsController {
     return this.cometsRequestsService.findAll();
   }
 
-  @Get('/user')
-  async findUser(@Query() email: string){
-    return this.cometsRequestsService.findUser(email)
+  @Get('/user/:email')
+  async findUser(@Param('email') email: string): Promise<User>{
+    return await this.cometsRequestsService.findUser(email)
   }
-
 }

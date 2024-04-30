@@ -10,25 +10,55 @@ export class UsersService {
   constructor(@InjectModel('User') private userModel: Model<UserDocument>){}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
+    console.log(createUserDto)
     const user = new this.userModel(createUserDto);
+    console.log(user)
     return user.save();  
   }
 
   async findByEmail(email: string): Promise<User> {
-    const user = this.userModel.findOne({"email": email})
+    const user = await this.userModel.findOne({"email": email})
+    return user;
+  }
+
+  async find(params: any): Promise<User> {
+    const user = await this.userModel.findOne(params);
     return user;
   }
 
   findAll() {
-    return `This action returns all users`;
+    return this.userModel.find();
   }
 
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: string, field: string) {
+    try{
+      const updated =  this.userModel.findByIdAndUpdate(
+        id,
+        {$inc: { [field] : 1 }},
+        {new: true}
+      ).exec()
+      return updated
+    }catch(error){
+      console.error(error)
+    }
+    
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  remove(email: string) {
+    try{
+      const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      let deletedUser;
+      if (regex.test(email)){
+        deletedUser = this.userModel.findOneAndDelete({email: email})
+        return deletedUser;
+      }else{
+        throw new Error(`No users associated with ${email}`)
+      }
+      
+    }catch(error){
+      console.error(error)
+    }
+    
   }
 }

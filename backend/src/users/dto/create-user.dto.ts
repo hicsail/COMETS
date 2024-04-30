@@ -4,8 +4,4 @@ export class CreateUserDto {
 
     @IsEmail()
     readonly email: string;
-
-    @IsInt()
-    readonly simulation_count: number
-
 }

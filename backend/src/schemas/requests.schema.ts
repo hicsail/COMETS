@@ -8,13 +8,31 @@ export type CometsRequestDocument = HydratedDocument<CometsRequest>
 
 interface ModelParams {
     demographicNoise: boolean;
-    demographicNoiseAmplitude: number;
-    uptakeVMax: number;
-    uptakeKm: number;
+    demographicNoiseAmp: number;
+    vMax: number;
+    Km: number;
     deathRate: number;
-    biomassLinearDiffusivity: number;
-    biomassNonlinearDiffusivity: number;
+    linearDiffusivity: number;
+    nonlinearDiffusivity: number;
 }
+
+interface MediaParams {
+    name: string;
+    concentration: number;
+}
+
+interface LayoutParams {
+    name: string;
+    volume: number;
+}
+
+interface GlobalParams {
+    simulatedTime: number;
+    timeSteps: number;
+    nutrientDiffusivity: number;
+    logFrequency: number;
+}
+
 
 @Schema()
 export class CometsRequest extends Document {
@@ -25,16 +43,16 @@ export class CometsRequest extends Document {
     // id: string
 
     @Prop({ type: Object, required: true})
-    global_params: Record<string, number>
+    global_params: GlobalParams
 
     @Prop({ type: Object, required: true})
-    layout: Record<string, number>
+    layout: LayoutParams
 
     @Prop({ type: Object, required: true})
-    media: Record<string, number>
+    media: MediaParams
     
     @Prop({ type: [{type: Object}], required: true})
-    models: Record<string, ModelParams>[]
+    models: ModelParams[]
 
     @Prop({ type: User, required: true})
     requester: User;

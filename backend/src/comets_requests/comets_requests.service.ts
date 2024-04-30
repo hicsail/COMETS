@@ -6,6 +6,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/schemas/users.schema';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @Injectable()
 export class CometsRequestsService {
@@ -15,19 +16,31 @@ export class CometsRequestsService {
     ){}
 
   async create(createCometsRequestDto: CreateCometsRequestDto): Promise<CometsRequest>{
-
-    // Look up user by email and attach to createccometsdto
-    const user = await this.userService.findByEmail(String(createCometsRequestDto.email))
-    console.log(user)
-    // need to have a case where a new email is given and creates a new user 
-    const req_data = {
-      "global_params": createCometsRequestDto.global_params,
-      "layout": createCometsRequestDto.layout,
-      "media": createCometsRequestDto.media,
-      "requester": user
+    try{
+      // Look up user by email and attach to createccometsdto
+      let user = await this.userService.findByEmail(String(createCometsRequestDto.email))
+      
+      if(user === null){
+        const userDto: CreateUserDto = {
+          email: String(createCometsRequestDto.email)
+        }
+        user = await this.userService.create(userDto)
+      }
+      const req_data = {
+        "global_params": createCometsRequestDto.global_params,
+        "layout": createCometsRequestDto.layout,
+        "media": createCometsRequestDto.media,
+        "requester": user
+        //add a requestComplete: Boolean
+      }
+      const c_request = new this.cometsRequestModel(req_data);
+      /*
+        Send to queue
+      */
+      return c_request.save();
+    }catch(err){
+      console.error(err);
     }
-    const c_request = new this.cometsRequestModel(req_data);
-    return c_request.save();
   }
 
   findAll() {
@@ -35,10 +48,8 @@ export class CometsRequestsService {
     return all_requests;
   }
 
-  findUser(email: string): Promise<User>{
-
-    const user = this.userService.findByEmail(String(email));
-    console.log(typeof(String(email)))
+  async findUser(email: string): Promise<User>{
+    const user = await this.userService.findByEmail(String(email));
     return user;
   }
 
