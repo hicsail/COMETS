@@ -3,6 +3,9 @@ import { RootLayout } from "./pages/Root";
 import { LandingPage } from "./pages/Landing";
 import "./App.css";
 import { DashboardPage } from "./pages/Dashboard";
+import { ExperimentSetupPage } from "./pages/ExperimentSetup";
+import { SummaryReviewPage } from "./pages/SummaryReview";
+import { ExperimentSubmittedPage } from "./pages/ExperimentSubmitted";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +20,19 @@ const router = createBrowserRouter([
         path: "/dashboard",
         element: <DashboardPage />,
       },
+      {
+        path: "/experimentSetup",
+        element: <ExperimentSetupPage />,
+        children: [],
+      },
+      {
+        path: "/summary-review",
+        element: <SummaryReviewPage />
+      },
+      {
+        path: "/experiment-submitted",
+        element: <ExperimentSubmittedPage />
+      }
     ],
   },
 ]);

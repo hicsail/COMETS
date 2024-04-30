@@ -1,5 +1,6 @@
 import { Box, Button, Grid, Typography } from "@mui/material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { NavLink } from "react-router-dom";
 
 export function DashboardPage() {
   return (
@@ -10,7 +11,8 @@ export function DashboardPage() {
         src="../../dashboard.svg"
         alt="Dashboard Image"
         sx={{
-          width: "100vw",
+          left: "18vw",
+          width: "82vw",
           height: "30vh",
           objectFit: "cover",
           objectPosition: "center",
@@ -20,20 +22,17 @@ export function DashboardPage() {
       <Grid
         container
         direction={"column"}
-        spacing={2}
         overflow={"-moz-hidden-unscrollable"}
         sx={{
           width: "100%",
           paddingLeft: 5,
           paddingRight: 5,
-          paddingTop: "2.5%",
-          maxHeight: "40%",
-          justifyContent: "space-between",
+          paddingTop: "1%",
         }}
       >
         <Grid item>
           <Typography
-            variant="h3"
+            variant="h5"
             sx={{
               textAlign: "left",
               fontFamily: "Inter",
@@ -48,7 +47,7 @@ export function DashboardPage() {
 
         <Grid item>
           <Typography
-            variant="h1"
+            variant="h3"
             textOverflow={"initial"}
             sx={{
               textAlign: "left",
@@ -64,7 +63,7 @@ export function DashboardPage() {
 
         <Grid item>
           <Typography
-            variant="h4"
+            variant="h6"
             sx={{
               textAlign: "left",
               fontFamily: "Inter",
@@ -84,7 +83,7 @@ export function DashboardPage() {
 
         <Grid item>
           <Typography
-            variant="h4"
+            variant="h6"
             sx={{
               textAlign: "left",
               fontFamily: "Inter",
@@ -99,9 +98,9 @@ export function DashboardPage() {
           </Typography>
         </Grid>
 
-        <Grid item>
+        <Grid item flexDirection={"column"}>
           <Typography
-            variant="h4"
+            variant="h6"
             sx={{
               textAlign: "left",
               fontFamily: "Inter",
@@ -113,21 +112,20 @@ export function DashboardPage() {
           >
             To start your layout, click continue.
           </Typography>
-        </Grid>
 
-        <Grid item>
-          <Box>
+          <NavLink to="/experimentSetup">
             <Button
               variant="contained"
               endIcon={<ChevronRightIcon />}
               sx={{
                 height: "7.5vh",
                 width: "25vw",
+                alignContent: "center",
               }}
             >
               <Typography variant="h5">CONTINUE TO LAYOUT BUILDER</Typography>
             </Button>
-          </Box>
+          </NavLink>
         </Grid>
       </Grid>
     </Box>
