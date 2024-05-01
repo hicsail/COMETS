@@ -7,11 +7,14 @@ import { Model } from 'mongoose';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/schemas/users.schema';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 
 @Injectable()
 export class CometsRequestsService {
   constructor(
     @InjectModel('CometsRequest') private cometsRequestModel: Model<CometsRequestDocument>,
+    @InjectQueue('queue') private queue: Queue,
     private readonly userService: UsersService
     ){}
 
@@ -30,10 +33,18 @@ export class CometsRequestsService {
         "global_params": createCometsRequestDto.global_params,
         "layout": createCometsRequestDto.layout,
         "media": createCometsRequestDto.media,
-        "requester": user,
-        // "requestSuccessful": false
+        "requester": user
       }
       const c_request = new this.cometsRequestModel(req_data);
+
+      const attempt = 3;
+      while(attempt < 3){
+        const queue_request = await this.queue.add('job', createCometsRequestDto);
+        if(queue_request){
+          // Do something to check if the queue_request was successful
+          return;
+        }
+      }
       /*
         Send to queue
       */
