@@ -1,12 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Validate, Validator } from 'class-validator';
 import { HydratedDocument, Document, Types } from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
 import { User } from './users.schema';
 import { Job } from './job.schema';
 
 export type CometsRequestDocument = HydratedDocument<CometsRequest>
 
 interface ModelParams {
+    name: string;
     demographicNoise: boolean;
     demographicNoiseAmp: number;
     vMax: number;
@@ -37,10 +39,8 @@ interface GlobalParams {
 @Schema()
 export class CometsRequest extends Document {
     
-    // Need to figure out how to lookup the requests document in a more human-readable game
-    // id might work, but how would I call it on other parts of the code?
-    // @Prop({ type: Types.ObjectId, required: true, unique: true})
-    // id: string
+    @Prop({ type: String, required: true, default: () => uuidv4() })
+    id: string
 
     @Prop({ type: Object, required: true})
     global_params: GlobalParams
@@ -57,8 +57,11 @@ export class CometsRequest extends Document {
     @Prop({ type: User, required: true})
     requester: User;
 
-    // @Prop({ type: Job, required: false})
-    // completedJob: Job;
+    @Prop({ type: Job, required: false})
+    completedJob: Job;
+
+    @Prop({ type: Boolean, required: true, default: false})
+    requestSuccessful: boolean
 }
 
 export const CometsRequestSchema = SchemaFactory.createForClass(CometsRequest)

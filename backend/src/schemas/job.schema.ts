@@ -20,9 +20,21 @@ export class Job extends Document {
   @Prop({ type: Object})
   total_biomass: Record<string, any>
 
-  @Prop({ type: CometsRequest})
-  comets_request: CometsRequest
-
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);
+
+
+// const s = 
+// {
+//   "id": "123443211234",
+//   "flux": {
+//     "f" : 1
+//   },
+//   "metabolic_time_series": {
+//     "mts": 2
+//   },
+//   "total_biomass": {
+//     tb: 3
+//   }
+// }
