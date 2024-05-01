@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCometsRequestDto } from './dto/create-comets_request.dto';
 import { UpdateCometsRequestDto } from './dto/update-comets_request.dto';
 import { CometsRequest, CometsRequestDocument } from 'src/schemas/requests.schema';
@@ -30,8 +30,8 @@ export class CometsRequestsService {
         "global_params": createCometsRequestDto.global_params,
         "layout": createCometsRequestDto.layout,
         "media": createCometsRequestDto.media,
-        "requester": user
-        //add a requestComplete: Boolean
+        "requester": user,
+        // "requestSuccessful": false
       }
       const c_request = new this.cometsRequestModel(req_data);
       /*
@@ -50,11 +50,28 @@ export class CometsRequestsService {
 
   async findUser(email: string): Promise<User>{
     const user = await this.userService.findByEmail(String(email));
+    if(!user){
+      console.error(`No user associated with ${email}`)
+      throw new NotFoundException(`No user associated with ${email}`)
+    }
     return user;
   }
 
-  update(id: number, updateCometsRequestDto: UpdateCometsRequestDto) {
-    return `This action updates a #${id} cometsRequest`;
+  async update(updateCometsRequestDto: UpdateCometsRequestDto, id:string): Promise<CometsRequest> {
+    try{
+      const documentUpdates = {
+        requestSuccessful: updateCometsRequestDto.jobSuccessful,
+        completedJob: updateCometsRequestDto.completedJob
+      }
+      const request = await this.cometsRequestModel.findByIdAndUpdate(id,documentUpdates)
+      if(!request){
+        throw new NotFoundException('No document found')
+      }
+      return request;
+    }catch(err){
+      throw new Error(err)
+    }
+    
   }
 
   remove(id: number) {
