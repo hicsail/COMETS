@@ -37,17 +37,19 @@ export class CometsRequestsService {
       }
       const c_request = new this.cometsRequestModel(req_data);
 
-      const attempt = 3;
-      while(attempt < 3){
-        const queue_request = await this.queue.add('job', createCometsRequestDto);
-        if(queue_request){
-          // Do something to check if the queue_request was successful
-          return;
-        }
-      }
       /*
         Send to queue
       */
+      const attempt = 3;
+      // while(attempt < 3){
+
+      const queue_request = await this.queue.add('job', createCometsRequestDto);
+      console.log(queue_request.data)
+        if(!queue_request){
+          // Do something to check if the queue_request was successful
+          return;
+        }
+      // }
       return c_request.save();
     }catch(err){
       console.error(err);

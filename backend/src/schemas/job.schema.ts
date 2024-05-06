@@ -10,15 +10,13 @@ export class Job extends Document {
   
   @Prop({ type: String, required: true, default: () => uuidv4() })
   id: string
+  
+  @Prop({ type: String}) 
+  request_id: string
 
   @Prop({ type: Object})
-  flux: Record<string, any>
+  experiment_result: Object
 
-  @Prop({ type: Object})
-  metabolic_time_series: Record<string, any>
-
-  @Prop({ type: Object})
-  total_biomass: Record<string, any>
 
 }
 

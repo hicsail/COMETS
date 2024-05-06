@@ -6,6 +6,7 @@ import { Queue } from 'bull';
 
 @Injectable()
 export class DispatcherService {
+    // True if server is available to run a simulation
     private serverStatus = true;
 
     constructor (
@@ -26,20 +27,25 @@ export class DispatcherService {
         });
     }
 
-    async dispatch(): Promise<void> {
+    async dispatch(): Promise<any> {
+        // uses BQ to get the next request/job on the queue
         const job = await this.queue.getNextJob();
 
         if (job) {
             try {
-                // const jsonData = job.jsonData;
+                const jsonData = job.data;
+                // serverStatus has to change
                 this.serverStatus = false;
-                const response = await axios.get('http://localhost:5000/process');
+                // job/request is sent to Flask server using standard HTTP. Destination can be changed to Serverless Function
+                const response = await axios.post('http://127.0.0.1:5000/process', jsonData);
                 await job.moveToCompleted('done', true)
                 this.serverStatus = true;
+                return response;
             }
             catch (error) {
                 console.error('Error disptaching job:', error);
                 await job.moveToFailed({ message: error.message });
+                this.serverStatus = true
             } 
         }
         else {

@@ -11,20 +11,12 @@ import { Queue } from 'bull';
 export class JobService {
     constructor(
         @InjectModel(Job.name) private jobModel: Model<Job>,
-        // @InjectQueue('queue') private queue: Queue
     ) {}
 
     async create(createJobDto: CreateJobDto) : Promise<Job> {
-        /*
-         Projections: Check for duplicate jobs
-         Implemented in next round
-         */
         const res = await this.jobModel.create(createJobDto);
+        console.log(`http://localhost:5173/results/${res.id}`)
         
-        /*
-        // used to push into queue, place this into request service
-        // await this.queue.add('job', createJobDto);
-         */
         return res;
     }
 
