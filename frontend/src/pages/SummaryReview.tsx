@@ -19,7 +19,7 @@ const bodyTheme = createTheme({
 });
 
 export function SummaryReviewPage() {
-  const [activeStep, setActiveStep] = useState(2);
+  const [activeStep, setActiveStep] = useState(1);
 
   return (
     <ThemeProvider theme={bodyTheme}>
@@ -112,13 +112,13 @@ export function SummaryReviewPage() {
                   By continuing, you agree to the confirmation of the selected simulation to be processed.
                 </Typography>
 
-                <NavLink to='/experiment-submitted'>
-                <Button 
-                  variant="contained"
-                  fullWidth
-                >
-                  Continue
-                </Button>
+                <NavLink to="/experimentSubmitted">
+                  <Button 
+                    variant="contained"
+                    fullWidth
+                  >
+                    Continue
+                  </Button>
                 </NavLink>
               </Card>
 

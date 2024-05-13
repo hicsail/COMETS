@@ -25,7 +25,8 @@ import {
   GlobalParameters,
   cometsType,
 } from "../types/ExperimentTypes";
-import { Footer } from "../components/Footer";
+import FooterStepper from "../components/FooterStepper";
+import Footer from "../components/Footer";
 import { NavLink } from "react-router-dom";
 
 const mediaOptions: Media[] = [
@@ -310,7 +311,7 @@ export function ExperimentSetupPage() {
         sx={{ minWidth: 900, width: 1500, maxWidth: "100%", paddingBottom: 30 }}
       >
         <Grid item xs={7}>
-        <NavLink to='/summary-review'>
+        <NavLink to='/SummaryReview'>
           <Button  variant='outlined'sx={{width:'100%'}}>Next</Button>
         </NavLink>
         </Grid>
@@ -558,19 +559,23 @@ export function ExperimentSetupPage() {
         </Box>
       </Drawer>
       <Drawer
-        variant="permanent"
-        anchor="bottom"
-        PaperProps={{
-          sx: {
-            background: "#e9ecef",
-            height: 150,
-            width: "100vw",
-            zIndex: 99,
-          },
-        }}
-      >
-        {/* Insert the stepper here */}
-      </Drawer>
+          variant="permanent"
+          anchor="bottom"
+          PaperProps={{
+            sx: {
+              display: 'flex',        // Enable flexbox
+              justifyContent: 'center', // Center items horizontally
+              alignItems: 'center',   // Center items vertically
+              background: "white",
+              height: 100,
+              width: "64vw",
+              left: '16vw',
+              zIndex: 99,
+            },
+          }}
+        >
+          <FooterStepper activeStep={0} />
+        </Drawer>
     </Box>
   );
 }
