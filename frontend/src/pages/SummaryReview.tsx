@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Button, Card, Drawer, Grid, TextField, Typography, ThemeProvider, createTheme } from "@mui/material";
 import FooterStepper from '../components/FooterStepper';
+import { NavLink } from 'react-router-dom';
 
 const bodyTheme = createTheme({
   typography: {
@@ -111,12 +112,14 @@ export function SummaryReviewPage() {
                   By continuing, you agree to the confirmation of the selected simulation to be processed.
                 </Typography>
 
-                <Button 
-                  variant="contained"
-                  fullWidth
-                >
-                  Continue
-                </Button>
+                <NavLink to="/experiment-submitted">
+                  <Button 
+                    variant="contained"
+                    fullWidth
+                  >
+                    Continue
+                  </Button>
+                </NavLink>
               </Card>
 
               <Box
