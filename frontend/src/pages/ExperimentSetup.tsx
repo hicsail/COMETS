@@ -25,7 +25,8 @@ import {
   GlobalParameters,
   cometsType,
 } from "../types/ExperimentTypes";
-import { Footer } from "../components/Footer";
+import FooterStepper from "../components/FooterStepper";
+import Footer from "../components/Footer";
 
 const mediaOptions: Media[] = [
   {
@@ -548,19 +549,23 @@ export function ExperimentSetupPage() {
         </Box>
       </Drawer>
       <Drawer
-        variant="permanent"
-        anchor="bottom"
-        PaperProps={{
-          sx: {
-            background: "#e9ecef",
-            height: 150,
-            width: "100vw",
-            zIndex: 99,
-          },
-        }}
-      >
-        {/* Insert the stepper here */}
-      </Drawer>
+          variant="permanent"
+          anchor="bottom"
+          PaperProps={{
+            sx: {
+              display: 'flex',        // Enable flexbox
+              justifyContent: 'center', // Center items horizontally
+              alignItems: 'center',   // Center items vertically
+              background: "white",
+              height: 100,
+              width: "64vw",
+              left: '16vw',
+              zIndex: 99,
+            },
+          }}
+        >
+          <FooterStepper activeStep={1} />
+        </Drawer>
     </Box>
   );
 }
