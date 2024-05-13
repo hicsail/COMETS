@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCometsRequestDto } from './dto/create-comets_request.dto';
 import { UpdateCometsRequestDto } from './dto/update-comets_request.dto';
 import { CometsRequest, CometsRequestDocument } from 'src/schemas/requests.schema';
@@ -7,11 +7,14 @@ import { Model } from 'mongoose';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/schemas/users.schema';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
 
 @Injectable()
 export class CometsRequestsService {
   constructor(
     @InjectModel('CometsRequest') private cometsRequestModel: Model<CometsRequestDocument>,
+    @InjectQueue('queue') private queue: Queue,
     private readonly userService: UsersService
     ){}
 
@@ -31,12 +34,22 @@ export class CometsRequestsService {
         "layout": createCometsRequestDto.layout,
         "media": createCometsRequestDto.media,
         "requester": user
-        //add a requestComplete: Boolean
       }
       const c_request = new this.cometsRequestModel(req_data);
+
       /*
         Send to queue
       */
+      const attempt = 3;
+      // while(attempt < 3){
+
+      const queue_request = await this.queue.add('job', createCometsRequestDto);
+      console.log(queue_request.data)
+        if(!queue_request){
+          // Do something to check if the queue_request was successful
+          return;
+        }
+      // }
       return c_request.save();
     }catch(err){
       console.error(err);
@@ -50,11 +63,28 @@ export class CometsRequestsService {
 
   async findUser(email: string): Promise<User>{
     const user = await this.userService.findByEmail(String(email));
+    if(!user){
+      console.error(`No user associated with ${email}`)
+      throw new NotFoundException(`No user associated with ${email}`)
+    }
     return user;
   }
 
-  update(id: number, updateCometsRequestDto: UpdateCometsRequestDto) {
-    return `This action updates a #${id} cometsRequest`;
+  async update(updateCometsRequestDto: UpdateCometsRequestDto, id:string): Promise<CometsRequest> {
+    try{
+      const documentUpdates = {
+        requestSuccessful: updateCometsRequestDto.jobSuccessful,
+        completedJob: updateCometsRequestDto.completedJob
+      }
+      const request = await this.cometsRequestModel.findByIdAndUpdate(id,documentUpdates)
+      if(!request){
+        throw new NotFoundException('No document found')
+      }
+      return request;
+    }catch(err){
+      throw new Error(err)
+    }
+    
   }
 
   remove(id: number) {

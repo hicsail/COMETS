@@ -11,18 +11,9 @@ export class Job extends Document {
   @Prop({ type: String, required: true, default: () => uuidv4() })
   id: string
 
-  @Prop({ type: Object})
-  flux: Record<string, any>
-
-  @Prop({ type: Object})
-  metabolic_time_series: Record<string, any>
-
-  @Prop({ type: Object})
-  total_biomass: Record<string, any>
-
-  @Prop({ type: CometsRequest})
-  comets_request: CometsRequest
-
+  @Prop({ type: String})
+  filepath: string
+  
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);
