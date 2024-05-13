@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Button, Card, Drawer, Grid, TextField, Typography, ThemeProvider, createTheme } from "@mui/material";
 import FooterStepper from '../components/FooterStepper';
+import { Link } from 'react-router-dom';
 
 const bodyTheme = createTheme({
   typography: {
@@ -19,7 +20,7 @@ const bodyTheme = createTheme({
 });
 
 export function ExperimentSubmittedPage() {
-  const [activeStep, setActiveStep] = useState(3);
+  const [activeStep, setActiveStep] = useState(2);
 
   return (
     <ThemeProvider theme={bodyTheme}>
@@ -77,6 +78,8 @@ export function ExperimentSubmittedPage() {
               </Typography>
 
               <Button 
+                component={Link}
+                to="https://www.runcomets.org/get-started"
                   variant="contained"
                   fullWidth
                 >

@@ -564,7 +564,7 @@ export function ExperimentSetupPage() {
             },
           }}
         >
-          <FooterStepper activeStep={1} />
+          <FooterStepper activeStep={0} />
         </Drawer>
     </Box>
   );

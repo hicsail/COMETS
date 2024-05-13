@@ -19,7 +19,7 @@ const bodyTheme = createTheme({
 });
 
 export function SummaryReviewPage() {
-  const [activeStep, setActiveStep] = useState(2);
+  const [activeStep, setActiveStep] = useState(1);
 
   return (
     <ThemeProvider theme={bodyTheme}>
