@@ -112,7 +112,7 @@ export function SummaryReviewPage() {
                   By continuing, you agree to the confirmation of the selected simulation to be processed.
                 </Typography>
 
-                <NavLink to="/experiment-submitted">
+                <NavLink to="/experimentSubmitted">
                   <Button 
                     variant="contained"
                     fullWidth
