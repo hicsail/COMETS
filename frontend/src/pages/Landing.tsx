@@ -90,7 +90,7 @@ export function LandingPage() {
                   paddingBottom: "2.5%",
                 }}
               >
-                COMETS = Biological + Physics
+                COMETS = Biology + Physics
               </Typography>
               <Typography
                 sx={{
