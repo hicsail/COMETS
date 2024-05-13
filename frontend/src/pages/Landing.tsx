@@ -82,18 +82,6 @@ export function LandingPage() {
               <Typography
                 sx={{
                   textAlign: "left",
-                  paddingBottom: "2.5%",
-                  fontFamily: "Inter",
-                  fontSize: "16px",
-                  color: "black",
-                  fontWeight: "400",
-                }}
-              >
-                Build and run microbial growth simulations in space and time
-              </Typography>
-              <Typography
-                sx={{
-                  textAlign: "left",
                   fontFamily: "Open Sans",
                   fontSize: "46px",
                   color: "black",
@@ -102,7 +90,7 @@ export function LandingPage() {
                   paddingBottom: "2.5%",
                 }}
               >
-                COMETS SMART INTERFACE
+                COMETS = Biological + Physics
               </Typography>
               <Typography
                 sx={{
@@ -113,11 +101,21 @@ export function LandingPage() {
                   opacity: "45%",
                 }}
               >
-                COMETS is a software platform for performing computer
-                simulations of spatially structured microbial communities. It is
-                based on stoichiometric modeling of the genome-scale metabolic
-                network of individual microbial species using dynamic flux
-                balance analysis, and on a discrete approximation of diffusion.{" "}
+                COMETS (Computation Of Microbial Ecosystems in Time and Space) simulates the dynamics of microbial communities, for example bacterial colonies on a Petri dish, or microbial communities in soil. COMETS works by combining predictions of metabolic reaction rates (fluxes) in each organism, with biophysical calculations of the spreading of cells and molecules through diffusion.
+              {" "}
+              </Typography>
+              <Typography
+                sx={{
+                  textAlign: "left",
+                  fontFamily: "Open Sans",
+                  fontSize: "30px",
+                  color: "black",
+                  fontWeight: "700",
+                  lineHeight: "110%",
+                  paddingBottom: "2.5%",
+                }}
+              >
+                Run microbiology experiments in a virtual lab
               </Typography>
               <Typography
                 sx={{
@@ -128,8 +126,8 @@ export function LandingPage() {
                   paddingBottom: "5%",
                 }}
               >
-                Explore the COMETS Smart Interface and try out our layout
-                builder
+                COMETS is written in Java and is freely available. To facilitate access, we have developed the browser-based COMETS Smart Interface (COMETS-SI). 
+
               </Typography>
 
               <Box
@@ -192,7 +190,8 @@ export function LandingPage() {
                         color: "black",
                       }}
                     >
-                      COMETS Smart Interface
+                      Click here to start exploring the COMETS Smart Interface!
+
                     </Typography>
                   </Button>
                 </NavLink>

@@ -11,6 +11,7 @@ import {
   Divider,
   Tooltip,
   IconButton,
+  Typography
 } from "@mui/material";
 import { FC, useState } from "react";
 import { MetabolicModel } from "../types/Model";
@@ -70,7 +71,7 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
                 <FormControlLabel
                   sx={{ marginTop: 2 }}
                   key={index}
-                  label={option.name}
+                  label={<Typography sx={{fontStyle:'italic'}}>{option.name}</Typography>}
                   control={
                     <>
                       <Tooltip title={option.desc}>

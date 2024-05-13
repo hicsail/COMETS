@@ -29,7 +29,7 @@ import { Footer } from "../components/Footer";
 
 const mediaOptions: Media[] = [
   {
-    name: "Core Glucose",
+    name: "Minimal Core Glucose",
     desc: "Example Desc for core glucose",
     mainMetabolites: "Glucose",
     min: 1,
@@ -39,7 +39,7 @@ const mediaOptions: Media[] = [
     },
   },
   {
-    name: "Core Acetate",
+    name: "Minimal Core Acetate",
     desc: "Example Desc for core acetate",
     mainMetabolites: "Acetate",
     min: 1,
@@ -107,21 +107,12 @@ const layoutOptions: Layout[] = [
     params: {
       mediaVolume: 0,
     },
-  },
-  {
-    name: "EcoFab",
-    desc: "Example description for EcoFab",
-    min: 1,
-    max: 50,
-    params: {
-      mediaVolume: 0,
-    },
-  },
+  }
 ];
 
 const modelOptions: MetabolicModel[] = [
   {
-    name: "E. Coli Core",
+    name: "Escherichia coli Core",
     desc: "Example description for E. Coli Core model",
     params: {
       demographicNoise: false,
@@ -134,7 +125,7 @@ const modelOptions: MetabolicModel[] = [
     },
   },
   {
-    name: "E. Coli",
+    name: "Escherichia coli",
     desc: "Example description for E. Coli model",
     params: {
       demographicNoise: false,
@@ -147,7 +138,7 @@ const modelOptions: MetabolicModel[] = [
     },
   },
   {
-    name: "S. Enterica",
+    name: "Nitrosomonas eurpaea (ATCC19718)",
     desc: "Example description for S. Enterica model",
     params: {
       demographicNoise: false,
@@ -159,6 +150,20 @@ const modelOptions: MetabolicModel[] = [
       biomassNonlinearDiffusivity: 0,
     },
   },
+  {
+    name: "Nitrobacter winograskyi",
+    desc: "Example description for S. Enterica model",
+    params: {
+      demographicNoise: false,
+      demographicNoiseAmplitude: 0,
+      uptakeVMax: 0,
+      uptakeKm: 0,
+      deathRate: 0,
+      biomassLinearDiffusivity: 0,
+      biomassNonlinearDiffusivity: 0,
+    },
+  },
+  
 ];
 
 export function ExperimentSetupPage() {
@@ -312,7 +317,7 @@ export function ExperimentSetupPage() {
               id="layoutPanelbh-header"
               sx={{ backgroundColor: "#CCCCFF", height: "5vh" }}
             >
-              <Typography variant="h4">Layout</Typography>
+              <Typography variant="h4">Choose layout</Typography>
               <Divider variant="fullWidth" />
             </AccordionSummary>
             <AccordionDetails>
@@ -342,7 +347,7 @@ export function ExperimentSetupPage() {
               id="mediaPanelbh-header"
               sx={{ backgroundColor: "#CCCCFF", height: "5vh" }}
             >
-              <Typography variant="h4">Media</Typography>
+              <Typography variant="h4">Choose media</Typography>
               <Divider variant="fullWidth" />
             </AccordionSummary>
             <AccordionDetails>
@@ -372,7 +377,7 @@ export function ExperimentSetupPage() {
               id="modelPanelbh-header"
               sx={{ backgroundColor: "#CCCCFF", height: "5vh" }}
             >
-              <Typography variant="h4">Model</Typography>
+              <Typography variant="h4">Choose organisms</Typography>
               <Divider variant="fullWidth" />
             </AccordionSummary>
             <AccordionDetails>
@@ -401,7 +406,7 @@ export function ExperimentSetupPage() {
           >
             <Box sx={{ width: "30%", alignSelf: "center", marginRight: 3 }}>
               <Typography textAlign={"left"} variant="h6" color="black">
-                Simulated Time
+                Simulated Time (hours)
               </Typography>
             </Box>
             <TextField
@@ -453,33 +458,7 @@ export function ExperimentSetupPage() {
           >
             <Box sx={{ width: "30%", alignSelf: "center", marginRight: 3 }}>
               <Typography textAlign={"left"} variant="h6" color="black">
-                Nutrient Diffusivity
-              </Typography>
-            </Box>
-            <TextField
-              label="Nutrient Diffusivity"
-              variant="filled"
-              type="number"
-              fullWidth
-              value={globalParams.params.nutrientDiffusivity}
-              onChange={(event) =>
-                handleTextChange("nutrientDiffusivity", event.target.value)
-              }
-              error={textfieldError}
-              helperText={textfieldError ? "Please input numbers only" : ""}
-              sx={{
-                height: "5vh",
-              }}
-            />
-          </Box>
-          <Box
-            display={"flex"}
-            flexDirection={"row"}
-            sx={{ paddingLeft: 10, paddingRight: "2%", maxWidth: "80%" }}
-          >
-            <Box sx={{ width: "30%", alignSelf: "center", marginRight: 3 }}>
-              <Typography textAlign={"left"} variant="h6" color="black">
-                Log Frequency
+                Save Frequency
               </Typography>
             </Box>
             <TextField
@@ -490,6 +469,32 @@ export function ExperimentSetupPage() {
               value={globalParams.params.logFrequency}
               onChange={(event) =>
                 handleTextChange("logFrequency", event.target.value)
+              }
+              error={textfieldError}
+              helperText={textfieldError ? "Please input numbers only" : ""}
+              sx={{
+                height: "5vh",
+              }}
+            />
+          </Box> 
+          <Box
+            display={"flex"}
+            flexDirection={"row"}
+            sx={{ paddingLeft: 10, paddingRight: "2%", maxWidth: "80%" }}
+          >
+            <Box sx={{ width: "30%", alignSelf: "center", marginRight: 3 }}>
+              <Typography textAlign={"left"} variant="h6" color="black">
+                Nutrient Diffusivity (cm<sup>2</sup>/s)
+              </Typography>
+            </Box>
+            <TextField
+              label="Nutrient Diffusivity"
+              variant="filled"
+              type="number"
+              fullWidth
+              value={globalParams.params.nutrientDiffusivity}
+              onChange={(event) =>
+                handleTextChange("nutrientDiffusivity", event.target.value)
               }
               error={textfieldError}
               helperText={textfieldError ? "Please input numbers only" : ""}
