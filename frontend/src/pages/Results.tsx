@@ -51,7 +51,10 @@ export function ResultsPage() {
                 SIMULATION RUN RESULTS
               </Typography>
             </Grid>
-            </Grid>
+          </Grid>
+          <Grid item xs={6}>
+            
+          </Grid>
             </Grid>
       </Box>
     </ThemeProvider>
