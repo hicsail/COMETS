@@ -26,6 +26,7 @@ import {
   cometsType,
 } from "../types/ExperimentTypes";
 import { Footer } from "../components/Footer";
+import { NavLink } from "react-router-dom";
 
 const mediaOptions: Media[] = [
   {
@@ -303,13 +304,17 @@ export function ExperimentSetupPage() {
           Choose the model, layout, and media that you would like to simulate
         </Typography>
       </Box>
-
       <Grid
         container
         spacing={2}
         sx={{ minWidth: 900, width: 1500, maxWidth: "100%", paddingBottom: 30 }}
       >
-        <Grid item xs={6}>
+        <Grid item xs={7}>
+        <NavLink to='/summary-review'>
+          <Button  variant='outlined'sx={{width:'100%'}}>Next</Button>
+        </NavLink>
+        </Grid>
+        <Grid item xs={7}>
           <Accordion>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
@@ -402,7 +407,7 @@ export function ExperimentSetupPage() {
           <Box
             display={"flex"}
             flexDirection={"row"}
-            sx={{ paddingLeft: 10, paddingRight: "2%", maxWidth: "80%" }}
+            sx={{paddingRight: "2%", maxWidth: "80%" }}
           >
             <Box sx={{ width: "30%", alignSelf: "center", marginRight: 3 }}>
               <Typography textAlign={"left"} variant="h6" color="black">
@@ -428,7 +433,7 @@ export function ExperimentSetupPage() {
           <Box
             display={"flex"}
             flexDirection={"row"}
-            sx={{ paddingLeft: 10, paddingRight: "2%", maxWidth: "80%" }}
+            sx={{paddingRight: "2%", maxWidth: "80%" }}
           >
             <Box sx={{ width: "30%", alignSelf: "center", marginRight: 3 }}>
               <Typography textAlign={"left"} variant="h6" color="black">
@@ -454,7 +459,7 @@ export function ExperimentSetupPage() {
           <Box
             display={"flex"}
             flexDirection={"row"}
-            sx={{ paddingLeft: 10, paddingRight: "2%", maxWidth: "80%" }}
+            sx={{paddingRight: "2%", maxWidth: "80%" }}
           >
             <Box sx={{ width: "30%", alignSelf: "center", marginRight: 3 }}>
               <Typography textAlign={"left"} variant="h6" color="black">
@@ -480,7 +485,7 @@ export function ExperimentSetupPage() {
           <Box
             display={"flex"}
             flexDirection={"row"}
-            sx={{ paddingLeft: 10, paddingRight: "2%", maxWidth: "80%" }}
+            sx={{paddingRight: "2%", maxWidth: "80%" }}
           >
             <Box sx={{ width: "30%", alignSelf: "center", marginRight: 3 }}>
               <Typography textAlign={"left"} variant="h6" color="black">
@@ -504,7 +509,7 @@ export function ExperimentSetupPage() {
             />
           </Box>
           <Button
-            sx={{ margin: 2, maxWidth: "80%", paddingLeft: "2%" }}
+            sx={{ margin: 2, maxWidth: "80%"}}
             variant="outlined"
             onClick={() => handleSubmit(globalParams)}
           >
