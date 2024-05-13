@@ -6,7 +6,7 @@ import StepConnector, { stepConnectorClasses } from '@mui/material/StepConnector
 import { StepIconProps } from '@mui/material/StepIcon';
 
 // Define the steps
-const steps = ['Prepare your experiment', 'Setup Global Parameters', 'Review', 'Layout Complete'];
+const steps = ['Prepare your experiment', 'Review', 'Layout Complete'];
 
 const QontoConnector = styled(StepConnector)(({ theme }) => ({
   [`&.${stepConnectorClasses.alternativeLabel}`]: {
