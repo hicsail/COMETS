@@ -13,9 +13,10 @@ import {
 } from "@mui/material";
 import { Outlet, NavLink } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
+import BookIcon from "@mui/icons-material/Book";
+import MailIcon from "@mui/icons-material/Mail";
+import InfoIcon from "@mui/icons-material/Info";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
-import CallIcon from "@mui/icons-material/Call";
 import { NavbarComponent } from "../components/Navbar";
 // import CometsLogo from '../assets/comets_logo.svg';
 
@@ -45,9 +46,9 @@ export function RootLayout() {
           <Divider />
           <List>
             <ListItem disablePadding>
-              <ListItemButton component={NavLink} to="#">
+              <ListItemButton component={NavLink} to="https://www.runcomets.org/about">
                 <ListItemIcon>
-                  <HomeIcon />
+                  <InfoIcon />
                 </ListItemIcon>
                 <ListItemText primary="About Comets" />
                 <ChevronRightIcon />
@@ -58,9 +59,9 @@ export function RootLayout() {
 
           <List>
             <ListItem disablePadding>
-              <ListItemButton component={NavLink} to="experimentSetup">
+              <ListItemButton component={NavLink} to="https://segrelab.github.io/comets-manual/">
                 <ListItemIcon>
-                  <HomeIcon />
+                  <BookIcon />
                 </ListItemIcon>
                 <ListItemText primary="Documentation" />
                 <ChevronRightIcon />
@@ -71,9 +72,9 @@ export function RootLayout() {
 
           <List>
             <ListItem disablePadding>
-              <ListItemButton component={NavLink} to="experimentSetup">
+              <ListItemButton component={NavLink} to="https://www.runcomets.org/collaborate">
                 <ListItemIcon>
-                  <HomeIcon />
+                  <MailIcon />
                 </ListItemIcon>
                 <ListItemText primary="Contact Us" />
                 <ChevronRightIcon />

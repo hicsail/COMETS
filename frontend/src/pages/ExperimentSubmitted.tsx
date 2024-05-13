@@ -19,7 +19,7 @@ const bodyTheme = createTheme({
 });
 
 export function ExperimentSubmittedPage() {
-  const [activeStep, setActiveStep] = useState(2);
+  const [activeStep, setActiveStep] = useState(3);
 
   return (
     <ThemeProvider theme={bodyTheme}>
