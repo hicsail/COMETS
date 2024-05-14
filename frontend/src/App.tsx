@@ -35,7 +35,7 @@ const router = createBrowserRouter([
         element: <ExperimentSubmittedPage />
       },
       {
-        path: "/results",
+        path: "/results/:id",
         element: <ResultsPage />
       }
     ],

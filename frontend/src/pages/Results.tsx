@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
-import { Box, Button, Card, Drawer, Grid, TextField, Typography, ThemeProvider, createTheme } from "@mui/material";
+import { Box, 
+         Button,
+         Card,
+         Drawer, 
+         Grid, 
+         TextField, 
+         Typography, 
+         ThemeProvider, 
+         createTheme } from "@mui/material";
+import { useSearchParams, useParams } from 'react-router-dom';
+import axios from 'axios';
 
 const bodyTheme = createTheme({
   typography: {
@@ -18,6 +28,10 @@ const bodyTheme = createTheme({
 });
 
 export function ResultsPage() {
+  const { id } = useParams()
+  console.log(id)
+  const res = axios.get(`http://localhost:3000/job/${id}`)
+  console.log(res)
   return (
     <ThemeProvider theme={bodyTheme}>
       <Box 

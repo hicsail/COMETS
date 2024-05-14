@@ -26,7 +26,6 @@ import {
   cometsType,
 } from "../types/ExperimentTypes";
 import FooterStepper from "../components/FooterStepper";
-import Footer from "../components/Footer";
 import { NavLink } from "react-router-dom";
 
 const mediaOptions: Media[] = [
