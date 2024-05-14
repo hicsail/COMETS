@@ -22,6 +22,7 @@ from matplotlib import pyplot as plt
 import matplotlib.colors, matplotlib.cm
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
 
@@ -32,12 +33,12 @@ def uploadToS3(comets_result, id):
     # Initiate S3 resource
     s3 = boto3.resource(
         's3',
-        aws_access_key_id='',
-        aws_secret_access_key='',
-        endpoint_url=''
+        aws_access_key_id='145ffe3eb22641f7be445f96a3962bbd',
+        aws_secret_access_key='95c638c1740f47158f2ea35ea0bc0cb6',
+        endpoint_url='https://stack.nerc.mghpcc.org:13808/'
     )
     # Initiate specific bucket on OpenStack
-    bucket = s3.Bucket(' ')
+    bucket = s3.Bucket('comets-run-bucket')
     try:
         for file in comets_result:
             print(file)
@@ -48,38 +49,79 @@ def uploadToS3(comets_result, id):
         print(f's3 upload failed: {error}')
 
 
-@app.route('/result/<id>', methods=['GET'])
-def get_result(id):
+@app.route('/result/<id>/<source>', methods=['GET'])
+@cross_origin()
+def get_result(id, source):
     
     s3 = boto3.resource(
         's3',
-        aws_access_key_id='',
-        aws_secret_access_key='',
-        endpoint_url=''
+        aws_access_key_id='145ffe3eb22641f7be445f96a3962bbd',
+        aws_secret_access_key='95c638c1740f47158f2ea35ea0bc0cb6',
+        endpoint_url='https://stack.nerc.mghpcc.org:13808/'
     )
     # Downloading the file from S3
-    bucket = s3.Bucket(' ')
+    bucket = s3.Bucket('comets-run-bucket')
     prefix = id
+    
     for object in bucket.objects.filter(Prefix = id):
         if not os.path.exists(prefix):
             os.makedirs(os.path.dirname(object.key), exist_ok=True)
-            bucket.download_file(object.key, object.key)
+        bucket.download_file(object.key, object.key)
     
+    image_index = [20,40,60,80,100]
     with open(f'{id}/{id}.pkl', 'rb') as file:
         data = dill.load(file)
-    my_cmap = matplotlib.cm.get_cmap("magma")
-    my_cmap.set_bad((0,0,0))
-    plt.switch_backend('Agg')
-
-    images = [data.get_biomass_image('e_coli_core', 20), data.get_biomass_image('e_coli_core', 40), data.get_biomass_image('e_coli_core', 60), data.get_biomass_image('e_coli_core', 80), data.get_biomass_image('e_coli_core', 100)]
-    fig, axs = plt.subplots(1, 5, figsize=(20, 4))
-    # Display each image in a subplot
-    for ax, img in zip(axs, images):
-        cax = ax.imshow(img, cmap='viridis')  # You can specify a colormap (e.g., 'viridis', 'gray', etc.)
-        ax.axis('off')  # Turn off axis
-
-    fig.colorbar(cax, ax=axs[-1], orientation='vertical')
-    fig.savefig(f'{id}/biomass0.png', format='png', bbox_inches='tight')
+    if source == 'biomass':
+        png_file_name = 'biomass.png'
+        my_cmap = matplotlib.cm.get_cmap("magma")
+        my_cmap.set_bad((0,0,0))
+        plt.switch_backend('Agg')
+        images = [data.get_biomass_image('e_coli_core', image_index[0]), 
+                  data.get_biomass_image('e_coli_core', image_index[1]), 
+                  data.get_biomass_image('e_coli_core', image_index[2]), 
+                  data.get_biomass_image('e_coli_core', image_index[3]), 
+                  data.get_biomass_image('e_coli_core', image_index[4])]
+        fig, axs = plt.subplots(1, 5, figsize=(20, 4))
+        # Display each image in a subplot
+        for ax, img in zip(axs, images):
+            cax = ax.imshow(img, cmap='viridis')  # You can specify a colormap (e.g., 'viridis', 'gray', etc.)
+            ax.axis('off')  # Turn off axix
+        fig.colorbar(cax, ax=axs[-1], orientation='vertical')
+        fig.savefig(f'{id}/{png_file_name}', format='png', bbox_inches='tight')
+    elif source == 'metabolite': 
+        png_file_name = 'metabolite.png'
+        my_cmap = matplotlib.cm.get_cmap("magma")
+        my_cmap.set_bad((0,0,0))
+        plt.switch_backend('Agg')
+        images = [data.get_metabolite_image('glc__D_e', image_index[0]), 
+                  data.get_metabolite_image('glc__D_e', image_index[1]), 
+                  data.get_metabolite_image('glc__D_e', image_index[2]), 
+                  data.get_metabolite_image('glc__D_e', image_index[3]), 
+                  data.get_metabolite_image('glc__D_e', image_index[4])]
+        fig, axs = plt.subplots(1, 5, figsize=(20, 4))
+        # Display each image in a subplot
+        for ax, img in zip(axs, images):
+            cax = ax.imshow(img, cmap='viridis')  # You can specify a colormap (e.g., 'viridis', 'gray', etc.)
+            ax.axis('off')  # Turn off axix
+        fig.colorbar(cax, ax=axs[-1], orientation='vertical')
+        fig.savefig(f'{id}/{png_file_name}', format='png', bbox_inches='tight')
+    elif source == 'flux': 
+        png_file_name = 'flux.png'
+        my_cmap = matplotlib.cm.get_cmap("magma")
+        my_cmap.set_bad((0,0,0))
+        plt.switch_backend('Agg')
+        images = [data.get_flux_image('e_coli_core','EX_glc__D_e', image_index[0]), 
+                    data.get_flux_image('e_coli_core','EX_glc__D_e', image_index[1]), 
+                    data.get_flux_image('e_coli_core','EX_glc__D_e', image_index[2]), 
+                    data.get_flux_image('e_coli_core','EX_glc__D_e', image_index[3]), 
+                    data.get_flux_image('e_coli_core','EX_glc__D_e', image_index[4])]
+        fig, axs = plt.subplots(1, 5, figsize=(20, 4))
+        # Display each image in a subplot
+        for ax, img in zip(axs, images):
+            cax = ax.imshow(img, cmap='viridis')  # You can specify a colormap (e.g., 'viridis', 'gray', etc.)
+            ax.axis('off')  # Turn off axix
+        fig.colorbar(cax, ax=axs[-1], orientation='vertical')
+        fig.savefig(f'{id}/{png_file_name}', format='png', bbox_inches='tight')
         # value is .25 of maxCycles
     """
     Options to return from experiment results
@@ -98,7 +140,7 @@ def get_result(id):
     """
     
     try:
-        return send_from_directory(f'./{id}', 'biomass0.png')
+        return send_from_directory(f'./{id}', png_file_name, as_attachment=True)
     except:
         raise Exception('Failed lol')
 
@@ -308,7 +350,8 @@ if __name__ == '__main__':
     matplotlib.use('Agg')
     # os.environ['COMETS_GLOP'] = '/Users/zimlim/Desktop/comets-project/comets_glop'
     warnings.simplefilter(action='ignore', category=FutureWarning)
-    
+    cors = CORS(app)
+    app.config['CORS_HEADERS'] = 'Content-Type'
     app.run(debug=True)
 
 
