@@ -33,12 +33,12 @@ def uploadToS3(comets_result, id):
     # Initiate S3 resource
     s3 = boto3.resource(
         's3',
-        aws_access_key_id='145ffe3eb22641f7be445f96a3962bbd',
-        aws_secret_access_key='95c638c1740f47158f2ea35ea0bc0cb6',
-        endpoint_url='https://stack.nerc.mghpcc.org:13808/'
+        aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+        aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
+        endpoint_url=os.getenv('ENDPOINT_URL')
     )
     # Initiate specific bucket on OpenStack
-    bucket = s3.Bucket('comets-run-bucket')
+    bucket = s3.Bucket(os.getenv('BUCKET_NAME'))
     try:
         for file in comets_result:
             print(file)
@@ -55,12 +55,12 @@ def get_result(id, source):
     
     s3 = boto3.resource(
         's3',
-        aws_access_key_id='145ffe3eb22641f7be445f96a3962bbd',
-        aws_secret_access_key='95c638c1740f47158f2ea35ea0bc0cb6',
-        endpoint_url='https://stack.nerc.mghpcc.org:13808/'
+        aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+        aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
+        endpoint_url=os.getenv('ENDPOINT_URL')
     )
     # Downloading the file from S3
-    bucket = s3.Bucket('comets-run-bucket')
+    bucket = s3.Bucket(os.getenv('BUCKET_NAME'))
     prefix = id
     
     for object in bucket.objects.filter(Prefix = id):
