@@ -11,11 +11,13 @@ import { DispatcherModule } from './dispatcher/dispatcher.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from './config/configuration';
 import Bull from 'bull';
+import { CometsRequestsModule } from './comets_requests/comets_requests.module';
+import { UsersModule } from './users/users.module';
 
 
 @Module({
   imports: [
-    MongooseModule.forRoot(`mongodb://${process.env.DATABASE_HOST}:${process.env.DATABASE_PORT}/${process.env.DATABASE_COLLECTION}`), 
+    MongooseModule.forRoot(`mongodb://localhost:27017/comets`), 
     BullModule.forRoot({
       redis: {
         host: 'localhost',
@@ -29,8 +31,11 @@ import Bull from 'bull';
     QueueModule,
     JobModule,
     DispatcherModule,
+    CometsRequestsModule,
+    UsersModule,
     ConfigModule.forRoot({
-      load: [configuration]
+      load: [configuration],
+      envFilePath: '../.env'
     })
   ],
   controllers: [AppController],

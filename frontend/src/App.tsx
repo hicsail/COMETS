@@ -4,6 +4,9 @@ import { LandingPage } from "./pages/Landing";
 import "./App.css";
 import { DashboardPage } from "./pages/Dashboard";
 import { ExperimentSetupPage } from "./pages/ExperimentSetup";
+import { SummaryReviewPage } from "./pages/SummaryReview";
+import { ResultsPage } from "./pages/Results";
+import { ExperimentSubmittedPage } from "./pages/ExperimentSubmitted";
 
 const router = createBrowserRouter([
   {
@@ -23,6 +26,18 @@ const router = createBrowserRouter([
         element: <ExperimentSetupPage />,
         children: [],
       },
+      {
+        path: "/summaryReview",
+        element: <SummaryReviewPage />
+      },
+      {
+        path: "/experimentSubmitted",
+        element: <ExperimentSubmittedPage />
+      },
+      {
+        path: "/results/:id",
+        element: <ResultsPage />
+      }
     ],
   },
 ]);

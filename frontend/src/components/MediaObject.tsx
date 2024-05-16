@@ -5,9 +5,12 @@ import {
   FormControlLabel,
   Checkbox,
   Divider,
+  Tooltip,
+  IconButton,
 } from "@mui/material";
 import { FC, useState, ChangeEvent } from "react";
-import { Media } from "../types/Media";
+import { Media } from "../types/ExperimentTypes";
+import InfoIcon from "@mui/icons-material/Info";
 
 interface MediaComponentProps {
   mediaOptions: Media[];
@@ -54,11 +57,22 @@ export const MediaComponent: FC<MediaComponentProps> = (props) => {
                   key={index}
                   label={option.name}
                   control={
-                    <Checkbox
-                      value={props.value}
-                      onChange={() => handleCheckboxChange(option)}
-                      checked={selectedOption === option}
-                    />
+                    <>
+                      <Tooltip title={option.desc}>
+                        <IconButton
+                          onClick={() => {
+                            navigator.clipboard.writeText(option.desc);
+                          }}
+                        >
+                          <InfoIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Checkbox
+                        value={props.value}
+                        onChange={() => handleCheckboxChange(option)}
+                        checked={selectedOption === option}
+                      />
+                    </>
                   }
                 />
                 {selectedOption === option && (
