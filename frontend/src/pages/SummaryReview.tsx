@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, ChangeEvent } from "react";
 import {
   Box,
   Button,
@@ -11,147 +11,11 @@ import {
   createTheme,
 } from "@mui/material";
 import FooterStepper from "../components/FooterStepper";
-import { NavLink } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { SidebarCard } from "../components/SidebarObject";
 import { MetabolicModel, Layout, Media, SummaryCard } from "../types/ExperimentTypes";
+import axios from 'axios';
 
-export const mediaOptions: Media[] = [
-  {
-    name: "Minimal Core Glucose",
-    desc: "Example Desc for core glucose",
-    mainMetabolites: "Glucose",
-    min: 1,
-    max: 3,
-    params: {
-      mediaConcentration: 0,
-    },
-  },
-  {
-    name: "Minimal Core Acetate",
-    desc: "Example Desc for core acetate",
-    mainMetabolites: "Acetate",
-    min: 1,
-    max: 3,
-    params: {
-      mediaConcentration: 0,
-    },
-  },
-  {
-    name: "M9 Minimal Glucose",
-    desc: "Example Desc for m9 minimal glucose",
-    mainMetabolites: "Glucose",
-    min: 1,
-    max: 3,
-    params: {
-      mediaConcentration: 0,
-    },
-  },
-  {
-    name: "M9 Minimal Acetate",
-    desc: "Example Desc for m9 minimal acetate",
-    mainMetabolites: "Acetate",
-    min: 1,
-    max: 3,
-    params: {
-      mediaConcentration: 0,
-    },
-  },
-  {
-    name: "LB Rich",
-    desc: "Example Desc for LB Rich",
-    mainMetabolites: "Acetate",
-    min: 1,
-    max: 3,
-    params: {
-      mediaConcentration: 0,
-    },
-  },
-];
-
-export const layoutOptions: Layout[] = [
-  {
-    name: "9 cm Petri Dish (Center Colony)",
-    desc: "Example description for center colony",
-    min: 1,
-    max: 12,
-    params: {
-      mediaVolume: 0,
-    },
-  },
-  {
-    name: "9 cm Petri Dish (Random Lawn)",
-    desc: "Example description for random lawn",
-    min: 1,
-    max: 50,
-    params: {
-      mediaVolume: 0,
-    },
-  },
-  {
-    name: "10 ml Test Tube",
-    desc: "Example description for test tube",
-    min: 1,
-    max: 50,
-    params: {
-      mediaVolume: 0,
-    },
-  },
-];
-
-export const modelOptions: MetabolicModel[] = [
-  {
-    name: "Escherichia coli Core",
-    desc: "Example description for E. Coli Core model",
-    params: {
-      demographicNoise: false,
-      demographicNoiseAmplitude: 0,
-      uptakeVMax: 0,
-      uptakeKm: 0,
-      deathRate: 0,
-      biomassLinearDiffusivity: 0,
-      biomassNonlinearDiffusivity: 0,
-    },
-  },
-  {
-    name: "Escherichia coli",
-    desc: "Example description for E. Coli model",
-    params: {
-      demographicNoise: false,
-      demographicNoiseAmplitude: 0,
-      uptakeVMax: 0,
-      uptakeKm: 0,
-      deathRate: 0,
-      biomassLinearDiffusivity: 0,
-      biomassNonlinearDiffusivity: 0,
-    },
-  },
-  {
-    name: "Nitrosomonas eurpaea (ATCC19718)",
-    desc: "Example description for S. Enterica model",
-    params: {
-      demographicNoise: false,
-      demographicNoiseAmplitude: 0,
-      uptakeVMax: 0,
-      uptakeKm: 0,
-      deathRate: 0,
-      biomassLinearDiffusivity: 0,
-      biomassNonlinearDiffusivity: 0,
-    },
-  },
-  {
-    name: "Nitrobacter winograskyi",
-    desc: "Example description for S. Enterica model",
-    params: {
-      demographicNoise: false,
-      demographicNoiseAmplitude: 0,
-      uptakeVMax: 0,
-      uptakeKm: 0,
-      deathRate: 0,
-      biomassLinearDiffusivity: 0,
-      biomassNonlinearDiffusivity: 0,
-    },
-  },
-];
 
 const bodyTheme = createTheme({
   typography: {
@@ -170,26 +34,69 @@ const bodyTheme = createTheme({
 
 export function SummaryReviewPage() {
   const [activeStep, setActiveStep] = useState(1);
-  const [sidebarItems, setSidebarItems] = useState<SummaryCard[]>([
-    {
-      label: modelOptions[0].name,
-      desc: modelOptions[0].desc,
-      info: modelOptions[0],
-      type: "MetabolicModel",
-    },
-    {
-      label: layoutOptions[0].name,
-      desc: layoutOptions[0].desc,
-      info: layoutOptions[0],
-      type: "Layout",
-    },
-    {
-      label: mediaOptions[0].name,
-      desc: mediaOptions[0].desc,
-      info: mediaOptions[0],
-      type: "Media",
-    },
-  ]);
+  const [email, setEmail] = useState('')
+  const [textfieldError, setTextfieldError] = useState(false);
+  const location = useLocation();
+  const { data } = location.state;
+  
+  const handleSubmit = (email:string) => {
+    let body = {
+      global_params: {},
+      layout: {},
+      models: [{}],
+      media: {},
+      email: email
+    }
+    const models:any = []
+    data.map((item: any) =>{
+      console.log(item)
+      const param: any = item.info.params
+      if(item.info.type === 'model'){
+        models.push(
+          {
+            name: item.label,
+            demographicNoise: param["demographicNoise"],
+            demographicNoiseAmp: param["demographicNoiseAmp"],
+            vMax: param["uptakeVMax"],
+            Km: param["uptakeKm"],
+            deathRate: param["deathRate"],
+            linearDiffusivity: param["biomassLinearDiffusivity"],
+            nonLinearDiffusivity: param["biomassNonLinearDiffusivity"]
+          }
+        )
+      }else if(item.info.type === 'layout'){
+        body.layout = {
+          name: item.label,
+          volume: param["mediaVolume"]
+        }
+      }else if(item.info.type === 'media'){
+        body.media = {
+          name: item.label,
+          concentration: param["mediaConcentration"]
+        }
+      }else if(item.info.type === 'global_parameters'){
+        body.global_params = param 
+      } 
+
+    })
+    body.models = models;
+    console.log(body)
+    
+    axios.post('http://localhost:3000/comets-request', (body)).then((ret) => {console.log(ret)})
+    // console.log(res)
+  }
+
+  const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target) {
+      if (/\S+@\S+\.\S+/.test(event.target.value)) {
+        console.log(event.target.value);
+        setEmail(event.target.value);
+      } else {
+        setTextfieldError(true);
+      }
+    }
+  };
+
 
   return (
     <ThemeProvider theme={bodyTheme}>
@@ -270,6 +177,10 @@ export function SummaryReviewPage() {
                   fullWidth
                   label="Email address"
                   variant="outlined"
+                  onChange={handleTextChange}
+                  helperText={
+                    textfieldError ? "Please input a valid email" : ""
+                  }
                   sx={{
                     mb: 2,
                   }}
@@ -285,11 +196,15 @@ export function SummaryReviewPage() {
                   simulation to be processed.
                 </Typography>
 
-                <NavLink to="/experimentSubmitted">
-                  <Button variant="contained" fullWidth>
+                <Link to="/experimentSubmitted" state={{data: data}}>
+                  <Button 
+                    variant="contained"
+                    fullWidth
+                    onClick={() => handleSubmit(email)}
+                  >
                     Continue
                   </Button>
-                </NavLink>
+                </Link>
               </Card>
 
               <Box
@@ -313,7 +228,7 @@ export function SummaryReviewPage() {
             ></Typography>
 
             <Box sx={{ width: "100%"}} display={"flex"} flexDirection={"column"}>
-              {sidebarItems.map((item, index) => (
+              {data.map((item: any, index: number) => (
                 <Box
                   display={"flex"}
                   flexDirection={"column"}

@@ -9,7 +9,7 @@ import {
   IconButton,
 } from "@mui/material";
 import { FC, useState, ChangeEvent } from "react";
-import { Media } from "../types/Media";
+import { Media } from "../types/ExperimentTypes";
 import InfoIcon from "@mui/icons-material/Info";
 
 interface MediaComponentProps {

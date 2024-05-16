@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { Box, Button, Card, Drawer, Grid, TextField, Typography, ThemeProvider, createTheme } from "@mui/material";
 import FooterStepper from "../components/FooterStepper";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { SidebarCard } from "../components/SidebarObject";
-import { mediaOptions, layoutOptions, modelOptions } from "./SummaryReview"; // Ensure these options are exported from SummaryReviewPage
 
 const bodyTheme = createTheme({
   typography: {
@@ -23,26 +22,8 @@ const bodyTheme = createTheme({
 
 export function ExperimentSubmittedPage() {
   const [activeStep, setActiveStep] = useState(2);
-  const [sidebarItems, setSidebarItems] = useState([
-    {
-      label: modelOptions[0].name,
-      desc: modelOptions[0].desc,
-      info: modelOptions[0],
-      type: "MetabolicModel",
-    },
-    {
-      label: layoutOptions[0].name,
-      desc: layoutOptions[0].desc,
-      info: layoutOptions[0],
-      type: "Layout",
-    },
-    {
-      label: mediaOptions[0].name,
-      desc: mediaOptions[0].desc,
-      info: mediaOptions[0],
-      type: "Media",
-    },
-  ]);
+  const location = useLocation();
+  const { data } = location.state;
 
   return (
     <ThemeProvider theme={bodyTheme}>
@@ -112,7 +93,7 @@ export function ExperimentSubmittedPage() {
 
           <Grid item xs={6}>
             <Box sx={{ width: "100%" }} display={"flex"} flexDirection={"column"}>
-              {sidebarItems.map((item, index) => (
+              {data.map((item: any, index: number) => (
                 <Box
                   display={"flex"}
                   flexDirection={"column"}
