@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent } from 'react';
 import { Box, Button, Card, Drawer, Grid, TextField, Typography, ThemeProvider, createTheme } from "@mui/material";
 import FooterStepper from '../components/FooterStepper';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation, Link } from 'react-router-dom';
+import axios from 'axios';
 
 const bodyTheme = createTheme({
   typography: {
@@ -20,6 +21,69 @@ const bodyTheme = createTheme({
 
 export function SummaryReviewPage() {
   const [activeStep, setActiveStep] = useState(1);
+  const [email, setEmail] = useState('')
+  const [textfieldError, setTextfieldError] = useState(false);
+  const location = useLocation();
+  const { data } = location.state;
+
+  const handleSubmit = (email:string) => {
+    let body = {
+      global_params: {},
+      layout: {},
+      models: [{}],
+      media: {},
+      email: email
+    }
+    const models:any = []
+    data.map((item: any) =>{
+      console.log(item)
+      const param: any = item.info.params
+      if(item.info.type === 'model'){
+        models.push(
+          {
+            name: item.label,
+            demographicNoise: param["demographicNoise"],
+            demographicNoiseAmp: param["demographicNoiseAmp"],
+            vMax: param["uptakeVMax"],
+            Km: param["uptakeKm"],
+            deathRate: param["deathRate"],
+            linearDiffusivity: param["biomassLinearDiffusivity"],
+            nonLinearDiffusivity: param["biomassNonLinearDiffusivity"]
+          }
+        )
+      }else if(item.info.type === 'layout'){
+        body.layout = {
+          name: item.label,
+          volume: param["mediaVolume"]
+        }
+      }else if(item.info.type === 'media'){
+        body.media = {
+          name: item.label,
+          concentration: param["mediaConcentration"]
+        }
+      }else if(item.info.type === 'global_parameters'){
+        body.global_params = param 
+      } 
+
+    })
+    body.models = models;
+    console.log(body)
+    
+    axios.post('http://localhost:3000/comets-request', (body)).then((ret) => {console.log(ret)})
+    // console.log(res)
+  }
+
+  const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target) {
+      if (/\S+@\S+\.\S+/.test(event.target.value)) {
+        console.log(event.target.value);
+        setEmail(event.target.value);
+      } else {
+        setTextfieldError(true);
+      }
+    }
+  };
+
 
   return (
     <ThemeProvider theme={bodyTheme}>
@@ -98,6 +162,10 @@ export function SummaryReviewPage() {
                   fullWidth 
                   label="Email address"
                   variant="outlined"
+                  onChange={handleTextChange}
+                  helperText={
+                    textfieldError ? "Please input a valid email" : ""
+                  }
                   sx={{
                     mb: 2
                   }}
@@ -112,14 +180,15 @@ export function SummaryReviewPage() {
                   By continuing, you agree to the confirmation of the selected simulation to be processed.
                 </Typography>
 
-                <NavLink to="/experimentSubmitted">
+                <Link to="/experimentSubmitted">
                   <Button 
                     variant="contained"
                     fullWidth
+                    onClick={() => handleSubmit(email)}
                   >
                     Continue
                   </Button>
-                </NavLink>
+                </Link>
               </Card>
 
               <Box

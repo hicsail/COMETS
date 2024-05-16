@@ -26,7 +26,22 @@ from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
 
-def uploadToS3(comets_result, id):
+def translation(name):
+    dict = {
+        "Escherichia coli Core": "E.Coli Core"
+    }
+    return dict[name]
+
+def sendEmail(email, id):
+    print("Email function hit")
+    url = os.getenv('BASE_HOST_URL')
+    try:
+        req = requests.get(f'{url}/job/email/{email}/{id}')
+        print('Email sent with code: ',req.status_code)
+    except:
+        raise Exception('Could not send email')
+    
+def uploadToS3(comets_result, id, email):
     print('uploadToS3 function called')
     # comets_result should be an array filled with files created by comets run 
 
@@ -44,7 +59,10 @@ def uploadToS3(comets_result, id):
             print(file)
             fileKey = f'{id}/{file}'
             upload = bucket.put_object(Body=open(file, 'rb'), Key=fileKey)
-            print(f'Uploaded file: {upload}')
+            os.remove(file)
+        # Update job state and send email
+        sendEmail(email, id)
+        # Delete all uploaded file
     except Exception as error:
         print(f's3 upload failed: {error}')
 
@@ -183,18 +201,23 @@ def process():
 
     
     
-    # Creating the results document on MongoDB
+    # Creating the Job document on MongoDB
     body = {
             # filepath should be a signed URL made by S3
             "filepath": ''
         }
-    req = requests.post('', body)
+    url = os.getenv('BASE_HOST_URL')
+    req = requests.post(f'{url}/job/create', body)
     job_obj = json.loads(req.content)
     job_id = job_obj["id"]
 
+
     data = json.loads(request.data.decode('utf-8').replace("'",'"'))
+    print("data", data)
+    requester_email = data['email']
     comets_layout = c.layout()
     comets_params = c.params()
+
 
     # Set all media metabolites constant for now (mmol) 
     # Dimensions of petri dish and test tube is different
@@ -223,7 +246,7 @@ def process():
     comets_layout.set_specific_metabolite('pi_e', 1000)
 
     # Load all models
-    models = data['model']
+    models = data['models']
     comets_model_arr = []
     # E.Coli model is using different path than other models
     for model in models:
@@ -231,10 +254,14 @@ def process():
         print()
         load_model = None
         
-
+        model_name = translation(model['name'])
         # Load each model from either XML file or Cobra
-        if model['name'] == 'E.Coli Core':
+        """
+        Need to add more cases to this if/else statement with other model names
+        """
+        if model_name == 'E.Coli Core':
             load_model = cobra.io.load_model("textbook")
+        
         comets_model = c.model(load_model)
         
         # Set each model parameters
@@ -259,7 +286,9 @@ def process():
     layout = data['layout']
     comets_layout.grid = [101,101] # constant?
     initi_population =[]
-    if layout['name'] == '9cm Petri Dish Center Colony':
+    layout_name = layout['name'].lower().replace('(','').replace(')','').replace(" ", "")
+    print("layout_name", layout_name)
+    if  layout_name == '9cmpetridishcentercolony':
 
         upper_bound = comets_layout.grid[0] - 1
         drop_radius = 5 
@@ -272,7 +301,7 @@ def process():
             model.initial_pop = initi_population
             comets_layout.add_model(model)
 
-    elif layout['name'] == '9cm Petri Dish Random Lawn':
+    elif layout_name == '9cmpetridishrandomlawn':
 
         number_of_innoculates=100
         upper_bound = comets_layout.grid[0] - 1
@@ -289,7 +318,7 @@ def process():
             model.initial_pop = initi_population
             comets_layout.add_model(model)
 
-    elif layout['name'] == 'Test Tube':
+    elif layout_name == 'testtube':
         initi_population.append([0,0,1e-6])
         for model in comets_model_arr:
             model.initial_pop = initi_population
@@ -333,9 +362,10 @@ def process():
             if file not in current_files:
                 files_to_upload.append(file)
         # print(files_to_upload)
-        uploadToS3(files_to_upload, job_id)
+        uploadToS3(files_to_upload, job_id, requester_email)
+
     except:
-        raise Exception('Not working')
+        raise Exception('Not working', experiment.run_output)
     
         """
         available methods to call from "experiment"

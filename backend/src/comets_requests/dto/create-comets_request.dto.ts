@@ -9,7 +9,7 @@ export class CreateCometsRequestDto {
         "name": String,
         "volume": Number
     };
-    readonly model = {
+    readonly models = [{
         "name": String,
         "demographicNoise": Boolean,
         "demographicNoiseAmp": Number,
@@ -18,7 +18,7 @@ export class CreateCometsRequestDto {
         "deathRate": Number,
         "linearDiffusivity": Number,
         "nonLinearDiffusivity": Number
-    };
+    }];
     readonly media = {
         "name": String,
         "concentration": Number
