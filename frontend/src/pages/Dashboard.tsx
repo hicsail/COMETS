@@ -120,10 +120,7 @@ export function DashboardPage() {
               sx={{
                 height: "7.5vh",
                 width: "25vw",
-<<<<<<< HEAD
-=======
                 alignContent: "center",
->>>>>>> 0eb59404736a870485e6578bba860d0f20ccf5f2
               }}
             >
               <Typography variant="h5">CONTINUE TO LAYOUT BUILDER</Typography>

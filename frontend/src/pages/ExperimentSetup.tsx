@@ -25,11 +25,8 @@ import {
   GlobalParameters,
   cometsType,
 } from "../types/ExperimentTypes";
-<<<<<<< HEAD
-=======
 import FooterStepper from "../components/FooterStepper";
 import { Link } from "react-router-dom";
->>>>>>> 0eb59404736a870485e6578bba860d0f20ccf5f2
 
 const mediaOptions: Media[] = [
   {
@@ -119,20 +116,7 @@ const layoutOptions: Layout[] = [
     params: {
       mediaVolume: 0,
     },
-<<<<<<< HEAD
-  },
-  {
-    name: "EcoFab",
-    desc: "Example description for EcoFab",
-    min: 1,
-    max: 50,
-    params: {
-      mediaVolume: 0,
-    },
-  },
-=======
   }
->>>>>>> 0eb59404736a870485e6578bba860d0f20ccf5f2
 ];
 
 const modelOptions: MetabolicModel[] = [
@@ -265,10 +249,6 @@ export function ExperimentSetupPage() {
         if (numOfModel <= 0) {
           setNumOfModel(0);
           setIsModelPicked(false);
-<<<<<<< HEAD
-          console.log(isModelPicked)
-=======
->>>>>>> 0eb59404736a870485e6578bba860d0f20ccf5f2
         }
         break;
       case "Media":
@@ -276,24 +256,17 @@ export function ExperimentSetupPage() {
         break;
       case "Layout":
         setIsLayoutPicked(false);
-<<<<<<< HEAD
-=======
         break;
       case "Global Parameters":
         setIsGlobalParametersPicked(false);
         break;
->>>>>>> 0eb59404736a870485e6578bba860d0f20ccf5f2
     }
     // Remove the item at the specified index
     updatedSidebarItems.splice(index, 1);
     // Update the state with the modified array
     setSidebarItems(updatedSidebarItems);
   };
-<<<<<<< HEAD
-
-=======
   
->>>>>>> 0eb59404736a870485e6578bba860d0f20ccf5f2
   const handleTextChange = (field: string, value: string) => {
     if (/^\d*$/.test(value)) {
       const updatedParams = {
@@ -339,15 +312,10 @@ export function ExperimentSetupPage() {
     };
 
     setSidebarItems([...sidebarItems, sidebarItem]);
-<<<<<<< HEAD
-    switch (cometsType(item)) {
-      case "MetabolicModel":
-=======
     console.log("comets type ",cometsType(item))
     switch (cometsType(item)) {
       case "MetabolicModel":
         console.log(numOfModel)
->>>>>>> 0eb59404736a870485e6578bba860d0f20ccf5f2
         setNumOfModel((prevCount) => prevCount + 1);
         if (numOfModel > 0 && numOfModel >= maxModel) {
           setIsModelPicked(true);
@@ -369,13 +337,8 @@ export function ExperimentSetupPage() {
   };
 
   return (
-<<<<<<< HEAD
-    <Box sx={{ paddingTop: 10, paddingLeft: '15vw' }}>
-      <Box sx={{ width: "85vw", height: "10vh" }}>
-=======
     <Box sx={{ paddingTop: 10, paddingLeft: 5 }}>
       <Box sx={{ width: "85vw", height: "10vh", marginBottom: 1 }}>
->>>>>>> 0eb59404736a870485e6578bba860d0f20ccf5f2
         <Typography
           variant="h2"
           fontWeight={"bold"}
@@ -395,16 +358,6 @@ export function ExperimentSetupPage() {
           Choose the model, layout, and media that you would like to simulate
         </Typography>
       </Box>
-<<<<<<< HEAD
-
-      <Grid container spacing={2} sx={{ width: 1000 }}>
-        <Grid item xs={6}>
-          <Accordion
-            expanded={layoutExpanded === "layoutPanel"}
-            onChange={handleAccordionChange("layoutPanel")}
-            sx={{ marginTop: 1 }}
-          >
-=======
       <Grid
         container
         spacing={2}
@@ -417,7 +370,6 @@ export function ExperimentSetupPage() {
         </Grid>
         <Grid item xs={7}>
           <Accordion>
->>>>>>> 0eb59404736a870485e6578bba860d0f20ccf5f2
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="layoutPanelbh-content"
@@ -435,11 +387,7 @@ export function ExperimentSetupPage() {
               />
             </AccordionDetails>
             <Button
-<<<<<<< HEAD
-              sx={{ margin: 2, width: "90%" }}
-=======
               sx={{ margin: 2, width: "90%", backgroundColor: "#CCCCFF" }}
->>>>>>> 0eb59404736a870485e6578bba860d0f20ccf5f2
               variant="outlined"
               onClick={() => handleSubmit(layoutChoice)}
               disabled={isLayoutPicked}
@@ -470,11 +418,7 @@ export function ExperimentSetupPage() {
               />
             </AccordionDetails>
             <Button
-<<<<<<< HEAD
-              sx={{ margin: 2, width: "90%" }}
-=======
               sx={{ margin: 2, width: "90%", backgroundColor: "#CCCCFF" }}
->>>>>>> 0eb59404736a870485e6578bba860d0f20ccf5f2
               variant="outlined"
               onClick={() => handleSubmit(mediaChoice)}
               disabled={isMediaPicked}
@@ -506,11 +450,7 @@ export function ExperimentSetupPage() {
               />
             </AccordionDetails>
             <Button
-<<<<<<< HEAD
-              sx={{ margin: 2, width: "90%" }}
-=======
               sx={{ margin: 2, width: "90%", backgroundColor: "#CCCCFF"}}
->>>>>>> 0eb59404736a870485e6578bba860d0f20ccf5f2
               variant="outlined"
               onClick={() => handleSubmit(modelChoice)}
               disabled={numOfModel >= maxModel}
@@ -523,15 +463,9 @@ export function ExperimentSetupPage() {
           <Box
             display={"flex"}
             flexDirection={"row"}
-<<<<<<< HEAD
-            sx={{paddingLeft: 10}}
-          >
-            <Box sx={{ width: 400, alignSelf: "center" }}>
-=======
             sx={{paddingRight: "2%", maxWidth: "80%" }}
           >
             <Box sx={{ width: "30%", alignSelf: "center", marginRight: 3 }}>
->>>>>>> 0eb59404736a870485e6578bba860d0f20ccf5f2
               <Typography textAlign={"left"} variant="h6" color="black">
                 Simulated Time (hours)
               </Typography>
@@ -555,15 +489,9 @@ export function ExperimentSetupPage() {
           <Box
             display={"flex"}
             flexDirection={"row"}
-<<<<<<< HEAD
-            sx={{paddingLeft: 10}}
-          >
-            <Box sx={{ width: 400, alignSelf: "center" }}>
-=======
             sx={{paddingRight: "2%", maxWidth: "80%" }}
           >
             <Box sx={{ width: "30%", alignSelf: "center", marginRight: 3 }}>
->>>>>>> 0eb59404736a870485e6578bba860d0f20ccf5f2
               <Typography textAlign={"left"} variant="h6" color="black">
                 No. of steps
               </Typography>
@@ -587,15 +515,9 @@ export function ExperimentSetupPage() {
           <Box
             display={"flex"}
             flexDirection={"row"}
-<<<<<<< HEAD
-            sx={{paddingLeft: 10}}
-          >
-            <Box sx={{ width: 400, alignSelf: "center" }}>
-=======
             sx={{paddingRight: "2%", maxWidth: "80%" }}
           >
             <Box sx={{ width: "30%", alignSelf: "center", marginRight: 3 }}>
->>>>>>> 0eb59404736a870485e6578bba860d0f20ccf5f2
               <Typography textAlign={"left"} variant="h6" color="black">
                 Save Frequency
               </Typography>
@@ -642,39 +564,8 @@ export function ExperimentSetupPage() {
               }}
             />
           </Box>
-<<<<<<< HEAD
-          <Box
-            display={"flex"}
-            flexDirection={"row"}
-            sx={{paddingLeft: 10}}
-          >
-            <Box sx={{ width: 400, alignSelf: "center" }}>
-              <Typography textAlign={"left"} variant="h6" color="black">
-                Log Frequency
-              </Typography>
-            </Box>
-            <TextField
-              label="Log Frequency"
-              variant="filled"
-              type="number"
-              fullWidth
-              value={globalParams.params.logFrequency}
-              onChange={(event) =>
-                handleTextChange("logFrequency", event.target.value)
-              }
-              error={textfieldError}
-              helperText={textfieldError ? "Please input numbers only" : ""}
-              sx={{
-                height: "5vh",
-              }}
-            />
-          </Box>
-          <Button
-            sx={{ margin: 2, maxWidth: "80%", paddingLeft: "2%" }}
-=======
           <Button
             sx={{ margin: 2, maxWidth: "80%", backgroundColor: "#CCCCFF"}}
->>>>>>> 0eb59404736a870485e6578bba860d0f20ccf5f2
             variant="outlined"
             onClick={() => handleSubmit(globalParams)}
             disabled={isGlobalParametersPicked}
@@ -688,16 +579,12 @@ export function ExperimentSetupPage() {
         variant="permanent"
         anchor="right"
         PaperProps={{
-<<<<<<< HEAD
-          sx: { backgroundColor: "#e9ecef", height: '100vh', width:300 },
-=======
           sx: {
             backgroundColor: "#e9ecef",
             width: 350,
             minWidth: "10%",
             height: "100%",
           },
->>>>>>> 0eb59404736a870485e6578bba860d0f20ccf5f2
         }}
       >
         <Typography
@@ -709,11 +596,7 @@ export function ExperimentSetupPage() {
         >
           Experiment Selection
         </Typography>
-<<<<<<< HEAD
-        <Box sx={{ width: "100%" }}>
-=======
         <Box sx={{ width: "100%" }} display={"flex"} flexDirection={"column"}>
->>>>>>> 0eb59404736a870485e6578bba860d0f20ccf5f2
           {sidebarItems.map((item, index) => (
             <Box
               display={"flex"}
