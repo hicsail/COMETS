@@ -5,8 +5,17 @@ import { Job } from 'src/schemas/job.schema';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
 import { HttpService } from '@nestjs/axios';
+import * as nodemailer from 'nodemailer'
 
-
+const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+        user: "cometssmartinterface@gmail.com",
+        pass: "gvzabudgxiglufki"
+    }
+})
 
 
 @Injectable()
@@ -31,6 +40,23 @@ export class JobService {
 
     async purge(): Promise<void> {
         await this.jobModel.deleteMany({});
+    }
+
+    async sendEmail(email: string, id: string): Promise<void>{
+        const mailOptions = {
+            from: "cometssmartinterface@gmail.com",
+            to: email,
+            subject: "Your COMETS SI simulation has been completed",
+            text: `Click here to view the results of your simulation: http://localhost:5173/results/${id}`
+        }
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+              console.error("Error sending email: ", error);
+            } else {
+              console.log("Email sent: ", info.response);
+            }
+          });
     }
 
     async update(updateBody: UpdateJobDto): Promise<Job> {

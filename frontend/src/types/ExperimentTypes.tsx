@@ -1,6 +1,7 @@
 export type MetabolicModel = {
   name: string;
   desc: string;
+  type: string;
   params: {
     [key: string]: boolean | number;
     demographicNoise: boolean;
@@ -16,6 +17,7 @@ export type MetabolicModel = {
 export type Media = {
   name: string;
   desc: string;
+  type: string;
   min: number;
   max: number;
   mainMetabolites: string; //this is to check if its acetate or glucose or something else
@@ -28,6 +30,7 @@ export type Media = {
 export type Layout = {
   name: string;
   desc: string;
+  type: string;
   min: number;
   max: number;
   params: {
@@ -46,6 +49,7 @@ export type SummaryCard = {
 export type GlobalParameters = {
   name: string;
   desc: string;
+  type: string;
   params: {
     [key: string]: number;
     simulatedTime: number;
@@ -61,6 +65,7 @@ export interface SummaryCardArray extends Array<SummaryCard> {
 }
 
 export function cometsType(obj: any): string {
+
   if (metabolicModels.includes(obj.name)) {
     return "MetabolicModel";
   } else if (media.includes(obj.name)) {
@@ -68,13 +73,21 @@ export function cometsType(obj: any): string {
   } else if (layout.includes(obj.name)) {
     return "Layout";
   } else {
-    return typeof obj;
+    return "Global Parameters";
   }
 }
 
 // Private Helper Functions and consts
 
-const metabolicModels = ["E. Coli Core", "E. Coli", "S. Enterica"];
+const metabolicModels = [
+  "Escherichia coli Core",
+  "Escherichia coli",
+  "Nitrosomonas europaea",
+  "Nitrobacter winogradskyi",
+  "E. Coli Core", 
+  "E. Coli", 
+  "S. Enterica"
+];
 const layout = [
   "9 cm Petri Dish (Center Colony)",
   "9 cm Petri Dish (Random Lawn)",
@@ -82,8 +95,8 @@ const layout = [
   "EcoFab",
 ];
 const media = [
-  "Core Glucose",
-  "Core Acetate",
+  "Minimal Core Glucose",
+  "Minimal Core Acetate",
   "M9 Minimal Glucose",
   "M9 Minimal Acetate",
   "LB Rich",

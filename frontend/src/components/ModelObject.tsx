@@ -14,7 +14,7 @@ import {
   Typography
 } from "@mui/material";
 import { FC, useState } from "react";
-import { MetabolicModel } from "../types/Model";
+import { MetabolicModel } from "../types/ExperimentTypes";
 import InfoIcon from "@mui/icons-material/Info";
 
 interface ModelComponentProps {

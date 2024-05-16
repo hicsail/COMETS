@@ -9,7 +9,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import { FC, useState, ChangeEvent } from "react";
-import { Layout } from "../types/Layout";
+import { Layout } from "../types/ExperimentTypes";
 import InfoIcon from "@mui/icons-material/Info";
 interface LayoutComponentProps {
   layoutOptions: Layout[];
