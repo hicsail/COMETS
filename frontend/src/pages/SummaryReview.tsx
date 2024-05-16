@@ -1,22 +1,35 @@
-import React, { useState, ChangeEvent } from 'react';
-import { Box, Button, Card, Drawer, Grid, TextField, Typography, ThemeProvider, createTheme } from "@mui/material";
-import FooterStepper from '../components/FooterStepper';
-import { NavLink, useLocation, Link } from 'react-router-dom';
+import React, { useState, ChangeEvent } from "react";
+import {
+  Box,
+  Button,
+  Card,
+  Drawer,
+  Grid,
+  TextField,
+  Typography,
+  ThemeProvider,
+  createTheme,
+} from "@mui/material";
+import FooterStepper from "../components/FooterStepper";
+import { Link, useLocation } from "react-router-dom";
+import { SidebarCard } from "../components/SidebarObject";
+import { MetabolicModel, Layout, Media, SummaryCard } from "../types/ExperimentTypes";
 import axios from 'axios';
+
 
 const bodyTheme = createTheme({
   typography: {
     h1: {
       fontSize: 50,
-      fontWeight: 700
+      fontWeight: 700,
     },
     h2: {
       fontSize: 40,
     },
     h3: {
-      fontSize: 18
-    }
-  }
+      fontSize: 18,
+    },
+  },
 });
 
 export function SummaryReviewPage() {
@@ -25,7 +38,7 @@ export function SummaryReviewPage() {
   const [textfieldError, setTextfieldError] = useState(false);
   const location = useLocation();
   const { data } = location.state;
-
+  
   const handleSubmit = (email:string) => {
     let body = {
       global_params: {},
@@ -87,7 +100,7 @@ export function SummaryReviewPage() {
 
   return (
     <ThemeProvider theme={bodyTheme}>
-      <Box 
+      <Box
         component="main"
         sx={{
           position: "relative",
@@ -96,70 +109,72 @@ export function SummaryReviewPage() {
       >
         <Grid container spacing={2}>
           <Grid item xs={6}>
-            <Grid 
-              container 
+            <Grid
+              container
               spacing={2}
               direction="column"
               alignItems="left"
               style={{
-                paddingLeft: '2vw',
-                paddingBottom: "10%"
+                paddingLeft: "2vw",
+                paddingBottom: "10%",
               }}
             >
-              <Typography 
+              <Typography
                 variant="h1"
                 sx={{
                   color: "black",
                   textAlign: "left",
                   paddingBottom: "10%",
-                  paddingTop: "5%"
+                  paddingTop: "5%",
                 }}
               >
                 3. Review
               </Typography>
 
-              <Typography 
+              <Typography
                 variant="h3"
                 sx={{
                   textAlign: "left",
                   color: "grey",
-                  paddingBottom: "10%"
+                  paddingBottom: "10%",
                 }}
               >
-                Please review your selected simulation. Once you have confirmed the selection is correct, you can run your simulation by entering your email below.
+                Please review your selected simulation. Once you have confirmed
+                the selection is correct, you can run your simulation by
+                entering your email below.
               </Typography>
 
-              <Typography 
+              <Typography
                 variant="h3"
                 sx={{
                   textAlign: "left",
                   color: "grey",
-                  paddingBottom: "10%"
+                  paddingBottom: "10%",
                 }}
               >
                 We will notify you of your simulations results via email.
               </Typography>
 
-              <Card 
+              <Card
                 sx={{
-                  width: '100%',
+                  width: "100%",
                   p: 2,
-                  boxSizing: 'border-box',
-                  borderRadius: '16px',
+                  boxSizing: "border-box",
+                  borderRadius: "16px",
                 }}
               >
-                <Typography 
+                <Typography
                   variant="h6"
                   sx={{
                     mb: 2,
-                    textAlign: "left"
+                    textAlign: "left",
                   }}
                 >
                   Continue with email
                 </Typography>
 
-                <TextField 
-                  fullWidth 
+                <TextField
+                  fullWidth
                   label="Email address"
                   variant="outlined"
                   onChange={handleTextChange}
@@ -167,20 +182,21 @@ export function SummaryReviewPage() {
                     textfieldError ? "Please input a valid email" : ""
                   }
                   sx={{
-                    mb: 2
+                    mb: 2,
                   }}
                 />
 
-                <Typography 
+                <Typography
                   variant="body2"
                   sx={{
-                    mb: 2
+                    mb: 2,
                   }}
                 >
-                  By continuing, you agree to the confirmation of the selected simulation to be processed.
+                  By continuing, you agree to the confirmation of the selected
+                  simulation to be processed.
                 </Typography>
 
-                <Link to="/experimentSubmitted">
+                <Link to="/experimentSubmitted" state={{data: data}}>
                   <Button 
                     variant="contained"
                     fullWidth
@@ -192,29 +208,37 @@ export function SummaryReviewPage() {
               </Card>
 
               <Box
-               sx={{
-                  paddingTop:"5%"
-               }} >
-               <Button 
-                     variant="contained"
-                     fullWidth
-                  >
-                     Download CometsPY
-               </Button>
+                sx={{
+                  paddingTop: "5%",
+                }}
+              >
+                <Button variant="contained" fullWidth>
+                  Download CometsPY
+                </Button>
               </Box>
-
             </Grid>
           </Grid>
 
           <Grid item xs={6}>
-            <Typography 
+            <Typography
               sx={{
                 color: "black",
-                fontSize: "26px"
+                fontSize: "26px",
               }}
-            >
-              Insert cards here
-            </Typography>
+            ></Typography>
+
+            <Box sx={{ width: "100%"}} display={"flex"} flexDirection={"column"}>
+              {data.map((item: any, index: number) => (
+                <Box
+                  display={"flex"}
+                  flexDirection={"column"}
+                  sx={{ paddingBottom: "0.5vw" }}
+                  key={index}
+                >
+                  <SidebarCard item={item} key={index}/>
+                </Box>
+              ))}
+            </Box>
           </Grid>
         </Grid>
 
@@ -223,13 +247,13 @@ export function SummaryReviewPage() {
           anchor="bottom"
           PaperProps={{
             sx: {
-              display: 'flex',        // Enable flexbox
-              justifyContent: 'center', // Center items horizontally
-              alignItems: 'center',   // Center items vertically
+              display: "flex", // Enable flexbox
+              justifyContent: "center", // Center items horizontally
+              alignItems: "center", // Center items vertically
               background: "white",
               height: 100,
               width: "90vw",
-              left: '15vw',
+              left: "15vw",
               zIndex: 99,
             },
           }}
