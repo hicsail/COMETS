@@ -137,30 +137,9 @@ export function LandingPage() {
                   width: "100%",
                 }}
               >
-<<<<<<< HEAD
                 <NavLink to="https://www.runcomets.org/about" target="_blank">
                   <Button
                     variant="contained"
-=======
-                <Button
-                  component={Link}
-                  to="https://www.runcomets.org/about"
-                  variant="contained"
-                  sx={{
-                    borderRadius: "20px",
-                    backgroundColor: "white",
-                    color: "primary.main",
-                    border: "none",
-                    height: "10vh",
-                    width: "18vw",
-                    textTransform: "none",
-                    "&:hover": {
-                      backgroundColor: "white",
-                    },
-                  }}
-                >
-                  <Typography
->>>>>>> 0eb59404736a870485e6578bba860d0f20ccf5f2
                     sx={{
                       borderRadius: "20px",
                       backgroundColor: "white",

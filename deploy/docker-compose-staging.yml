@@ -7,3 +7,18 @@ services:
     image: hicsail/comets:staging
     ports:
       - 5174:80
+  comets_backend:
+    container_name: comets_backend
+    platform: linux/amd64
+    restart:  always
+    build: 
+      context:  ../backend
+      dockerfile: Dockerfile
+    ports:
+      - 3014:3000
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
