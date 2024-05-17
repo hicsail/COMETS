@@ -69,7 +69,7 @@ export function ResultsPage() {
                 Total Biomass
               </Typography>
               <img
-                src={`http://127.0.0.1:5000/result/${id}/biomass`}
+                src={`https://comets-flask.sail.codes/result/${id}/biomass`}
                 style={{
                   maxWidth: '100%',
                   maxHeight: '100%',
@@ -87,7 +87,7 @@ export function ResultsPage() {
                 Metabolite
               </Typography>
               <img
-                src={`http://127.0.0.1:5000/result/${id}/metabolite`}
+                src={`https://comets-flask.sail.codes/result/${id}/metabolite`}
                 style={{
                   maxWidth: '100%',
                   maxHeight: '100%',
@@ -105,7 +105,7 @@ export function ResultsPage() {
                 Flux
               </Typography>
               <img
-                src={`http://127.0.0.1:5000/result/${id}/flux`}
+                src={`https://comets-flask.sail.codes/result/${id}/flux`}
                 style={{
                   maxWidth: '100%',
                   maxHeight: '100%',
