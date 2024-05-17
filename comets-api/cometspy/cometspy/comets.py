@@ -73,10 +73,10 @@ class comets:
         the directory at which to save temporary sim files
     GUROBI_HOME : str
         the directory where GUROBI exists on the system
-    COMETS_HOME : str
+    COMETS_GLOP : str
         the directory where COMETS exists on the system
     VERSION : str
-        the version of comets, read from the files at COMETS_HOME
+        the version of comets, read from the files at COMETS_GLOP
     classpath_pieces : dict
         classpath separated into library name (key) and location (value)
     JAVA_CLASSPATH : str
@@ -122,25 +122,9 @@ class comets:
 
         # define instance variables
         self.working_dir = os.getcwd() + '/' + relative_dir
-        try:
-            self.GUROBI_HOME = os.environ['GUROBI_COMETS_HOME']
-            os.environ['GUROBI_HOME'] = self.GUROBI_HOME
-        except:
-            try:
-                self.GUROBI_HOME = os.environ['GUROBI_HOME']
-            except:
-                try:
-                    self.GUROBI_HOME = os.environ['COMETS_GUROBI_HOME']
-                except:
-                    self.GUROBI_HOME = ''
-                    print("could not find environmental variable GUROBI_COMETS_HOME or GUROBI_HOME or COMETS_GUROBI_HOME")
-                    print("COMETS will not work with GUROBI until this is solved. ")
-                    print("Here is a solution:")
-                    print("    1. import os and set os.environ['GUROBI_HOME'] then try to make a comets object again")
-                    print("       e.g.   import os")
-                    print("              os.environ['GUROBI_HOME'] = 'C:\\\\gurobi902\\\\win64'")
-        self.COMETS_HOME = os.environ['COMETS_HOME']
-        self.VERSION = os.path.splitext(os.listdir(os.environ['COMETS_HOME'] +
+        self.COMETS_GLOP = os.environ['COMETS_GLOP']
+        self.COMETS_GLOP = os.environ['COMETS_GLOP']
+        self.VERSION = os.path.splitext(os.listdir(os.environ['COMETS_GLOP'] +
                                                    '/bin')[0])[0]
 
         # set default classpaths, which users may change
@@ -169,54 +153,52 @@ class comets:
         sets up what it thinks the classpath should be
         """
         self.classpath_pieces = {}
-        self.classpath_pieces['gurobi'] = (self.GUROBI_HOME +
-                                           '/lib/gurobi.jar')
 
-        self.classpath_pieces['junit'] = glob.glob(self.COMETS_HOME +
+        self.classpath_pieces['junit'] = glob.glob(self.COMETS_GLOP +
                                                    '/lib/junit' + '/**/*junit*',
                                                    recursive=True)[0]
-        self.classpath_pieces['hamcrest'] = glob.glob(self.COMETS_HOME +
+        self.classpath_pieces['hamcrest'] = glob.glob(self.COMETS_GLOP +
                                                       '/lib' + '/**/*hamcrest*',
                                                       recursive=True)[0]
 
-        self.classpath_pieces['jogl_all'] = glob.glob(self.COMETS_HOME +
+        self.classpath_pieces['jogl_all'] = glob.glob(self.COMETS_GLOP +
                                                       '/lib' + '/**/jogl-all.jar',
                                                       recursive=True)[0]
-        self.classpath_pieces['gluegen_rt'] = glob.glob(self.COMETS_HOME +
+        self.classpath_pieces['gluegen_rt'] = glob.glob(self.COMETS_GLOP +
                                                       '/lib' + '/**/gluegen-rt.jar',
                                                       recursive=True)[0]
-        self.classpath_pieces['gluegen'] = glob.glob(self.COMETS_HOME +
+        self.classpath_pieces['gluegen'] = glob.glob(self.COMETS_GLOP +
                                                       '/lib' + '/**/gluegen.jar',
                                                       recursive=True)[0]
         self.classpath_pieces['gluegen_rt_natives'] = glob.glob(
-            self.COMETS_HOME + '/lib' + '/**/gluegen-rt-natives-linux-amd64.jar',
+            self.COMETS_GLOP + '/lib' + '/**/gluegen-rt-natives-linux-amd64.jar',
             recursive=True)[0]
         self.classpath_pieces['jogl_all_natives'] = glob.glob(
-            self.COMETS_HOME + '/lib' + '/**/jogl-all-natives-linux-amd64.jar',
+            self.COMETS_GLOP + '/lib' + '/**/jogl-all-natives-linux-amd64.jar',
             recursive=True)[0]
 
-        self.classpath_pieces['jmatio'] = glob.glob(self.COMETS_HOME +
+        self.classpath_pieces['jmatio'] = glob.glob(self.COMETS_GLOP +
                                                       '/lib' + '/**/jmatio.jar',
                                                       recursive=True)[0]
-        self.classpath_pieces['jmat'] = glob.glob(self.COMETS_HOME +
+        self.classpath_pieces['jmat'] = glob.glob(self.COMETS_GLOP +
                                                       '/lib' + '/**/jmatio.jar',
                                                       recursive=True)[0]
 
-        self.classpath_pieces['concurrent'] = glob.glob(self.COMETS_HOME +
+        self.classpath_pieces['concurrent'] = glob.glob(self.COMETS_GLOP +
                                                       '/lib' + '/**/concurrent.jar',
                                                       recursive=True)[0]
-        self.classpath_pieces['colt'] = glob.glob(self.COMETS_HOME +
+        self.classpath_pieces['colt'] = glob.glob(self.COMETS_GLOP +
                                                       '/lib' + '/**/colt.jar',
                                                       recursive=True)[0]
 
-        __lang3 = glob.glob(self.COMETS_HOME +
+        __lang3 = glob.glob(self.COMETS_GLOP +
                             '/lib' + '/**/commons-lang3*jar',
                             recursive=True)
         self.classpath_pieces['lang3'] = [i for i in __lang3
                                           if 'test' not in i
                                           and 'sources' not in i][0]
 
-        __math3 = glob.glob(self.COMETS_HOME +
+        __math3 = glob.glob(self.COMETS_GLOP +
                             '/lib' + '/**/commons-math3*jar',
                             recursive=True)
         self.classpath_pieces['math3'] = [i for i in __math3
@@ -225,11 +207,17 @@ class comets:
                                           and 'tools' not in i
                                           and 'javadoc' not in i][0]
 
-        self.classpath_pieces['jdistlib'] = glob.glob(self.COMETS_HOME +
+        self.classpath_pieces['jdistlib'] = glob.glob(self.COMETS_GLOP +
                                                       '/lib' + '/**/*jdistlib*',
                                                       recursive=True)[0]
-        self.classpath_pieces['bin'] = (self.COMETS_HOME +
+        self.classpath_pieces['bin'] = (self.COMETS_GLOP +
                                         '/bin/' + self.VERSION + '.jar')
+
+        # building classpath pieces for COMETS Glop
+        print('yes')
+        self.classpath_pieces['glop_lib'] = ":".join(glob.glob(self.COMETS_GLOP + '/comets_glop_lib/*.jar'))
+        self.classpath_pieces['or-tools'] = ":".join(glob.glob(self.COMETS_GLOP + '/lib/or-tools/**/*jar'))
+        self.classpath_pieces['or-tools-arm64'] = ":".join(glob.glob(self.COMETS_GLOP + '/or-tools/arm64/*jar'))
 
 
     def __build_and_set_classpath(self):
@@ -239,11 +227,13 @@ class comets:
         if platform.system() == 'Windows':
             classpath = ';'.join(paths)
             classpath = '\"' + classpath + '\"'
-            self.JAVA_LIB = '\"' + self.GUROBI_HOME + '/lib;' + self.GUROBI_HOME+ '/bin;'+ self.COMETS_HOME+ '/lib/jogl/jogamp-all-platforms/lib'+ '\"'
+            self.JAVA_LIB = '\"' + self.GUROBI_HOME + '/lib;' + self.GUROBI_HOME+ '/bin;'+ self.COMETS_GLOP+ '/lib/jogl/jogamp-all-platforms/lib'+ '\"'
 
         else:
             classpath = ':'.join(paths)
+
         self.JAVA_CLASSPATH = classpath
+        print(classpath)
 
     def __test_classpath_pieces(self):
         ''' checks to see if there is a file at each location in classpath
@@ -372,12 +362,13 @@ class comets:
             f.writelines('load_layout ' + '.current_layout' + to_append)
 
         if platform.system() == 'Windows':
-            self.cmd = ('\"' + self.COMETS_HOME +
+            self.cmd = ('\"' + self.COMETS_GLOP +
                         '\\comets_scr' + '\" \"' +
                         c_script +
                         '\"')
         else:
             # simulate
+            print(self.JAVA_CLASSPATH)
             self.cmd = ('java -classpath ' + self.JAVA_CLASSPATH +
                         # ' -Djava.library.path=' + self.D_JAVA_LIB_PATH +
                         ' edu.bu.segrelab.comets.Comets -loader' +
@@ -538,10 +529,10 @@ class comets:
                 message += "check if comets.version and comets.classpath_pieces['bin'] \n"
                 message += "point to an actual comets.jar file\n"
                 message += "this problem may be associated with a malformed\n"
-                message += "os.environ['COMETS_HOME'] environmental variable\n"
+                message += "os.environ['COMETS_GLOP'] environmental variable\n"
                 message += "that can be overwritten by, for example, \n"
                 message += ">>> import os\n"
-                message += ">>> os.environ['COMETS_HOME'] = '/home/comets/'"
+                message += ">>> os.environ['COMETS_GLOP'] = '/home/comets/'"
                 raise RuntimeError(f"COMETS simulation did not complete:\n {message}")
 
             loc = self.run_output.find("NoClassDefFoundError")
@@ -552,10 +543,10 @@ class comets:
                     message = "JAVA could not find gurobi.\n"
                     message += "try the following: \n"
                     message += ">>> import os\n"
-                    message += ">>> os.environ['GUROBI_COMETS_HOME']\n"
+                    message += ">>> os.environ['GUROBI_COMETS_GLOP']\n"
                     message += "if there is nothing there try setting that variable\n"
                     message += "to the location of gurobi.jar, for example:\n"
-                    message += ">>> os.environ['GUROBI_COMETS_HOME'] = '/opt/gurobi900/linux64'"
+                    message += ">>> os.environ['GUROBI_COMETS_GLOP'] = '/opt/gurobi900/linux64'"
                 else:
                     message = f"JAVA could not find a needed class: {missing_class}\n"
                     message += "make sure it is in your java classpath\n"

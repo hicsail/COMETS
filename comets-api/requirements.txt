@@ -1,0 +1,9 @@
+cobra
+numpy==1.23.5
+requests
+dill
+boto3
+flask_cors
+matplotlib
+python-dotenv
+pandas==1.5.3

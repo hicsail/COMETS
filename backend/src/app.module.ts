@@ -17,16 +17,16 @@ import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(`mongodb://localhost:27017/comets`), 
+    MongooseModule.forRoot(`mongodb://mongo/comets`),
     BullModule.forRoot({
       redis: {
-        host: 'localhost',
+        host: 'redis',
         port: 6379,
       },
     }),
     BullBoardModule.forRoot({
       route: '/queues',
-      adapter: ExpressAdapter 
+      adapter: ExpressAdapter
     }),
     QueueModule,
     JobModule,

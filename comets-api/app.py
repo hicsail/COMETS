@@ -40,10 +40,10 @@ def sendEmail(email, id):
         print('Email sent with code: ',req.status_code)
     except:
         raise Exception('Could not send email')
-    
+
 def uploadToS3(comets_result, id, email):
     print('uploadToS3 function called')
-    # comets_result should be an array filled with files created by comets run 
+    # comets_result should be an array filled with files created by comets run
 
     # Initiate S3 resource
     s3 = boto3.resource(
@@ -70,7 +70,7 @@ def uploadToS3(comets_result, id, email):
 @app.route('/result/<id>/<source>', methods=['GET'])
 @cross_origin()
 def get_result(id, source):
-    
+
     s3 = boto3.resource(
         's3',
         aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
@@ -80,12 +80,12 @@ def get_result(id, source):
     # Downloading the file from S3
     bucket = s3.Bucket(os.getenv('BUCKET_NAME'))
     prefix = id
-    
+
     for object in bucket.objects.filter(Prefix = id):
         if not os.path.exists(prefix):
             os.makedirs(os.path.dirname(object.key), exist_ok=True)
         bucket.download_file(object.key, object.key)
-    
+
     image_index = [20,40,60,80,100]
     with open(f'{id}/{id}.pkl', 'rb') as file:
         data = dill.load(file)
@@ -94,10 +94,10 @@ def get_result(id, source):
         my_cmap = matplotlib.cm.get_cmap("magma")
         my_cmap.set_bad((0,0,0))
         plt.switch_backend('Agg')
-        images = [data.get_biomass_image('e_coli_core', image_index[0]), 
-                  data.get_biomass_image('e_coli_core', image_index[1]), 
-                  data.get_biomass_image('e_coli_core', image_index[2]), 
-                  data.get_biomass_image('e_coli_core', image_index[3]), 
+        images = [data.get_biomass_image('e_coli_core', image_index[0]),
+                  data.get_biomass_image('e_coli_core', image_index[1]),
+                  data.get_biomass_image('e_coli_core', image_index[2]),
+                  data.get_biomass_image('e_coli_core', image_index[3]),
                   data.get_biomass_image('e_coli_core', image_index[4])]
         fig, axs = plt.subplots(1, 5, figsize=(20, 4))
         # Display each image in a subplot
@@ -106,15 +106,15 @@ def get_result(id, source):
             ax.axis('off')  # Turn off axix
         fig.colorbar(cax, ax=axs[-1], orientation='vertical')
         fig.savefig(f'{id}/{png_file_name}', format='png', bbox_inches='tight')
-    elif source == 'metabolite': 
+    elif source == 'metabolite':
         png_file_name = 'metabolite.png'
         my_cmap = matplotlib.cm.get_cmap("magma")
         my_cmap.set_bad((0,0,0))
         plt.switch_backend('Agg')
-        images = [data.get_metabolite_image('glc__D_e', image_index[0]), 
-                  data.get_metabolite_image('glc__D_e', image_index[1]), 
-                  data.get_metabolite_image('glc__D_e', image_index[2]), 
-                  data.get_metabolite_image('glc__D_e', image_index[3]), 
+        images = [data.get_metabolite_image('glc__D_e', image_index[0]),
+                  data.get_metabolite_image('glc__D_e', image_index[1]),
+                  data.get_metabolite_image('glc__D_e', image_index[2]),
+                  data.get_metabolite_image('glc__D_e', image_index[3]),
                   data.get_metabolite_image('glc__D_e', image_index[4])]
         fig, axs = plt.subplots(1, 5, figsize=(20, 4))
         # Display each image in a subplot
@@ -123,15 +123,15 @@ def get_result(id, source):
             ax.axis('off')  # Turn off axix
         fig.colorbar(cax, ax=axs[-1], orientation='vertical')
         fig.savefig(f'{id}/{png_file_name}', format='png', bbox_inches='tight')
-    elif source == 'flux': 
+    elif source == 'flux':
         png_file_name = 'flux.png'
         my_cmap = matplotlib.cm.get_cmap("magma")
         my_cmap.set_bad((0,0,0))
         plt.switch_backend('Agg')
-        images = [data.get_flux_image('e_coli_core','EX_glc__D_e', image_index[0]), 
-                    data.get_flux_image('e_coli_core','EX_glc__D_e', image_index[1]), 
-                    data.get_flux_image('e_coli_core','EX_glc__D_e', image_index[2]), 
-                    data.get_flux_image('e_coli_core','EX_glc__D_e', image_index[3]), 
+        images = [data.get_flux_image('e_coli_core','EX_glc__D_e', image_index[0]),
+                    data.get_flux_image('e_coli_core','EX_glc__D_e', image_index[1]),
+                    data.get_flux_image('e_coli_core','EX_glc__D_e', image_index[2]),
+                    data.get_flux_image('e_coli_core','EX_glc__D_e', image_index[3]),
                     data.get_flux_image('e_coli_core','EX_glc__D_e', image_index[4])]
         fig, axs = plt.subplots(1, 5, figsize=(20, 4))
         # Display each image in a subplot
@@ -144,19 +144,19 @@ def get_result(id, source):
     """
     Options to return from experiment results
 
-    From comets module functions 
+    From comets module functions
         * Biomass image (how to handle different organisms of the same model)
         * Metabolite image
         * Flux image
         * Metabolite Time Series
         * Species Exchange Flux (same problem with Biomass image)
-    
+
     From comets dataframe
         * Total biomass
         * Fluxes
-    
+
     """
-    
+
     try:
         return send_from_directory(f'./{id}', png_file_name, as_attachment=True)
     except:
@@ -180,7 +180,7 @@ def home():
 @app.route('/process', methods=['POST'])
 def process():
     print('Started Processing!')
-    
+
     os.environ['COMETS_GLOP'] = './comets_glop'
     """
     Files needed to save (8 files in total)
@@ -199,8 +199,8 @@ def process():
     # Listing all files currently in current directory to check against
     current_files = os.listdir()
 
-    
-    
+
+
     # Creating the Job document on MongoDB
     body = {
             # filepath should be a signed URL made by S3
@@ -219,10 +219,10 @@ def process():
     comets_params = c.params()
 
 
-    # Set all media metabolites constant for now (mmol) 
+    # Set all media metabolites constant for now (mmol)
     # Dimensions of petri dish and test tube is different
     """
-    Petri Dish 
+    Petri Dish
     9 cm
     Grid = 100x100
     User gives concentration (mmol/cm3) and volume (ml)
@@ -253,7 +253,7 @@ def process():
         print("model", model)
         print()
         load_model = None
-        
+
         model_name = translation(model['name'])
         # Load each model from either XML file or Cobra
         """
@@ -261,9 +261,9 @@ def process():
         """
         if model_name == 'E.Coli Core':
             load_model = cobra.io.load_model("textbook")
-        
+
         comets_model = c.model(load_model)
-        
+
         # Set each model parameters
         comets_model.neutral_drift_flag = True # model['demographicNoise']
         comets_model.add_neutral_drift_parameter(0.000001) # model['demographicNoiseAmp']
@@ -291,12 +291,12 @@ def process():
     if  layout_name == '9cmpetridishcentercolony':
 
         upper_bound = comets_layout.grid[0] - 1
-        drop_radius = 5 
+        drop_radius = 5
         for x in range(0,upper_bound):
             for y in range(0,upper_bound):
-                if (x-(upper_bound/2))**2+(y-(upper_bound/2))**2 < drop_radius**2: 
+                if (x-(upper_bound/2))**2+(y-(upper_bound/2))**2 < drop_radius**2:
                     initi_population.append([x,y,1e-6])
-        
+
         for model in comets_model_arr:
             model.initial_pop = initi_population
             comets_layout.add_model(model)
@@ -306,7 +306,7 @@ def process():
         number_of_innoculates=100
         upper_bound = comets_layout.grid[0] - 1
         """
-        
+
         """
 
         for i in range(np.int(number_of_innoculates*1.28)):
@@ -325,10 +325,10 @@ def process():
             comets_layout.add_model(model)
     else:
         print('Default case')
-    
+
 
     # Create media
-    
+
     comets_params.set_param('numRunThreads', 1)
     comets_params.set_param('timeStep', 0.1) # timeStep = simulatedTime / maxCycles (number of steps)
     comets_params.set_param('maxCycles', 100) # Leave it as it is
@@ -344,7 +344,8 @@ def process():
     comets_params.set_param('writeTotalBiomassLog', True)
     comets_params.set_param("writeFluxLog", True)
     comets_params.set_param('writeMediaLog', True)
-    
+    comets_params.set_param('comets_optimizer', 'GLOP')
+
     # Create the experiment
     experiment = c.comets(comets_layout, comets_params)
 
@@ -365,13 +366,14 @@ def process():
         uploadToS3(files_to_upload, job_id, requester_email)
 
     except:
+        print(experiment.run_output)
         raise Exception('Not working', experiment.run_output)
-    
+
         """
         available methods to call from "experiment"
-        
+
         """
-        
+
         # Need to delete the failed Job document on MongoDB using "id" field
     return 'Done'
 
@@ -382,6 +384,6 @@ if __name__ == '__main__':
     warnings.simplefilter(action='ignore', category=FutureWarning)
     cors = CORS(app)
     app.config['CORS_HEADERS'] = 'Content-Type'
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
 
 
