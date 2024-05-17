@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Box, Button, Card, Drawer, Grid, TextField, Typography, ThemeProvider, createTheme } from "@mui/material";
+import { useState } from "react";
+import { Box, Button, Drawer, Grid, Typography, ThemeProvider, createTheme } from "@mui/material";
 import FooterStepper from "../components/FooterStepper";
 import { Link, useLocation } from "react-router-dom";
 import { SidebarCard } from "../components/SidebarObject";
@@ -21,7 +21,7 @@ const bodyTheme = createTheme({
 });
 
 export function ExperimentSubmittedPage() {
-  const [activeStep, setActiveStep] = useState(2);
+  const [activeStep, _setActiveStep] = useState(2);
   const location = useLocation();
   const { data } = location.state;
 

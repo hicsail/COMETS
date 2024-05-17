@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent } from "react";
 import {
   Box,
   Button,
@@ -13,7 +13,6 @@ import {
 import FooterStepper from "../components/FooterStepper";
 import { Link, useLocation } from "react-router-dom";
 import { SidebarCard } from "../components/SidebarObject";
-import { MetabolicModel, Layout, Media, SummaryCard } from "../types/ExperimentTypes";
 import axios from 'axios';
 
 
@@ -33,12 +32,12 @@ const bodyTheme = createTheme({
 });
 
 export function SummaryReviewPage() {
-  const [activeStep, setActiveStep] = useState(1);
+  const [activeStep, _setActiveStep] = useState(1);
   const [email, setEmail] = useState('')
   const [textfieldError, setTextfieldError] = useState(false);
   const location = useLocation();
   const { data } = location.state;
-  
+
   const handleSubmit = (email:string) => {
     let body = {
       global_params: {},
@@ -75,13 +74,13 @@ export function SummaryReviewPage() {
           concentration: param["mediaConcentration"]
         }
       }else if(item.info.type === 'global_parameters'){
-        body.global_params = param 
-      } 
+        body.global_params = param
+      }
 
     })
     body.models = models;
     console.log(body)
-    
+
     axios.post('http://localhost:3000/comets-request', (body)).then((ret) => {console.log(ret)})
     // console.log(res)
   }
@@ -197,7 +196,7 @@ export function SummaryReviewPage() {
                 </Typography>
 
                 <Link to="/experimentSubmitted" state={{data: data}}>
-                  <Button 
+                  <Button
                     variant="contained"
                     fullWidth
                     onClick={() => handleSubmit(email)}

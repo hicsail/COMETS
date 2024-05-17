@@ -1,14 +1,9 @@
-import React, { useState } from 'react';
-import { Box, 
-         Button,
-         Card,
-         Drawer, 
-         Grid, 
-         TextField, 
-         Typography, 
-         ThemeProvider, 
+import { Box,
+         Grid,
+         Typography,
+         ThemeProvider,
          createTheme } from "@mui/material";
-import { useSearchParams, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 const bodyTheme = createTheme({
   typography: {
@@ -28,10 +23,10 @@ const bodyTheme = createTheme({
 
 export function ResultsPage() {
   const { id } = useParams()
-  
+
   return (
     <ThemeProvider theme={bodyTheme}>
-      <Box 
+      <Box
         component="main"
         sx={{
           position: "relative",
@@ -40,17 +35,17 @@ export function ResultsPage() {
       >
         <Grid container spacing={1} flexDirection={'column'}>
           <Grid item xs={6}>
-            <Grid 
-              container 
+            <Grid
+              container
               spacing={2}
               direction="column"
               alignItems="left"
               style={{
                 paddingLeft: '2vw',
-                
+
               }}
             >
-              <Typography 
+              <Typography
                 variant="h1"
                 sx={{
                   color: "black",
@@ -61,7 +56,7 @@ export function ResultsPage() {
               >
                 SIMULATION RUN RESULTS
               </Typography>
-            </Grid>      
+            </Grid>
           </Grid>
           <Grid item xs={6}>
             <Box sx={{width:'90vh', height: '25vh', backgroundColor:'#F1EDF6', marginLeft:5, padding: 5, paddingBottom: 0, paddingTop:2}}>
@@ -73,11 +68,11 @@ export function ResultsPage() {
               >
                 Total Biomass
               </Typography>
-              <img 
+              <img
                 src={`http://127.0.0.1:5000/result/${id}/biomass`}
-                style={{ 
-                  maxWidth: '100%', 
-                  maxHeight: '100%', 
+                style={{
+                  maxWidth: '100%',
+                  maxHeight: '100%',
                   display: 'block' // Removes bottom space/gap
                 }}
               />
@@ -91,11 +86,11 @@ export function ResultsPage() {
               >
                 Metabolite
               </Typography>
-              <img 
+              <img
                 src={`http://127.0.0.1:5000/result/${id}/metabolite`}
-                style={{ 
-                  maxWidth: '100%', 
-                  maxHeight: '100%', 
+                style={{
+                  maxWidth: '100%',
+                  maxHeight: '100%',
                   display: 'block' // Removes bottom space/gap
                 }}
               />
@@ -109,11 +104,11 @@ export function ResultsPage() {
               >
                 Flux
               </Typography>
-              <img 
+              <img
                 src={`http://127.0.0.1:5000/result/${id}/flux`}
-                style={{ 
-                  maxWidth: '100%', 
-                  maxHeight: '100%', 
+                style={{
+                  maxWidth: '100%',
+                  maxHeight: '100%',
                   display: 'block' // Removes bottom space/gap
                 }}
               />

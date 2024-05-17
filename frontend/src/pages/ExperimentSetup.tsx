@@ -176,7 +176,7 @@ const modelOptions: MetabolicModel[] = [
       biomassNonlinearDiffusivity: 0,
     },
   },
-  
+
 ];
 
 type chosenOption = {
@@ -184,20 +184,20 @@ type chosenOption = {
       name: string,
       params: MetabolicModel["params"]
     }[],
-    layout: { 
+    layout: {
       name: string,
       params: Layout["params"] | {}
     } | {},
     media: {
       name: string,
-      params: Media["params"] 
+      params: Media["params"]
     } | {},
     global_parameters: GlobalParameters | {}
 }
 
 
 export function ExperimentSetupPage() {
-  const [layoutExpanded, setLayoutExpanded] = React.useState<string | false>(
+  const [_layoutExpanded, setLayoutExpanded] = React.useState<string | false>(
     false,
   );
   const [mediaExpanded, setMediaExpanded] = React.useState<string | false>(
@@ -206,7 +206,7 @@ export function ExperimentSetupPage() {
   const [modelExpanded, setModelExpanded] = React.useState<string | false>(
     false,
   );
-  const [chosenOptions, setChosenOptions] = useState<chosenOption>(
+  const [_chosenOptions, _setChosenOptions] = useState<chosenOption>(
     {
       models: [],
       layout: {},
@@ -266,7 +266,7 @@ export function ExperimentSetupPage() {
     // Update the state with the modified array
     setSidebarItems(updatedSidebarItems);
   };
-  
+
   const handleTextChange = (field: string, value: string) => {
     if (/^\d*$/.test(value)) {
       const updatedParams = {
@@ -285,7 +285,7 @@ export function ExperimentSetupPage() {
     }
   };
   const handleAccordionChange =
-    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+    (panel: string) => (_event: React.SyntheticEvent, isExpanded: boolean) => {
       if (panel === "layoutPanel") {
         setLayoutExpanded(isExpanded ? panel : false);
       } else if (panel === "mediaPanel") {
@@ -536,7 +536,7 @@ export function ExperimentSetupPage() {
                 height: "5vh",
               }}
             />
-          </Box> 
+          </Box>
           <Box
             display={"flex"}
             flexDirection={"row"}

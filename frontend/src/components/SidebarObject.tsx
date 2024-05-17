@@ -6,9 +6,8 @@ import {
   List,
   ListItemText,
   Typography,
-  Button,
 } from "@mui/material";
-import { FC, useState, ChangeEvent } from "react";
+import { FC } from "react";
 import { SummaryCard } from "../types/ExperimentTypes";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 export interface SidebarcardProps {
