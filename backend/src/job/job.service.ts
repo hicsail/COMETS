@@ -26,10 +26,10 @@ export class JobService {
     ) {}
 
     async create(createJobDto: CreateJobDto) : Promise<Job> {
-        
+
         const res = await this.jobModel.create(createJobDto);
         console.log(`http://localhost:5173/results/${res.id}`)
-        
+
         return res;
     }
 
@@ -47,7 +47,7 @@ export class JobService {
             from: "cometssmartinterface@gmail.com",
             to: email,
             subject: "Your COMETS SI simulation has been completed",
-            text: `Click here to view the results of your simulation: http://localhost:5173/results/${id}`
+            text: `Click here to view the results of your simulation: https://comets-frontend.sail.codes/results/${id}`
         }
 
         transporter.sendMail(mailOptions, (error, info) => {

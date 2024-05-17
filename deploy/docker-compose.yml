@@ -23,3 +23,8 @@ services:
       - 5007:5000
     env_file:
       - stack.env
+  frontend:
+    container_name: comets-frontend
+    image: hicsail/comets-frontend:latest
+    ports:
+      - 3015:80

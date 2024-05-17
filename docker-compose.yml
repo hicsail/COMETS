@@ -25,3 +25,9 @@ services:
       - 5007:5000
     env_file:
       - ./comets-api/.env
+  frontend:
+    container_name: comets-frontend
+    build:
+      context: ./frontend/
+    ports:
+      - 3015:80

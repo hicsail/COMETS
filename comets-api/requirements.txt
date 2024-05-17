@@ -4,6 +4,6 @@ requests
 dill
 boto3
 flask_cors
-matplotlib
+matplotlib==3.8.0
 python-dotenv
 pandas==1.5.3
