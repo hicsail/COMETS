@@ -3,9 +3,8 @@ version: '3.8.0'
 services:
   comets_backend:
     container_name: comets_backend
-    build:
-      context:  ../backend
-      dockerfile: Dockerfile
+    image: hicsail/comets-backend:latest
+    restart: always
     ports:
       - 3014:3000
   mongo:
@@ -17,12 +16,10 @@ services:
   redis:
     image: 'redis:latest'
   cometspy:
+    image: hicsail/comets-flask:latest
     container_name: comets-flask
-    build:
-      context: ../comets-api
     restart: always
     ports:
       - 5007:5000
     env_file:
-      - ../comets-api/.env
-
+      - ../stack.env
