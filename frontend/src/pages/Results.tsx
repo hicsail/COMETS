@@ -69,7 +69,7 @@ export function ResultsPage() {
                 Total Biomass (Escherichia coli Core)
               </Typography>
               <img
-                src={`https://comets-flask.sail.codes/result/${id}/biomass`}
+                src={`${import.meta.env.VITE_COMETS_FLASK}/result/${id}/biomass`}
                 style={{
                   maxWidth: '100%',
                   maxHeight: '100%',
@@ -87,7 +87,7 @@ export function ResultsPage() {
                 Metabolite (Glucose)
               </Typography>
               <img
-                src={`https://comets-flask.sail.codes/result/${id}/metabolite`}
+                src={`${import.meta.env.VITE_COMETS_FLASK}/result/${id}/metabolite`}
                 style={{
                   maxWidth: '100%',
                   maxHeight: '100%',
@@ -105,7 +105,7 @@ export function ResultsPage() {
                 Flux (Glucose)
               </Typography>
               <img
-                src={`https://comets-flask.sail.codes/result/${id}/flux`}
+                src={`${import.meta.env.VITE_COMETS_FLASK}/result/${id}/flux`}
                 style={{
                   maxWidth: '100%',
                   maxHeight: '100%',

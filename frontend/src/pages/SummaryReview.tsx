@@ -81,7 +81,7 @@ export function SummaryReviewPage() {
     body.models = models;
     console.log(body)
 
-    axios.post('https://comets-backend.sail.codes/comets-request', (body)).then((ret) => {console.log(ret)})
+    axios.post(`${import.meta.env.VITE_COMETS_BACKEND}/comets-request`, (body)).then((ret) => {console.log(ret)})
     // console.log(res)
   }
 
