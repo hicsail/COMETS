@@ -32,7 +32,7 @@ export function LandingPage() {
             >
               <Box
                 component="img"
-                src="comets-logo.jpeg"
+                src="/comets-logo.jpeg"
                 alt="Comets Logo"
                 sx={{
                   width: 63,
