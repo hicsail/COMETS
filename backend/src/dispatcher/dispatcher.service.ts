@@ -2,15 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { InjectQueue } from '@nestjs/bull';
 import axios from 'axios';
 import { Queue } from 'bull';
+import { ConfigService } from '@nestjs/config';
 
 
 @Injectable()
 export class DispatcherService {
     // True if server is available to run a simulation
     private serverStatus = true;
+    private readonly flaskURL = this.configService.getOrThrow<string>('flask.baseURL');
 
     constructor (
         @InjectQueue('queue') private queue: Queue,
+        private readonly configService: ConfigService
     ) {
         this.initializeQueueListener();
     }
@@ -37,7 +40,7 @@ export class DispatcherService {
                 // serverStatus has to change
                 this.serverStatus = false;
                 // job/request is sent to Flask server using standard HTTP. Destination can be changed to Serverless Function
-                const response = await axios.post('http://cometspy:5000/process', jsonData);
+                const response = await axios.post(`${this.flaskURL}/process`, jsonData);
                 await job.moveToCompleted('done', true)
                 this.serverStatus = true;
                 return response;
