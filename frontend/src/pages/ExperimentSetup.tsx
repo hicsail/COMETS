@@ -40,6 +40,7 @@ const mediaOptions: Media[] = [
       mediaConcentration: 0,
     },
   },
+  /*
   {
     name: "Minimal Core Acetate",
     desc: "Example Desc for core acetate",
@@ -84,6 +85,7 @@ const mediaOptions: Media[] = [
       mediaConcentration: 0,
     },
   },
+  */
 ];
 
 const layoutOptions: Layout[] = [
@@ -134,6 +136,7 @@ const modelOptions: MetabolicModel[] = [
       biomassNonlinearDiffusivity: 0,
     },
   },
+  /*
   {
     name: "Escherichia coli",
     desc: "Example description for E. Coli model",
@@ -176,7 +179,7 @@ const modelOptions: MetabolicModel[] = [
       biomassNonlinearDiffusivity: 0,
     },
   },
-
+  */
 ];
 
 type chosenOption = {

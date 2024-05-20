@@ -66,7 +66,7 @@ export function ResultsPage() {
                 color={'black'}
                 sx={{}}
               >
-                Total Biomass
+                Total Biomass (Escherichia coli Core)
               </Typography>
               <img
                 src={`https://comets-flask.sail.codes/result/${id}/biomass`}
@@ -84,7 +84,7 @@ export function ResultsPage() {
                 color={'black'}
                 sx={{}}
               >
-                Metabolite
+                Metabolite (Glucose)
               </Typography>
               <img
                 src={`https://comets-flask.sail.codes/result/${id}/metabolite`}
@@ -102,7 +102,7 @@ export function ResultsPage() {
                 color={'black'}
                 sx={{}}
               >
-                Flux
+                Flux (Glucose)
               </Typography>
               <img
                 src={`https://comets-flask.sail.codes/result/${id}/flux`}
