@@ -129,11 +129,11 @@ const modelOptions: MetabolicModel[] = [
     params: {
       demographicNoise: false,
       demographicNoiseAmplitude: 0,
-      uptakeVMax: 0,
-      uptakeKm: 0,
+      uptakeVMax: 10,
+      uptakeKm: 10e-5,
       deathRate: 0,
       biomassLinearDiffusivity: 0,
-      biomassNonlinearDiffusivity: 0,
+      biomassNonlinearDiffusivity: 0.6,
     },
   },
   /*
@@ -223,10 +223,10 @@ export function ExperimentSetupPage() {
     desc: "Desc of global parameters",
     type: "global_parameters",
     params: {
-      simulatedTime: 0,
-      timeSteps: 0,
-      nutrientDiffusivity: 0,
-      logFrequency: 0,
+      simulatedTime: 10,
+      timeSteps: 100,
+      nutrientDiffusivity: 6e-6,
+      logFrequency: 20,
     },
   });
   const [sidebarItems, setSidebarItems] = useState<SummaryCard[]>([]);
@@ -486,6 +486,9 @@ export function ExperimentSetupPage() {
               sx={{
                 height: "5vh",
               }}
+              inputProps={{
+                step: "0.000000001"
+              }}
             />
           </Box>
           <Box
@@ -511,6 +514,9 @@ export function ExperimentSetupPage() {
               helperText={textfieldError ? "Please input numbers only" : ""}
               sx={{
                 height: "5vh",
+              }}
+              inputProps={{
+                step: "0.000000001"
               }}
             />
           </Box>
@@ -538,6 +544,9 @@ export function ExperimentSetupPage() {
               sx={{
                 height: "5vh",
               }}
+              inputProps={{
+                step: "0.000000001"
+              }}
             />
           </Box>
           <Box
@@ -563,6 +572,9 @@ export function ExperimentSetupPage() {
               helperText={textfieldError ? "Please input numbers only" : ""}
               sx={{
                 height: "5vh",
+              }}
+              inputProps={{
+                step: "0.000000001"
               }}
             />
           </Box>
