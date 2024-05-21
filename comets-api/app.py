@@ -98,13 +98,19 @@ def get_result(id, source):
                   data.get_biomass_image('e_coli_core', image_index[1]),
                   data.get_biomass_image('e_coli_core', image_index[2]),
                   data.get_biomass_image('e_coli_core', image_index[3]),
-                  data.get_biomass_image('e_coli_core', image_index[4])]
-        fig, axs = plt.subplots(1, 5, figsize=(20, 4))
+                  data.get_biomass_image('e_coli_core', image_index[4]),
+                  create_plot(data)]
+
+        fig, axs = plt.subplots(1, 6, figsize=(20, 4))
         # Display each image in a subplot
+        index = -1
         for ax, img in zip(axs, images):
+            index += 1
             cax = ax.imshow(img, cmap='viridis')  # You can specify a colormap (e.g., 'viridis', 'gray', etc.)
             ax.axis('off')  # Turn off axix
-        fig.colorbar(cax, ax=axs[-1], orientation='vertical')
+            if index == 5:
+                continue
+            fig.colorbar(cax, ax=ax, orientation='vertical')
         fig.savefig(f'{id}/{png_file_name}', format='png', bbox_inches='tight')
     elif source == 'metabolite':
         png_file_name = 'metabolite.png'
@@ -121,7 +127,7 @@ def get_result(id, source):
         for ax, img in zip(axs, images):
             cax = ax.imshow(img, cmap='viridis')  # You can specify a colormap (e.g., 'viridis', 'gray', etc.)
             ax.axis('off')  # Turn off axix
-        fig.colorbar(cax, ax=axs[-1], orientation='vertical')
+            fig.colorbar(cax, ax=ax, orientation='vertical')
         fig.savefig(f'{id}/{png_file_name}', format='png', bbox_inches='tight')
     elif source == 'flux':
         png_file_name = 'flux.png'
@@ -138,7 +144,7 @@ def get_result(id, source):
         for ax, img in zip(axs, images):
             cax = ax.imshow(img, cmap='viridis')  # You can specify a colormap (e.g., 'viridis', 'gray', etc.)
             ax.axis('off')  # Turn off axix
-        fig.colorbar(cax, ax=axs[-1], orientation='vertical')
+            fig.colorbar(cax, ax=ax, orientation='vertical')
         fig.savefig(f'{id}/{png_file_name}', format='png', bbox_inches='tight')
         # value is .25 of maxCycles
     """
@@ -167,11 +173,12 @@ def create_plot(experiment):
     ax = experiment.total_biomass.plot(x='cycle', ax=ax)
     ax.set_ylabel("Biomass (gr.)")
 
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png', bbox_inches='tight')
-    buf.seek(0)
+    plt.savefig('temp.png', format='png', bbox_inches='tight')
     plt.close(fig)
-    return buf
+
+
+    image = plt.imread('temp.png')
+    return image
 
 @app.route('/health')
 def home():

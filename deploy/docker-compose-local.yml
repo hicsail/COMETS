@@ -4,14 +4,12 @@ services:
   comets_backend:
     container_name: comets_backend
     image: hicsail/comets-backend:latest
-    restart: always
     ports:
       - 3014:3000
     env_file:
       - local.env
   mongo:
     image: mongo
-    restart: always
     container_name: "mongo"
     volumes:
       - './dockervolume/mongodb:/data/db'
@@ -20,11 +18,11 @@ services:
   cometspy:
     image: hicsail/comets-flask:latest
     container_name: comets-flask
-    restart: always
     ports:
       - 5007:5000
     env_file:
       - local.env
+      - bucket.env
   frontend:
     container_name: comets-frontend
     image: hicsail/comets-frontend:local
