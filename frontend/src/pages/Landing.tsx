@@ -190,8 +190,7 @@ export function LandingPage() {
                         color: "black",
                       }}
                     >
-                      Click here to start exploring the COMETS Smart Interface!
-
+                      Explore COMETS SI
                     </Typography>
                   </Button>
                 </NavLink>

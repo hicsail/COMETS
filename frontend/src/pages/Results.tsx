@@ -30,7 +30,7 @@ export function ResultsPage() {
         component="main"
         sx={{
           position: "relative",
-          height: "100vh",
+          height: "200vh",
         }}
       >
         <Grid container spacing={1} flexDirection={'column'}>
@@ -59,14 +59,14 @@ export function ResultsPage() {
             </Grid>
           </Grid>
           <Grid item xs={6}>
-            <Box sx={{width:'90vh', height: '25vh', backgroundColor:'#F1EDF6', marginLeft:5, padding: 5, paddingBottom: 0, paddingTop:2}}>
+            <Box sx={{width:'90vh', height: '40vh', backgroundColor:'#F1EDF6', marginLeft:5, padding: 5, paddingBottom: 0, paddingTop:2}}>
               <Typography
                 variant='h1'
                 textAlign={'left'}
                 color={'black'}
                 sx={{}}
               >
-                Total Biomass (Escherichia coli Core)
+                Biomass (Escherichia coli Core)
               </Typography>
               <img
                 src={`${import.meta.env.VITE_COMETS_FLASK}/result/${id}/biomass`}

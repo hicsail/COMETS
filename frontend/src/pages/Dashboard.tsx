@@ -73,11 +73,9 @@ export function DashboardPage() {
               opacity: "45%",
             }}
           >
-            COMETS is a simulation tool used to simulate the growth of microbial
-            based on the culture used as well as the genome of the microbial.
-            Simulating the complex growth patterns takes a lot of computational
-            power and time to complete but COMETS Layout builder allows you to
-            make lightweight simulations within the web application.
+            Simulating the complex growth patterns of bacterial colonies takes
+            a lot of computational power and time to complete but COMETS Layout builder
+            allows you to make lightweight simulations within the web application.
           </Typography>
         </Grid>
 
@@ -93,8 +91,7 @@ export function DashboardPage() {
               opacity: "45%",
             }}
           >
-            Just chose your Model, Setup, and Metabolites. Set Your parameters.
-            Then, you are done!
+            Just chose your Model, Setup, and Metabolites. Set Your parameters. Then, you are done!
           </Typography>
         </Grid>
 

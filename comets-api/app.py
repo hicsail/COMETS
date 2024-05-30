@@ -91,60 +91,117 @@ def get_result(id, source):
         data = dill.load(file)
     if source == 'biomass':
         png_file_name = 'biomass.png'
+
         my_cmap = matplotlib.cm.get_cmap("magma")
         my_cmap.set_bad((0,0,0))
+
         plt.switch_backend('Agg')
+
         images = [data.get_biomass_image('e_coli_core', image_index[0]),
                   data.get_biomass_image('e_coli_core', image_index[1]),
                   data.get_biomass_image('e_coli_core', image_index[2]),
                   data.get_biomass_image('e_coli_core', image_index[3]),
-                  data.get_biomass_image('e_coli_core', image_index[4]),
-                  create_plot(data)]
+                  data.get_biomass_image('e_coli_core', image_index[4])]
 
-        fig, axs = plt.subplots(1, 6, figsize=(20, 4))
-        # Display each image in a subplot
-        index = -1
-        for ax, img in zip(axs, images):
-            index += 1
-            cax = ax.imshow(img, cmap='viridis')  # You can specify a colormap (e.g., 'viridis', 'gray', etc.)
-            ax.axis('off')  # Turn off axix
-            if index == 5:
-                continue
-            fig.colorbar(cax, ax=ax, orientation='vertical')
+        # Create the figure with the grid constraings
+        fig = plt.figure(constrained_layout=True, figsize=(20, 8))
+        gs = fig.add_gridspec(2, 6, width_ratios=[1, 1, 1, 1, 1, 0.25])
+
+        # Display the petri dish images on the first row
+        for index, img in enumerate(images):
+            # Display the subplot in the given row
+            ax = fig.add_subplot(gs[0, index])
+            # Title based on the timestep in hours
+            ax.set_title(str(image_index[index] // 10) + 'h')
+            # Add the image in
+            cax = ax.imshow(img, cmap='viridis')
+            ax.axis('off')
+
+        # Display the color bar on the side
+        ax = fig.add_subplot(gs[0, 5])
+        ax.axis('off')
+        ax.set_title('grams/pixel')
+        fig.colorbar(cax, ax=ax)
+
+        # Now use the remaining space to show the biomass plot
+        plot = create_plot(data)
+        ax = fig.add_subplot(gs[1:, :])
+        ax.set_title('Total Biomass')
+        ax.imshow(plot, cmap='viridis')
+        ax.axis('off')
+
         fig.savefig(f'{id}/{png_file_name}', format='png', bbox_inches='tight')
     elif source == 'metabolite':
         png_file_name = 'metabolite.png'
+
         my_cmap = matplotlib.cm.get_cmap("magma")
         my_cmap.set_bad((0,0,0))
+
         plt.switch_backend('Agg')
+
         images = [data.get_metabolite_image('glc__D_e', image_index[0]),
                   data.get_metabolite_image('glc__D_e', image_index[1]),
                   data.get_metabolite_image('glc__D_e', image_index[2]),
                   data.get_metabolite_image('glc__D_e', image_index[3]),
                   data.get_metabolite_image('glc__D_e', image_index[4])]
+
         fig, axs = plt.subplots(1, 5, figsize=(20, 4))
-        # Display each image in a subplot
-        for ax, img in zip(axs, images):
-            cax = ax.imshow(img, cmap='viridis')  # You can specify a colormap (e.g., 'viridis', 'gray', etc.)
-            ax.axis('off')  # Turn off axix
-            fig.colorbar(cax, ax=ax, orientation='vertical')
+
+        # Create the figure with the grid constraings
+        fig = plt.figure(constrained_layout=True, figsize=(20, 4))
+        gs = fig.add_gridspec(1, 6, width_ratios=[1, 1, 1, 1, 1, 0.25])
+
+        # Display the petri dish images on the first row
+        for index, img in enumerate(images):
+            # Display the subplot in the given row
+            ax = fig.add_subplot(gs[0, index])
+            # Title based on the timestep in hours
+            ax.set_title(str(image_index[index] // 10) + 'h')
+            # Add the image in
+            cax = ax.imshow(img, cmap='viridis')
+            ax.axis('off')
+
+        # Display the color bar on the side
+        ax = fig.add_subplot(gs[0, 5])
+        ax.axis('off')
+        ax.set_title('mmol/pixel')
+        fig.colorbar(cax, ax=ax)
+
         fig.savefig(f'{id}/{png_file_name}', format='png', bbox_inches='tight')
     elif source == 'flux':
         png_file_name = 'flux.png'
+
         my_cmap = matplotlib.cm.get_cmap("magma")
         my_cmap.set_bad((0,0,0))
+
         plt.switch_backend('Agg')
+
         images = [data.get_flux_image('e_coli_core','EX_glc__D_e', image_index[0]),
                     data.get_flux_image('e_coli_core','EX_glc__D_e', image_index[1]),
                     data.get_flux_image('e_coli_core','EX_glc__D_e', image_index[2]),
                     data.get_flux_image('e_coli_core','EX_glc__D_e', image_index[3]),
                     data.get_flux_image('e_coli_core','EX_glc__D_e', image_index[4])]
-        fig, axs = plt.subplots(1, 5, figsize=(20, 4))
-        # Display each image in a subplot
-        for ax, img in zip(axs, images):
-            cax = ax.imshow(img, cmap='viridis')  # You can specify a colormap (e.g., 'viridis', 'gray', etc.)
-            ax.axis('off')  # Turn off axix
-            fig.colorbar(cax, ax=ax, orientation='vertical')
+
+        # Create the figure with the grid constraings
+        fig = plt.figure(constrained_layout=True, figsize=(20, 4))
+        gs = fig.add_gridspec(1, 6, width_ratios=[1, 1, 1, 1, 1, 0.25])
+
+        # Display the petri dish images on the first row
+        for index, img in enumerate(images):
+            # Display the subplot in the given row
+            ax = fig.add_subplot(gs[0, index])
+            # Title based on the timestep in hours
+            ax.set_title(str(image_index[index] // 10) + 'h')
+            # Add the image in
+            cax = ax.imshow(img, cmap='viridis')
+            ax.axis('off')
+
+        # Display the color bar on the side
+        ax = fig.add_subplot(gs[0, 5])
+        ax.axis('off')
+        ax.set_title('mmol/gh')
+        fig.colorbar(cax, ax=ax)
+
         fig.savefig(f'{id}/{png_file_name}', format='png', bbox_inches='tight')
         # value is .25 of maxCycles
     """
