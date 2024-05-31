@@ -1,4 +1,3 @@
-import React from 'react';
 import { Stepper, Step, StepLabel, Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Check from '@mui/icons-material/Check';
@@ -68,8 +67,11 @@ function QontoStepIcon(props: StepIconProps) {
   );
 }
 
+interface FooterStepperProps {
+  activeStep: number;
+};
 
-function FooterStepper({ activeStep }) {
+const FooterStepper: React.FC<FooterStepperProps> = ({ activeStep  }) => {
   return (
     // replace sx with props
     <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>

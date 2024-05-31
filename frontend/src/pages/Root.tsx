@@ -1,5 +1,4 @@
 import {
-  AppBar,
   Box,
   Divider,
   Drawer,
@@ -9,7 +8,6 @@ import {
   ListItemIcon,
   ListItemText,
   Toolbar,
-  Typography,
 } from "@mui/material";
 import { Outlet, NavLink } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";

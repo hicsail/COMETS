@@ -31,12 +31,12 @@ export const LayoutComponent: FC<LayoutComponentProps> = (props) => {
   };
   const handleTextChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    min: number,
-    max: number,
+    _min: number,
+    _max: number,
   ) => {
     if (event.target) {
       if (/^\d*$/.test(event.target.value)) {
-        const vol = parseInt(event.target.value);
+        // const vol = parseInt(event.target.value);
         // if(vol >= min && vol <= max){
         setMediaVol(event.target.value);
         setTextfieldError(false);

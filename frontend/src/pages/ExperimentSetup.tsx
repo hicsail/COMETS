@@ -40,6 +40,7 @@ const mediaOptions: Media[] = [
       mediaConcentration: 0,
     },
   },
+  /*
   {
     name: "Minimal Core Acetate",
     desc: "Example Desc for core acetate",
@@ -84,6 +85,7 @@ const mediaOptions: Media[] = [
       mediaConcentration: 0,
     },
   },
+  */
 ];
 
 const layoutOptions: Layout[] = [
@@ -127,13 +129,14 @@ const modelOptions: MetabolicModel[] = [
     params: {
       demographicNoise: false,
       demographicNoiseAmplitude: 0,
-      uptakeVMax: 0,
-      uptakeKm: 0,
+      uptakeVMax: 10,
+      uptakeKm: 10e-5,
       deathRate: 0,
       biomassLinearDiffusivity: 0,
-      biomassNonlinearDiffusivity: 0,
+      biomassNonlinearDiffusivity: 0.6,
     },
   },
+  /*
   {
     name: "Escherichia coli",
     desc: "Example description for E. Coli model",
@@ -176,7 +179,7 @@ const modelOptions: MetabolicModel[] = [
       biomassNonlinearDiffusivity: 0,
     },
   },
-  
+  */
 ];
 
 type chosenOption = {
@@ -184,20 +187,20 @@ type chosenOption = {
       name: string,
       params: MetabolicModel["params"]
     }[],
-    layout: { 
+    layout: {
       name: string,
       params: Layout["params"] | {}
     } | {},
     media: {
       name: string,
-      params: Media["params"] 
+      params: Media["params"]
     } | {},
     global_parameters: GlobalParameters | {}
 }
 
 
 export function ExperimentSetupPage() {
-  const [layoutExpanded, setLayoutExpanded] = React.useState<string | false>(
+  const [_layoutExpanded, setLayoutExpanded] = React.useState<string | false>(
     false,
   );
   const [mediaExpanded, setMediaExpanded] = React.useState<string | false>(
@@ -206,7 +209,7 @@ export function ExperimentSetupPage() {
   const [modelExpanded, setModelExpanded] = React.useState<string | false>(
     false,
   );
-  const [chosenOptions, setChosenOptions] = useState<chosenOption>(
+  const [_chosenOptions, _setChosenOptions] = useState<chosenOption>(
     {
       models: [],
       layout: {},
@@ -220,10 +223,10 @@ export function ExperimentSetupPage() {
     desc: "Desc of global parameters",
     type: "global_parameters",
     params: {
-      simulatedTime: 0,
-      timeSteps: 0,
-      nutrientDiffusivity: 0,
-      logFrequency: 0,
+      simulatedTime: 10,
+      timeSteps: 100,
+      nutrientDiffusivity: 6e-6,
+      logFrequency: 20,
     },
   });
   const [sidebarItems, setSidebarItems] = useState<SummaryCard[]>([]);
@@ -266,7 +269,7 @@ export function ExperimentSetupPage() {
     // Update the state with the modified array
     setSidebarItems(updatedSidebarItems);
   };
-  
+
   const handleTextChange = (field: string, value: string) => {
     if (/^\d*$/.test(value)) {
       const updatedParams = {
@@ -285,7 +288,7 @@ export function ExperimentSetupPage() {
     }
   };
   const handleAccordionChange =
-    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+    (panel: string) => (_event: React.SyntheticEvent, isExpanded: boolean) => {
       if (panel === "layoutPanel") {
         setLayoutExpanded(isExpanded ? panel : false);
       } else if (panel === "mediaPanel") {
@@ -483,6 +486,9 @@ export function ExperimentSetupPage() {
               sx={{
                 height: "5vh",
               }}
+              inputProps={{
+                step: "0.000000001"
+              }}
             />
           </Box>
           <Box
@@ -508,6 +514,9 @@ export function ExperimentSetupPage() {
               helperText={textfieldError ? "Please input numbers only" : ""}
               sx={{
                 height: "5vh",
+              }}
+              inputProps={{
+                step: "0.000000001"
               }}
             />
           </Box>
@@ -535,8 +544,11 @@ export function ExperimentSetupPage() {
               sx={{
                 height: "5vh",
               }}
+              inputProps={{
+                step: "0.000000001"
+              }}
             />
-          </Box> 
+          </Box>
           <Box
             display={"flex"}
             flexDirection={"row"}
@@ -560,6 +572,9 @@ export function ExperimentSetupPage() {
               helperText={textfieldError ? "Please input numbers only" : ""}
               sx={{
                 height: "5vh",
+              }}
+              inputProps={{
+                step: "0.000000001"
               }}
             />
           </Box>

@@ -4,8 +4,8 @@ import { Model } from 'mongoose';
 import { Job } from 'src/schemas/job.schema';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UpdateJobDto } from './dto/update-job.dto';
-import { HttpService } from '@nestjs/axios';
 import * as nodemailer from 'nodemailer'
+import { ConfigService } from '@nestjs/config';
 
 const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -20,16 +20,18 @@ const transporter = nodemailer.createTransport({
 
 @Injectable()
 export class JobService {
+    private readonly frontendURL = this.configService.getOrThrow<string>('frontend.baseURL');
+
     constructor(
         @InjectModel(Job.name) private jobModel: Model<Job>,
-        private readonly httpService: HttpService
+        private configService: ConfigService
     ) {}
 
     async create(createJobDto: CreateJobDto) : Promise<Job> {
-        
+
         const res = await this.jobModel.create(createJobDto);
         console.log(`http://localhost:5173/results/${res.id}`)
-        
+
         return res;
     }
 
@@ -47,7 +49,7 @@ export class JobService {
             from: "cometssmartinterface@gmail.com",
             to: email,
             subject: "Your COMETS SI simulation has been completed",
-            text: `Click here to view the results of your simulation: http://localhost:5173/results/${id}`
+            text: `Click here to view the results of your simulation: ${this.frontendURL}/results/${id}`
         }
 
         transporter.sendMail(mailOptions, (error, info) => {

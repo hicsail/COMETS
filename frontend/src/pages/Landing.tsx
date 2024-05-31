@@ -32,7 +32,7 @@ export function LandingPage() {
             >
               <Box
                 component="img"
-                src="../../public/comets-logo.jpeg"
+                src="/comets-logo.jpeg"
                 alt="Comets Logo"
                 sx={{
                   width: 63,
@@ -126,7 +126,7 @@ export function LandingPage() {
                   paddingBottom: "5%",
                 }}
               >
-                COMETS is written in Java and is freely available. To facilitate access, we have developed the browser-based COMETS Smart Interface (COMETS-SI). 
+                COMETS is written in Java and is freely available. To facilitate access, we have developed the browser-based COMETS Smart Interface (COMETS-SI).
 
               </Typography>
 
@@ -190,8 +190,7 @@ export function LandingPage() {
                         color: "black",
                       }}
                     >
-                      Click here to start exploring the COMETS Smart Interface!
-
+                      Explore COMETS SI
                     </Typography>
                   </Button>
                 </NavLink>

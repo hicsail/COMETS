@@ -36,7 +36,7 @@ export const NavbarComponent = () => {
           <NavLink to="/" style={{ textDecoration: "none", color: "inherit" }}>
             <Box
               component="img"
-              src="../../public/comets-logo.jpeg"
+              src="/comets-logo.jpeg"
               alt="Comets Logo"
               sx={{
                 width: 63,

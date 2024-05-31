@@ -10,23 +10,33 @@ import { ExpressAdapter } from '@bull-board/express';
 import { DispatcherModule } from './dispatcher/dispatcher.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from './config/configuration';
-import Bull from 'bull';
 import { CometsRequestsModule } from './comets_requests/comets_requests.module';
 import { UsersModule } from './users/users.module';
 
 
 @Module({
   imports: [
-    MongooseModule.forRoot(`mongodb://localhost:27017/comets`), 
+    ConfigModule.forRoot({
+      load: [configuration],
+      isGlobal: true,
+      ignoreEnvVars: false
+    }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        uri: configService.getOrThrow<string>('database.uri')
+      })
+    }),
     BullModule.forRoot({
       redis: {
-        host: 'localhost',
+        host: 'redis',
         port: 6379,
       },
     }),
     BullBoardModule.forRoot({
       route: '/queues',
-      adapter: ExpressAdapter 
+      adapter: ExpressAdapter
     }),
     QueueModule,
     JobModule,

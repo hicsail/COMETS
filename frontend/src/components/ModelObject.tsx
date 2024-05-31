@@ -27,11 +27,11 @@ interface ModelComponentProps {
 const defaultParams: MetabolicModel["params"] = {
   demographicNoise: false,
   demographicNoiseAmplitude: 0,
-  uptakeVMax: 0,
-  uptakeKm: 0,
+  uptakeVMax: 10,
+  uptakeKm: 10e-5,
   deathRate: 0,
   biomassLinearDiffusivity: 0,
-  biomassNonlinearDiffusivity: 0,
+  biomassNonlinearDiffusivity: 0.6,
 };
 
 export const ModelComponent: FC<ModelComponentProps> = (props) => {
@@ -152,6 +152,9 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
                         textfieldError ? "Please input numbers only" : ""
                       }
                       sx={{ marginTop: 2 }}
+                      inputProps={{
+                        step: "0.000000001"
+                      }}
                     />
                     <TextField
                       variant="filled"
@@ -166,6 +169,9 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
                         textfieldError ? "Please input numbers only" : ""
                       }
                       sx={{ marginTop: 2 }}
+                      inputProps={{
+                        step: "0.000000001"
+                      }}
                     />
                     <TextField
                       variant="filled"
@@ -180,6 +186,9 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
                         textfieldError ? "Please input numbers only" : ""
                       }
                       sx={{ marginTop: 2 }}
+                      inputProps={{
+                        step: "0.000000001"
+                      }}
                     />
                     <TextField
                       variant="filled"
@@ -194,6 +203,9 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
                         textfieldError ? "Please input numbers only" : ""
                       }
                       sx={{ marginTop: 2 }}
+                      inputProps={{
+                        step: "0.000000001"
+                      }}
                     />
                     <TextField
                       variant="filled"
@@ -211,6 +223,9 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
                         textfieldError ? "Please input numbers only" : ""
                       }
                       sx={{ marginTop: 2 }}
+                      inputProps={{
+                        step: "0.000000001"
+                      }}
                     />
                     <TextField
                       variant="filled"
@@ -228,6 +243,9 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
                         textfieldError ? "Please input numbers only" : ""
                       }
                       sx={{ marginTop: 2 }}
+                      inputProps={{
+                        step: "0.000000001"
+                      }}
                     />
                     {/* <Button
                       sx={{ marginTop: 2 }}
