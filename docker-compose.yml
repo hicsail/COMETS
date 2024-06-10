@@ -5,6 +5,8 @@ services:
     container_name: comets_backend
     build:
       context: ./backend/
+    env_file:
+      - ./backend/.env
     restart: always
     ports:
       - 3014:3000

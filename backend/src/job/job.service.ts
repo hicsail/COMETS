@@ -30,8 +30,6 @@ export class JobService {
     async create(createJobDto: CreateJobDto) : Promise<Job> {
 
         const res = await this.jobModel.create(createJobDto);
-        console.log(`http://localhost:5173/results/${res.id}`)
-
         return res;
     }
 
