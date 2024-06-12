@@ -93,6 +93,7 @@ def get_result(id, source):
     Metabolite
     {
         metabolite_name: string,
+        metabolite_id: string,
         time_step: num (not yet implemented)
     }
     
@@ -164,11 +165,12 @@ def get_result(id, source):
         fig.colorbar(cax, ax=ax)
 
         # Now use the remaining space to show the biomass plot
-        plot = create_plot(data, 'total_biomass')
-        ax = fig.add_subplot(gs[1:, :])
-        ax.set_title(f'Total Biomass ({model_name})')
-        ax.imshow(plot, cmap='viridis')
-        ax.axis('off')
+        # plot = create_plot(data, 'total_biomass')
+        # print("biomass plot type: ", type(plot))
+        # ax = fig.add_subplot(gs[1:, :])
+        # ax.set_title(f'Total Biomass ({model_name})')
+        # ax.imshow(plot, cmap='viridis')
+        # ax.axis('off')
 
         fig.savefig(f'{id}/{png_file_name}', format='png', bbox_inches='tight')
 
@@ -214,6 +216,7 @@ def get_result(id, source):
 
         # Now use the remaining space to show the biomass plot
         # plot = create_plot(data, 'metabolite_time_series')
+        # print("plot type: ", type(plot))
         # ax = fig.add_subplot(gs[1:, :])
         # ax.set_title(f'Metabolite Time Series ({metabolite_name})')
         # ax.imshow(plot, cmap='viridis')
@@ -283,30 +286,52 @@ def get_result(id, source):
     """
 
     try:
-        return send_from_directory(f'./{id}', png_file_name, as_attachment=True)
+        response = send_from_directory(f'./{id}', png_file_name, as_attachment=True)
+        response.headers['Allow-Control-Access-Origin'] = '*'
+        return response
     except:
         raise Exception('Failed lol')
     # return data
 
-def create_plot(experiment, graph_type):
+# add a route for only getting a graph
+@app.route('/result/graph/<id>/<graph_type>', methods=['GET'])
+@cross_origin()
+def create_plot(graph_type, id):
+    print('hit thing thing')
+    with open(f'{id}/{id}.pkl', 'rb') as file:
+        experiment = dill.load(file)
     image = None
+    file_name = None
     if graph_type == 'total_biomass':
+        file_name = 'total_biomass.png'
+        plt.switch_backend('Agg')
         fig, ax = plt.subplots()
         ax = experiment.total_biomass.plot(x='cycle', ax=ax)
+        print('type for total_biomass: ', type(experiment.total_biomass))
         ax.set_ylabel("Biomass (gr.)")
 
-        plt.savefig('total_biomass.png', format='png', bbox_inches='tight')
+        plt.savefig(f'{id}/{file_name}', format='png', bbox_inches='tight')
         plt.close(fig)
-        image = plt.imread('total_biomass.png')
+        # image = plt.imread('total_biomass.png')
 
-    elif graph_type == 'metobolite_time_series':
+    elif graph_type == 'metabolite_time_series':
+        file_name = 'metabolite_time_series.png'
+        plt.switch_backend('Agg')
         fig, ax = plt.subplots()
-        ax = experiment.metabolite_time_series.plot(x='cycle', ax=ax)
-        ax.set_ylabel("Biomass (gr.)")
-
-        plt.savefig('metabolite_time_series.png', format='png', bbox_inches='tight')
+        ax = experiment.get_metabolite_time_series().plot(x='cycle', ax=ax)
+        ax.set_ylabel("Metabolite time series (gr.)")
+        plt.savefig(f'{id}/metabolite_time_series.png', format='png', bbox_inches='tight')
         plt.close(fig)
-    return image
+        print('done making the plot')
+        # image = plt.imread('metabolite_time_series.png')
+    try:
+        print(file_name)
+        print(id)
+        response = send_from_directory(f'./{id}', file_name, as_attachment=True)
+        response.headers['Allow-Control-Access-Origin'] = '*'
+        return response
+    except:
+        raise Exception('Failed in making graph lol')
 
 @app.route('/health')
 def home():
