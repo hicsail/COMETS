@@ -110,7 +110,7 @@ const layoutOptions: Layout[] = [
     },
   },
   {
-    name: "10 ml Test Tube",
+    name: "Test Tube",
     desc: "Example description for test tube",
     type: "layout",
     min: 1,

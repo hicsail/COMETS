@@ -60,8 +60,19 @@ export class JobService {
     }
 
     async update(updateBody: UpdateJobDto): Promise<Job> {
-        const updatedJob = this.jobModel.findByIdAndUpdate()
+        console.log(updateBody)
+        const update = { 
+            $set: {"fluxes": updateBody.fluxes },
+            
+        }
+        const updatedJob = this.jobModel.findOneAndUpdate({id:updateBody.id}, update)
+        console.log(updatedJob)
         return updatedJob;
+    }
+
+    async getById(id: string): Promise<Job>{
+        const jobDocument = this.jobModel.findOne({id: id});
+        return jobDocument;
     }
 
 }

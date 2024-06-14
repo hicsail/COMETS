@@ -1,4 +1,7 @@
 export class UpdateJobDto {
-    readonly filepath: string
     readonly id: string
+    readonly fluxes: [{
+        model_id: string
+        fluxes: string[]
+    }]
 }

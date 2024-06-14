@@ -30,7 +30,7 @@ import { UsersModule } from './users/users.module';
     }),
     BullModule.forRoot({
       redis: {
-        host: 'redis',
+        host: 'localhost',
         port: 6379,
       },
     }),

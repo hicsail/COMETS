@@ -25,9 +25,13 @@ def translation(name):
     dict = {
         "Escherichia coli Core": "E.Coli Core",
         "Escherichia coli": "E.Coli",
-        "Oxygen (Metabolite)": "o2_e",
-        "Glucose (Metabolite)": "glc__D_e",
-        "Acetate (Metabolite)": "ac_e"
+        "o2_e": "Oxygen (Metabolite)",
+        "nh4_e": "Ammonia (Metabolite)",
+        "h2o_e": "Water (Metabolite)",
+        "h_e" : "Hydrogen (Metabolite)",
+        "pi_e": "Phosphate (Metabolite)",
+        "glc__D_e" : "Glucose (Metabolite)",
+        "ac_e": "Acetate (Metabolite)"
     }
     return dict[name]
 
@@ -214,14 +218,6 @@ def get_result(id, source):
         ax.set_title('mmol/pixel')
         fig.colorbar(cax, ax=ax)
 
-        # Now use the remaining space to show the biomass plot
-        # plot = create_plot(data, 'metabolite_time_series')
-        # print("plot type: ", type(plot))
-        # ax = fig.add_subplot(gs[1:, :])
-        # ax.set_title(f'Metabolite Time Series ({metabolite_name})')
-        # ax.imshow(plot, cmap='viridis')
-        # ax.axis('off')
-
         fig.savefig(f'{id}/{png_file_name}', format='png', bbox_inches='tight')
         
     elif source == 'flux':
@@ -302,6 +298,8 @@ def create_plot(graph_type, id):
         experiment = dill.load(file)
     image = None
     file_name = None
+    print('metabolite time series: ',experiment.get_metabolite_time_series())
+    print('total_biomass: ', experiment.total_biomass)
     if graph_type == 'total_biomass':
         file_name = 'total_biomass.png'
         plt.switch_backend('Agg')
@@ -312,10 +310,10 @@ def create_plot(graph_type, id):
 
         plt.savefig(f'{id}/{file_name}', format='png', bbox_inches='tight')
         plt.close(fig)
-        # image = plt.imread('total_biomass.png')
 
     elif graph_type == 'metabolite_time_series':
         file_name = 'metabolite_time_series.png'
+        
         plt.switch_backend('Agg')
         fig, ax = plt.subplots()
         ax = experiment.get_metabolite_time_series().plot(x='cycle', ax=ax)
@@ -323,7 +321,6 @@ def create_plot(graph_type, id):
         plt.savefig(f'{id}/metabolite_time_series.png', format='png', bbox_inches='tight')
         plt.close(fig)
         print('done making the plot')
-        # image = plt.imread('metabolite_time_series.png')
     try:
         print(file_name)
         print(id)
@@ -341,7 +338,7 @@ def home():
 def process():
     print('Started Processing!')
 
-    os.environ['COMETS_GLOP'] = '/Users/zimlim/Desktop/comets-project/repo/COMETS/comets-api/comets_glop'
+    os.environ['COMETS_GLOP'] = '/Users/zimlim/Desktop/comets-project/comets_glop'
     """
     Files needed to save (8 files in total)
     * biomasslog
@@ -416,7 +413,36 @@ def process():
     comets_layout.set_specific_metabolite(metabolite_used, metabolite_amount)
     # Everything else set constant at 1000
     # Specific metabolite and value will be given by Ilija
-    metabolites_used = ['o2_e', 'nh4_e', 'h2o_e', 'h_e', 'pi_e']
+    metabolites_used = [
+        {
+            "name": translation('o2_e'),
+            "id": 'o2_e'
+        },
+        {
+            "name": translation('nh4_e'),
+            "id": 'nh4_e'
+        },
+        {
+            "name": translation('h2o_e'),
+            "id": 'h2o_e'
+        },
+        {
+            "name": translation('h_e'),
+            "id": 'h_e'
+        },
+        {
+            "name": translation('pi_e'),
+            "id": 'pi_e'
+        },
+        {
+            "name": translation('glc__D_e'),
+            "id": 'glc__D_e'
+        },
+        {
+            "name": translation('ac_e'),
+            "id": 'ac_e'
+        }
+    ]
     # Rich Medium from Zoey
 
     # Minimal Core 
@@ -425,6 +451,7 @@ def process():
     comets_layout.set_specific_metabolite('h2o_e', 1000)
     comets_layout.set_specific_metabolite('h_e', 1000)
     comets_layout.set_specific_metabolite('pi_e', 1000)
+
 
     # Load all models
     
@@ -555,7 +582,7 @@ def process():
     # experiment.total_biomass #
     # experiment.biomass # not using
     # experiment.get_metabolite_time_series() # like total_biomass but for metabolite
-    print("comets model ID arr ",comets_model_id_arr)
+    # print("comets model ID arr ",comets_model_id_arr)
     body = {
             # filepath should be a signed URL made by S3
             "filepath": '',
@@ -574,6 +601,27 @@ def process():
         with open(fileName, 'wb') as file:
             dill.dump(experiment, file)
 
+        # fluxes = experiment.fluxes
+        # print('fluxes: ', fluxes)
+        # print('flux by species',experiment.fluxes_by_species)
+        # Dictionary comprehension to filter keys
+        fluxes = []
+        for i in experiment.fluxes_by_species:
+            filtered_data = {k: v for k, v in experiment.fluxes_by_species[i].items() if 'EX' in k}
+            fluxes_present = []
+            for j in filtered_data:
+                fluxes_present.append(j)
+            fluxes_in_species = {
+                "model_id": i,
+                "fluxes": fluxes_present
+            }
+            fluxes.append(fluxes_in_species)
+        update_body = {
+            "id": job_id,
+            "fluxes": fluxes
+        }
+        req = requests.patch(f'{url}/job/{job_id}', json=update_body)
+        print(req)
         updated_files_list = os.listdir()
 
         files_to_upload = []
