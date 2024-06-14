@@ -5,15 +5,11 @@ import cometspy as c
 import cobra
 import cobra.io
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
 from pylab import *
-import io
 import matplotlib.pyplot as plt
 import matplotlib
 import json
 import numpy as np
-import math
-import pandas
 import requests
 from dill import dumps, loads, dump
 import dill
@@ -21,19 +17,25 @@ import boto3
 from matplotlib import pyplot as plt
 import matplotlib.colors, matplotlib.cm
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
-from matplotlib.figure import Figure
 from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
 
 def translation(name):
     dict = {
-        "Escherichia coli Core": "E.Coli Core"
+        "Escherichia coli Core": "E.Coli Core",
+        "Escherichia coli": "E.Coli",
+        "o2_e": "Oxygen (Metabolite)",
+        "nh4_e": "Ammonia (Metabolite)",
+        "h2o_e": "Water (Metabolite)",
+        "h_e" : "Hydrogen (Metabolite)",
+        "pi_e": "Phosphate (Metabolite)",
+        "glc__D_e" : "Glucose (Metabolite)",
+        "ac_e": "Acetate (Metabolite)"
     }
     return dict[name]
 
 def sendEmail(email, id):
-    print("Email function hit")
     url = os.getenv('BASE_HOST_URL')
     try:
         req = requests.get(f'{url}/job/email/{email}/{id}')
@@ -42,9 +44,7 @@ def sendEmail(email, id):
         raise Exception('Could not send email')
 
 def uploadToS3(comets_result, id, email):
-    print('uploadToS3 function called')
     # comets_result should be an array filled with files created by comets run
-
     # Initiate S3 resource
     s3 = boto3.resource(
         's3',
@@ -67,9 +67,41 @@ def uploadToS3(comets_result, id, email):
         print(f's3 upload failed: {error}')
 
 
-@app.route('/result/<id>/<source>', methods=['GET'])
+@app.route('/result/<id>/<source>', methods=['POST'])
 @cross_origin()
 def get_result(id, source):
+    print('hit get_result func')
+    print(request)
+    if not request.is_json:
+        raise Exception ('No body detected with this request. Include a body to call this endpoint')
+
+    req_data = request.get_json()
+    """
+    Different "source" will have different format for request body
+
+    Biomass
+    {
+        model_id: string,
+        model_name: string,
+        time_step: num (not yet implemented)
+    }
+
+    Flux
+    {
+        model_id: string,
+        model_name: string,
+        flux_name: string,
+        time_step: num (not yet implemented)
+    }
+
+    Metabolite
+    {
+        metabolite_name: string,
+        metabolite_id: string,
+        time_step: num (not yet implemented)
+    }
+    
+    """
 
     s3 = boto3.resource(
         's3',
@@ -85,23 +117,36 @@ def get_result(id, source):
         if not os.path.exists(prefix):
             os.makedirs(os.path.dirname(object.key), exist_ok=True)
         bucket.download_file(object.key, object.key)
-
-    image_index = [20,40,60,80,100]
+    
+    """
+    TODO 
+    Need to replace the image_index with calculations of percentages of the max timeSteps
+    """
+    print('after bucket download')
+    image_index = [20,40,60,80,100] 
     with open(f'{id}/{id}.pkl', 'rb') as file:
         data = dill.load(file)
+    
+    print('before if statement biomass')
     if source == 'biomass':
-        png_file_name = 'biomass.png'
+        print(req_data)
+        model_id = req_data['model_id']
+        model_name = req_data['model_name']
+        
+        print(model_id)
+        print(model_name)
+        png_file_name = f'biomass_{model_id}.png'
+        # png_file_name = f'biomass.png'
 
         my_cmap = matplotlib.cm.get_cmap("magma")
         my_cmap.set_bad((0,0,0))
 
         plt.switch_backend('Agg')
-
-        images = [data.get_biomass_image('e_coli_core', image_index[0]),
-                  data.get_biomass_image('e_coli_core', image_index[1]),
-                  data.get_biomass_image('e_coli_core', image_index[2]),
-                  data.get_biomass_image('e_coli_core', image_index[3]),
-                  data.get_biomass_image('e_coli_core', image_index[4])]
+        images = [data.get_biomass_image(model_id, image_index[0]),
+                  data.get_biomass_image(model_id, image_index[1]),
+                  data.get_biomass_image(model_id, image_index[2]),
+                  data.get_biomass_image(model_id, image_index[3]),
+                  data.get_biomass_image(model_id, image_index[4])]
 
         # Create the figure with the grid constraings
         fig = plt.figure(constrained_layout=True, figsize=(20, 8))
@@ -124,32 +169,38 @@ def get_result(id, source):
         fig.colorbar(cax, ax=ax)
 
         # Now use the remaining space to show the biomass plot
-        plot = create_plot(data)
-        ax = fig.add_subplot(gs[1:, :])
-        ax.set_title('Total Biomass')
-        ax.imshow(plot, cmap='viridis')
-        ax.axis('off')
+        # plot = create_plot(data, 'total_biomass')
+        # print("biomass plot type: ", type(plot))
+        # ax = fig.add_subplot(gs[1:, :])
+        # ax.set_title(f'Total Biomass ({model_name})')
+        # ax.imshow(plot, cmap='viridis')
+        # ax.axis('off')
 
         fig.savefig(f'{id}/{png_file_name}', format='png', bbox_inches='tight')
+
     elif source == 'metabolite':
-        png_file_name = 'metabolite.png'
+        metabolite_name = req_data['metabolite_name'] # used for title of graph
+        metabolite_id = req_data['metabolite_id']       
+       
+        
+        png_file_name = f'metabolite_{metabolite_id.lower()}.png'
 
         my_cmap = matplotlib.cm.get_cmap("magma")
         my_cmap.set_bad((0,0,0))
 
         plt.switch_backend('Agg')
 
-        images = [data.get_metabolite_image('glc__D_e', image_index[0]),
-                  data.get_metabolite_image('glc__D_e', image_index[1]),
-                  data.get_metabolite_image('glc__D_e', image_index[2]),
-                  data.get_metabolite_image('glc__D_e', image_index[3]),
-                  data.get_metabolite_image('glc__D_e', image_index[4])]
+        images = [data.get_metabolite_image(metabolite_id, image_index[0]),
+                  data.get_metabolite_image(metabolite_id, image_index[1]),
+                  data.get_metabolite_image(metabolite_id, image_index[2]),
+                  data.get_metabolite_image(metabolite_id, image_index[3]),
+                  data.get_metabolite_image(metabolite_id, image_index[4])]
 
         fig, axs = plt.subplots(1, 5, figsize=(20, 4))
 
         # Create the figure with the grid constraings
-        fig = plt.figure(constrained_layout=True, figsize=(20, 4))
-        gs = fig.add_gridspec(1, 6, width_ratios=[1, 1, 1, 1, 1, 0.25])
+        fig = plt.figure(constrained_layout=True, figsize=(20, 8))
+        gs = fig.add_gridspec(2, 6, width_ratios=[1, 1, 1, 1, 1, 0.25])
 
         # Display the petri dish images on the first row
         for index, img in enumerate(images):
@@ -168,19 +219,27 @@ def get_result(id, source):
         fig.colorbar(cax, ax=ax)
 
         fig.savefig(f'{id}/{png_file_name}', format='png', bbox_inches='tight')
+        
     elif source == 'flux':
-        png_file_name = 'flux.png'
+        
+        model_id = req_data['model_id']
+        model_name = req_data['model_name']
+        flux_name = req_data['flux_name']
+        flux_id = req_data['flux_id']
+        
+        
+        png_file_name = f'flux_{model_id}_{flux_id}.png'
 
         my_cmap = matplotlib.cm.get_cmap("magma")
         my_cmap.set_bad((0,0,0))
 
         plt.switch_backend('Agg')
 
-        images = [data.get_flux_image('e_coli_core','EX_glc__D_e', image_index[0]),
-                    data.get_flux_image('e_coli_core','EX_glc__D_e', image_index[1]),
-                    data.get_flux_image('e_coli_core','EX_glc__D_e', image_index[2]),
-                    data.get_flux_image('e_coli_core','EX_glc__D_e', image_index[3]),
-                    data.get_flux_image('e_coli_core','EX_glc__D_e', image_index[4])]
+        images = [data.get_flux_image(model_id,flux_id, image_index[0]),
+                    data.get_flux_image(model_id,flux_id, image_index[1]),
+                    data.get_flux_image(model_id,flux_id, image_index[2]),
+                    data.get_flux_image(model_id,flux_id, image_index[3]),
+                    data.get_flux_image(model_id,flux_id, image_index[4])]
 
         # Create the figure with the grid constraings
         fig = plt.figure(constrained_layout=True, figsize=(20, 4))
@@ -204,6 +263,8 @@ def get_result(id, source):
 
         fig.savefig(f'{id}/{png_file_name}', format='png', bbox_inches='tight')
         # value is .25 of maxCycles
+
+
     """
     Options to return from experiment results
 
@@ -221,21 +282,53 @@ def get_result(id, source):
     """
 
     try:
-        return send_from_directory(f'./{id}', png_file_name, as_attachment=True)
+        response = send_from_directory(f'./{id}', png_file_name, as_attachment=True)
+        response.headers['Allow-Control-Access-Origin'] = '*'
+        return response
     except:
         raise Exception('Failed lol')
+    # return data
 
-def create_plot(experiment):
-    fig, ax = plt.subplots()
-    ax = experiment.total_biomass.plot(x='cycle', ax=ax)
-    ax.set_ylabel("Biomass (gr.)")
+# add a route for only getting a graph
+@app.route('/result/graph/<id>/<graph_type>', methods=['GET'])
+@cross_origin()
+def create_plot(graph_type, id):
+    print('hit thing thing')
+    with open(f'{id}/{id}.pkl', 'rb') as file:
+        experiment = dill.load(file)
+    image = None
+    file_name = None
+    print('metabolite time series: ',experiment.get_metabolite_time_series())
+    print('total_biomass: ', experiment.total_biomass)
+    if graph_type == 'total_biomass':
+        file_name = 'total_biomass.png'
+        plt.switch_backend('Agg')
+        fig, ax = plt.subplots()
+        ax = experiment.total_biomass.plot(x='cycle', ax=ax)
+        print('type for total_biomass: ', type(experiment.total_biomass))
+        ax.set_ylabel("Biomass (gr.)")
 
-    plt.savefig('temp.png', format='png', bbox_inches='tight')
-    plt.close(fig)
+        plt.savefig(f'{id}/{file_name}', format='png', bbox_inches='tight')
+        plt.close(fig)
 
-
-    image = plt.imread('temp.png')
-    return image
+    elif graph_type == 'metabolite_time_series':
+        file_name = 'metabolite_time_series.png'
+        
+        plt.switch_backend('Agg')
+        fig, ax = plt.subplots()
+        ax = experiment.get_metabolite_time_series().plot(x='cycle', ax=ax)
+        ax.set_ylabel("Metabolite time series (gr.)")
+        plt.savefig(f'{id}/metabolite_time_series.png', format='png', bbox_inches='tight')
+        plt.close(fig)
+        print('done making the plot')
+    try:
+        print(file_name)
+        print(id)
+        response = send_from_directory(f'./{id}', file_name, as_attachment=True)
+        response.headers['Allow-Control-Access-Origin'] = '*'
+        return response
+    except:
+        raise Exception('Failed in making graph lol')
 
 @app.route('/health')
 def home():
@@ -245,7 +338,7 @@ def home():
 def process():
     print('Started Processing!')
 
-    os.environ['COMETS_GLOP'] = './comets_glop'
+    os.environ['COMETS_GLOP'] = '/Users/zimlim/Desktop/comets-project/comets_glop'
     """
     Files needed to save (8 files in total)
     * biomasslog
@@ -262,18 +355,9 @@ def process():
     """
     # Listing all files currently in current directory to check against
     current_files = os.listdir()
-
-
-
-    # Creating the Job document on MongoDB
-    body = {
-            # filepath should be a signed URL made by S3
-            "filepath": ''
-        }
     url = os.getenv('BASE_HOST_URL')
-    req = requests.post(f'{url}/job/create', body)
-    job_obj = json.loads(req.content)
-    job_id = job_obj["id"]
+    # Creating the Job document on MongoDB
+    
 
 
     data = json.loads(request.data.decode('utf-8').replace("'",'"'))
@@ -282,16 +366,24 @@ def process():
     comets_layout = c.layout()
     comets_params = c.params()
 
+    # Breaking down data into easy-to-read pieces
+    layout = data['layout']
+    media = data['media']
+    models = data['models']
+    global_params = data['global_params']
+    # {'global_params': {'simulatedTime': 1, 'timeSteps': 2, 'nutrientDiffusivity': 0, 'logFrequency': 0}, 'layout': {'name': '9cm Petri Dish Random Lawn', 'volume': 0}, 'models': [{'name': 'Escherichia coli Core', 'demographicNoise': False, 'demographicNoiseAmp': 0, 'vMax': 20, 'Km': 0, 'deathRate': 0, 'linearDiffusivity': 0, 'nonLinearDiffusivity': 0}], 'media': {'name': 'M9 Minimal Glucose', 'concentration': 12}, 'email': 'zimlim@bu.edu'}
 
     # Set all media metabolites constant for now (mmol)
     # Dimensions of petri dish and test tube is different
     """
-    Petri Dish
+    Petri Dish 
     9 cm
     Grid = 100x100
     User gives concentration (mmol/cm3) and volume (ml)
     Formula for glucose
-        height = volume / (3.14 * (3**2))
+        "4.5**2" because 4.5 is the radius for a 9 cm Petri Dish
+        using formula: volume = pi*(r^2)*height 
+        height = volume / (3.14 * (4.5**2))
         glucose or acetate = (spaceWidth**2) * height * concentration
 
     Test Tube
@@ -300,58 +392,127 @@ def process():
         have to change Km (will be set at Global parameter level)
             Km = concentration
     """
-    comets_layout.set_specific_metabolite('glc__D_e', 1e-5)
+    mediaVolume = data['layout']['volume']
+    mediaConcentration = data['media']['concentration']
+    
 
+    # metabolite and its concentration comes from "Choose Media"
+    
+    # Accounting for geometry of different layout types
+    if "Petri Dish" in layout['name']:
+        height = mediaVolume / (3.14 * (4.5**2))
+        metabolite_amount = 0.09 * height * mediaConcentration
+    elif "Test Tube" in layout['name']:
+        metabolite_amount = mediaConcentration * mediaVolume
+    
+    if "Glucose" in media['name']:
+        metabolite_used = 'glc__D_e'
+    elif "Acetate" in media['name']:
+        metabolite_used = 'ac_e'
+
+    comets_layout.set_specific_metabolite(metabolite_used, metabolite_amount)
     # Everything else set constant at 1000
+    # Specific metabolite and value will be given by Ilija
+    metabolites_used = [
+        {
+            "name": translation('o2_e'),
+            "id": 'o2_e'
+        },
+        {
+            "name": translation('nh4_e'),
+            "id": 'nh4_e'
+        },
+        {
+            "name": translation('h2o_e'),
+            "id": 'h2o_e'
+        },
+        {
+            "name": translation('h_e'),
+            "id": 'h_e'
+        },
+        {
+            "name": translation('pi_e'),
+            "id": 'pi_e'
+        },
+        {
+            "name": translation('glc__D_e'),
+            "id": 'glc__D_e'
+        },
+        {
+            "name": translation('ac_e'),
+            "id": 'ac_e'
+        }
+    ]
+    # Rich Medium from Zoey
+
+    # Minimal Core 
     comets_layout.set_specific_metabolite('o2_e', 1000)
     comets_layout.set_specific_metabolite('nh4_e', 1000)
     comets_layout.set_specific_metabolite('h2o_e', 1000)
     comets_layout.set_specific_metabolite('h_e', 1000)
     comets_layout.set_specific_metabolite('pi_e', 1000)
 
+
     # Load all models
-    models = data['models']
+    
     comets_model_arr = []
+    comets_model_id_arr = []
     # E.Coli model is using different path than other models
     for model in models:
-        print("model", model)
-        print()
         load_model = None
-
-        model_name = translation(model['name'])
+        model_name = model['name'].strip().lower()
         # Load each model from either XML file or Cobra
         """
-        Need to add more cases to this if/else statement with other model names
+        TODO
+        Replace load_model with appropriate models once model files are received from Ilija
         """
-        if model_name == 'E.Coli Core':
+        if model_name == 'escherichia coli core':
             load_model = cobra.io.load_model("textbook")
-
+        elif model_name == 'escherichia coli':
+            load_model = cobra.io.load_model("textbook")
+        elif model_name == 'nitrosomonas europaea':
+            load_model = cobra.io.load_model("textbook")
+        elif model_name == 'nitrobacter winogradskyi':
+            load_model = cobra.io.load_model("textbook")
+        else:
+            raise Exception(f'No model found with name: {model_name}')
+        
         comets_model = c.model(load_model)
-
         # Set each model parameters
-        comets_model.neutral_drift_flag = True # model['demographicNoise']
-        comets_model.add_neutral_drift_parameter(0.000001) # model['demographicNoiseAmp']
-        comets_model.add_nonlinear_diffusion_parameters(0.0, 600000e-6, 1.0, 1.0,0.0) # (model['linearDiffusivity], model[nonLinearDiffusivity], 1.0, 1.0, 0.0)
-        """
-        ---Keeping this part commented out for now due to Demo---
-        comets_model.change_km(model['Km'])
-        comets_model.change_vmax(model['vMax'])
-        """
+        comets_model.neutral_drift_flag = model['demographicNoise']
+        # if demographicNoise is false, dont set the next parameter
+        comets_model.add_neutral_drift_parameter(model['demographicNoiseAmp'])
+        comets_model.add_nonlinear_diffusion_parameters(float(model['linearDiffusivity']), float(model['nonLinearDiffusivity']), 1.0, 1.0, 0.0)
+        # comets_model.change_km('some sort of string',model['Km'])
+        # comets_model.change_vmax('some sort of string',model['vMax'])
 
         # All models share same value
         comets_model.change_bounds('EX_glc__D_e', -1000, 1000)
         comets_model.change_bounds('EX_ac_e', -1000, 1000)
-
+        
+        # Changing model Id if there's the same model added before
+        model_id = comets_model.id
+        iteration = 1
+        while comets_model.id in [model['model_id'] for model in comets_model_id_arr]:
+            comets_model.id = f'{model_id}_{iteration}'
+            iteration += 1
+            
+    
         # Add models to array and to comets layout
+        model_info_obj = {
+            "name": model_name,
+            "model_id": comets_model.id
+        }
+        print(model_info_obj)
         comets_model_arr.append(comets_model)
+        comets_model_id_arr.append(model_info_obj)
 
-
+    # print('model_id_arr: ', comets_model_id_arr)
     # Create layout
-    layout = data['layout']
     comets_layout.grid = [101,101] # constant?
     initi_population =[]
     layout_name = layout['name'].lower().replace('(','').replace(')','').replace(" ", "")
-    print("layout_name", layout_name)
+    # print("layout_name", layout_name)
     if  layout_name == '9cmpetridishcentercolony':
 
         upper_bound = comets_layout.grid[0] - 1
@@ -369,9 +530,6 @@ def process():
 
         number_of_innoculates=100
         upper_bound = comets_layout.grid[0] - 1
-        """
-
-        """
 
         for i in range(np.int(number_of_innoculates*1.28)):
             x=int(upper_bound*np.random.random())
@@ -388,31 +546,54 @@ def process():
             model.initial_pop = initi_population
             comets_layout.add_model(model)
     else:
-        print('Default case')
-
-
+        raise Exception(f"No layout found with associated name {layout['name']}")
     # Create media
-
+    
     comets_params.set_param('numRunThreads', 1)
-    comets_params.set_param('timeStep', 0.1) # timeStep = simulatedTime / maxCycles (number of steps)
-    comets_params.set_param('maxCycles', 100) # Leave it as it is
-    comets_params.set_param('spaceWidth',0.09) # 0.09 for petri dish, 0.05 for test tube
+    comets_params.set_param('timeStep', floor(global_params['simulatedTime']/global_params['timeSteps'])) # timeStep = simulatedTime / maxCycles (number of steps) //might want to change variable name for timeSteps to maxCycles
+    comets_params.set_param('maxCycles', global_params['timeSteps']) 
+    if(layout_name == 'testtube'): # 0.09 for petri dish, 0.05 for test tube
+        comets_params.set_param('spaceWidth',0.05) 
+    else:
+        comets_params.set_param('spaceWidth',0.09)
     comets_params.set_param('maxSpaceBiomass', 100)
-    comets_params.set_param('BiomassLogRate', 10)
-    comets_params.set_param('MediaLogRate', 10)
-    comets_params.set_param("FluxLogRate", 10)
+    """
+    TODO 
+    take input from request body 
+    """
+    comets_params.set_param('Vmax', 10)
+    comets_params.set_param('Km', 1e-7)
+    
+    comets_params.set_param('BiomassLogRate', global_params['logFrequency'])
+    comets_params.set_param('MediaLogRate', global_params['logFrequency'])
+    comets_params.set_param("FluxLogRate", global_params['logFrequency'])
     comets_params.set_param('ExchangeStyle','Monod Style')
-    comets_params.set_param('defaultDiffConst',6.0E-6)
+    # comets_params.set_param('defaultDiffConst',6.0E-6)
+    comets_params.set_param('defaultDiffConst', global_params['nutrientDiffusivity'])
     comets_params.set_param('biomassMotionStyle', 'ConvNonlin Diffusion 2D')
     comets_params.set_param('writeBiomassLog', True)
     comets_params.set_param('writeTotalBiomassLog', True)
     comets_params.set_param("writeFluxLog", True)
     comets_params.set_param('writeMediaLog', True)
     comets_params.set_param('comets_optimizer', 'GLOP')
-
     # Create the experiment
     experiment = c.comets(comets_layout, comets_params)
+    # print("fluxes: ", experiment.fluxes) #list of all fluxes. Filter them by the ones that start with "EX" and visualize (image not graph)
+    # experiment.total_biomass #
+    # experiment.biomass # not using
+    # experiment.get_metabolite_time_series() # like total_biomass but for metabolite
+    # print("comets model ID arr ",comets_model_id_arr)
+    body = {
+            # filepath should be a signed URL made by S3
+            "filepath": '',
+            "model_info": comets_model_id_arr,
+            "metabolites": metabolites_used
 
+        }
+    print(url)
+    req = requests.post(f'{url}/job/create', json=body)
+    job_obj = json.loads(req.content)
+    job_id = job_obj["id"]
     # Run the simulation
     try:
         experiment.run(False)
@@ -420,6 +601,27 @@ def process():
         with open(fileName, 'wb') as file:
             dill.dump(experiment, file)
 
+        # fluxes = experiment.fluxes
+        # print('fluxes: ', fluxes)
+        # print('flux by species',experiment.fluxes_by_species)
+        # Dictionary comprehension to filter keys
+        fluxes = []
+        for i in experiment.fluxes_by_species:
+            filtered_data = {k: v for k, v in experiment.fluxes_by_species[i].items() if 'EX' in k}
+            fluxes_present = []
+            for j in filtered_data:
+                fluxes_present.append(j)
+            fluxes_in_species = {
+                "model_id": i,
+                "fluxes": fluxes_present
+            }
+            fluxes.append(fluxes_in_species)
+        update_body = {
+            "id": job_id,
+            "fluxes": fluxes
+        }
+        req = requests.patch(f'{url}/job/{job_id}', json=update_body)
+        print(req)
         updated_files_list = os.listdir()
 
         files_to_upload = []
@@ -433,7 +635,7 @@ def process():
         print(experiment.run_output)
         raise Exception('Not working', experiment.run_output)
 
-        """
+    """
         available methods to call from "experiment"
 
         """

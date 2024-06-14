@@ -35,12 +35,13 @@ export const LayoutComponent: FC<LayoutComponentProps> = (props) => {
     _max: number,
   ) => {
     if (event.target) {
-      if (/^\d*$/.test(event.target.value)) {
+      if (/^\d*\.?\d*$/.test(event.target.value)) {
         // const vol = parseInt(event.target.value);
         // if(vol >= min && vol <= max){
         setMediaVol(event.target.value);
         setTextfieldError(false);
-        props.value.params.mediaVolume = parseInt(event.target.value);
+        props.value.params.mediaVolume = parseFloat(event.target.value);
+        
         // }else{
         //   setTextfieldError(true);
         // }

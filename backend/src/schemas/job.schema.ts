@@ -13,7 +13,25 @@ export class Job extends Document {
 
   @Prop({ type: String})
   filepath: string
-  
+
+  @Prop({ type: [Object] })
+  model_info: {
+    name: string
+    model_id: string
+  }[]
+
+  @Prop({ type: [Object] })
+  metabolites: {
+    name: string
+    metabolite_id: string
+  }
+
+  @Prop({ type: [Object] })
+  fluxes: {
+    name: string
+    flux_id: string
+  }
+
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);

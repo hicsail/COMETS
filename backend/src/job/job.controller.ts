@@ -32,6 +32,12 @@ export class JobController {
     }
     @Patch('/:id')
     async update(@Body() updateBody: UpdateJobDto ): Promise<Job> {
+        console.log(updateBody)
         return this.jobService.update(updateBody)
+    }
+
+    @Get('/:id')
+    async getById(@Param('id') id: string){
+        return this.jobService.getById(id)
     }
 }
