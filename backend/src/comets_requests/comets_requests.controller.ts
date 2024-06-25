@@ -9,7 +9,7 @@ export class CometsRequestsController {
   constructor(private readonly cometsRequestsService: CometsRequestsService) {}
 
   @Post()
-  async create(@Body() createCometsRequestDto: CreateCometsRequestDto) {
+  async create(@Body() createCometsRequestDto: any) {
     return this.cometsRequestsService.create(createCometsRequestDto);
   }
 

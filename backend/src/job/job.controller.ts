@@ -25,10 +25,10 @@ export class JobController {
         return this.jobService.purge()
     }
 
-    @Get('/email/:email/:id')
-    async sendEmail(@Param('email') email: string, @Param('id') id: string){
+    @Get('/email/:email/:id/:status')
+    async sendEmail(@Param('email') email: string, @Param('id') id: string, @Param('status') status: string){
         console.log(email, id)
-        return this.jobService.sendEmail(email, id)
+        return this.jobService.sendEmail(email, id, status)
     }
     @Patch('/:id')
     async update(@Body() updateBody: UpdateJobDto ): Promise<Job> {

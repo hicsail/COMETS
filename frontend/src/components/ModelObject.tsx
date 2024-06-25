@@ -26,15 +26,16 @@ interface ModelComponentProps {
 
 const defaultParams: MetabolicModel["params"] = {
   demographicNoise: false,
-  demographicNoiseAmplitude: 0,
+  demographicNoiseAmplitude: 0.001,
   uptakeVMax: 10,
   uptakeKm: 10e-5,
-  deathRate: 0,
-  biomassLinearDiffusivity: 0,
+  deathRate: 0.001,
+  biomassLinearDiffusivity: 0.001,
   biomassNonlinearDiffusivity: 0.6,
 };
 
 export const ModelComponent: FC<ModelComponentProps> = (props) => {
+  console.log(props.modelOptions)
   const [selectedOption, setSelectedOption] = useState<MetabolicModel | null>();
   const [modelParams, setModelParams] =
     useState<MetabolicModel["params"]>(defaultParams);
@@ -48,9 +49,9 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
     }
   };
   const handleTextChange = (field: string, value: string) => {
-    if (/^\d*$/.test(value)) {
-      setModelParams({ ...modelParams, [field]: parseInt(value) });
-      props.value.params = { ...modelParams, [field]: parseInt(value) };
+    if (/^\d*\.?\d*$/.test(value)) {
+      setModelParams({ ...modelParams, [field]: parseFloat(value) });
+      props.value.params = { ...modelParams, [field]: parseFloat(value) };
       setTextfieldError(false);
     } else {
       setTextfieldError(true);
@@ -62,12 +63,11 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
   };
 
   return (
-    <>
       <Box component="form" noValidate autoComplete="off" width={"100%"}>
         <FormGroup>
           {props.modelOptions.map((option, index) => {
             return (
-              <>
+              <Box key={index} display={"flex"} flexDirection={'column'}>
                 <FormControlLabel
                   sx={{ marginTop: 2 }}
                   key={index}
@@ -158,40 +158,6 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
                     />
                     <TextField
                       variant="filled"
-                      label="Uptake Vmax"
-                      type="number"
-                      value={modelParams.uptakeVMax}
-                      onChange={(event) =>
-                        handleTextChange("uptakeVMax", event.target.value)
-                      }
-                      error={textfieldError}
-                      helperText={
-                        textfieldError ? "Please input numbers only" : ""
-                      }
-                      sx={{ marginTop: 2 }}
-                      inputProps={{
-                        step: "0.000000001"
-                      }}
-                    />
-                    <TextField
-                      variant="filled"
-                      label="Uptake Km"
-                      type="number"
-                      value={modelParams.uptakeKm}
-                      onChange={(event) =>
-                        handleTextChange("uptakeKm", event.target.value)
-                      }
-                      error={textfieldError}
-                      helperText={
-                        textfieldError ? "Please input numbers only" : ""
-                      }
-                      sx={{ marginTop: 2 }}
-                      inputProps={{
-                        step: "0.000000001"
-                      }}
-                    />
-                    <TextField
-                      variant="filled"
                       label="Death Rate"
                       type="number"
                       value={modelParams.deathRate}
@@ -258,11 +224,10 @@ export const ModelComponent: FC<ModelComponentProps> = (props) => {
                   </>
                 )}
                 <Divider />
-              </>
+              </Box>
             );
           })}
         </FormGroup>
       </Box>
-    </>
   );
 };

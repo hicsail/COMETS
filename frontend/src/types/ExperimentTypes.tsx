@@ -56,6 +56,8 @@ export type GlobalParameters = {
     timeSteps: number;
     nutrientDiffusivity: number;
     logFrequency: number;
+    vMax: number;
+    km: number;
   };
 };
 
