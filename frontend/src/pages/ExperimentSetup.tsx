@@ -424,6 +424,37 @@ export function ExperimentSetupPage() {
           </Accordion>
 
           <Accordion
+            expanded={mediaExpanded === "mediaPanel"}
+            onChange={handleAccordionChange("mediaPanel")}
+            sx={{ marginTop: 1 }}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="mediaPanelbh-content"
+              id="mediaPanelbh-header"
+              sx={{ backgroundColor: "#CCCCFF", height: "5vh" }}
+            >
+              <Typography variant="h4">Choose media</Typography>
+              <Divider variant="fullWidth" />
+            </AccordionSummary>
+            <AccordionDetails>
+              <MediaComponent
+                mediaOptions={mediaOptions}
+                value={mediaChoice}
+                onChange={setMediaChoice}
+              />
+            </AccordionDetails>
+            <Button
+              sx={{ margin: 2, width: "90%", backgroundColor: "#CCCCFF" }}
+              variant="outlined"
+              onClick={() => handleSubmit(mediaChoice)}
+              disabled={isMediaPicked}
+            >
+              ADD MEDIA
+            </Button>
+          </Accordion>
+
+          <Accordion
             expanded={modelExpanded === "modelPanel"}
             onChange={handleAccordionChange("modelPanel")}
             sx={{ marginTop: 1 }}
@@ -452,38 +483,6 @@ export function ExperimentSetupPage() {
               disabled={numOfModel >= maxModel}
             >
               ADD MODEL
-            </Button>
-          </Accordion>
-
-
-          <Accordion
-            expanded={mediaExpanded === "mediaPanel"}
-            onChange={handleAccordionChange("mediaPanel")}
-            sx={{ marginTop: 1 }}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="mediaPanelbh-content"
-              id="mediaPanelbh-header"
-              sx={{ backgroundColor: "#CCCCFF", height: "5vh" }}
-            >
-              <Typography variant="h4">Choose media</Typography>
-              <Divider variant="fullWidth" />
-            </AccordionSummary>
-            <AccordionDetails>
-              <MediaComponent
-                mediaOptions={mediaOptions}
-                value={mediaChoice}
-                onChange={setMediaChoice}
-              />
-            </AccordionDetails>
-            <Button
-              sx={{ margin: 2, width: "90%", backgroundColor: "#CCCCFF" }}
-              variant="outlined"
-              onClick={() => handleSubmit(mediaChoice)}
-              disabled={isMediaPicked}
-            >
-              ADD MEDIA
             </Button>
           </Accordion>
         </Grid>

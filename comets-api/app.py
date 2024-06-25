@@ -90,7 +90,6 @@ def translation(name):
     return dict[name]
 
 def sendEmail(email, id, status):
-    print('in send email: ',email, id)
     url = os.getenv('BASE_HOST_URL')
     try:
         req = requests.get(f'{url}/job/email/{email}/{id}/{status}')
@@ -177,21 +176,17 @@ def get_result(id, source):
     TODO 
     Need to replace the image_index with calculations of percentages of the max timeSteps
     """
-    print('after bucket download')
     image_index = [20,40,60,80,100] 
     with open(f'{id}/{id}.pkl', 'rb') as file:
         data = dill.load(file)
     
-    print('before if statement biomass')
     if source == 'biomass':
-        print(req_data)
         model_id = req_data['model_id']
         model_name = req_data['model_name']
         
         print(model_id)
         print(model_name)
         png_file_name = f'biomass_{model_id}.png'
-        # png_file_name = f'biomass.png'
 
         my_cmap = matplotlib.cm.get_cmap("magma")
         my_cmap.set_bad((0,0,0))
@@ -339,19 +334,15 @@ def get_result(id, source):
 @app.route('/result/graph/<id>/<graph_type>', methods=['GET'])
 @cross_origin()
 def create_plot(graph_type, id):
-    print('hit thing thing')
     with open(f'{id}/{id}.pkl', 'rb') as file:
         experiment = dill.load(file)
     image = None
     file_name = None
-    print('metabolite time series: ',experiment.get_metabolite_time_series())
-    print('total_biomass: ', experiment.total_biomass)
     if graph_type == 'total_biomass':
         file_name = 'total_biomass.png'
         plt.switch_backend('Agg')
         fig, ax = plt.subplots()
         ax = experiment.total_biomass.plot(x='cycle', ax=ax)
-        print('type for total_biomass: ', type(experiment.total_biomass))
         ax.set_ylabel("Biomass (gr.)")
 
         plt.savefig(f'{id}/{file_name}', format='png', bbox_inches='tight')
@@ -366,10 +357,7 @@ def create_plot(graph_type, id):
         ax.set_ylabel("Metabolite time series (gr.)")
         plt.savefig(f'{id}/metabolite_time_series.png', format='png', bbox_inches='tight')
         plt.close(fig)
-        print('done making the plot')
     try:
-        print(file_name)
-        print(id)
         response = send_from_directory(f'./{id}', file_name, as_attachment=True)
         response.headers['Allow-Control-Access-Origin'] = '*'
         return response
@@ -407,7 +395,6 @@ def process():
 
 
     data = json.loads(request.data.decode('utf-8').replace("'",'"'))
-    print("data", data)
     requester_email = data['email']
     comets_layout = c.layout()
     comets_params = c.params()
@@ -530,7 +517,6 @@ def process():
             "name": model_name,
             "model_id": comets_model.id
         }
-        print(model_info_obj)
         comets_model_arr.append(comets_model)
         comets_model_id_arr.append(model_info_obj)
 
@@ -538,7 +524,6 @@ def process():
     comets_layout.grid = [101,101] # constant?
     initi_population =[]
     layout_name = layout['name'].lower().replace('(','').replace(')','').replace(" ", "")
-    # print("layout_name", layout_name)
     if  layout_name == '9cmpetridishcentercolony':
 
         upper_bound = comets_layout.grid[0] - 1
@@ -602,7 +587,6 @@ def process():
     comets_params.set_param("writeFluxLog", True)
     comets_params.set_param('writeMediaLog', True)
     comets_params.set_param('comets_optimizer', 'GLOP')
-    print('all_params: ',comets_params.all_params)
     # Create the experiment
     experiment = c.comets(comets_layout, comets_params)
     body = {
@@ -612,7 +596,6 @@ def process():
             "metabolites": metabolites_used
 
         }
-    print(url)
     req = requests.post(f'{url}/job/create', json=body)
     job_obj = json.loads(req.content)
     job_id = job_obj["id"]
@@ -640,18 +623,15 @@ def process():
             "fluxes": fluxes
         }
         req = requests.patch(f'{url}/job/{job_id}', json=update_body)
-        print(req)
         updated_files_list = os.listdir()
 
         files_to_upload = []
         for file in updated_files_list:
             if file not in current_files:
                 files_to_upload.append(file)
-        # print(files_to_upload)
         uploadToS3(files_to_upload, job_id, requester_email)
 
     except:
-        print('received data: ', data)
         sendEmail(requester_email, '01234fxxdvxfaaow', 'failure')
         print(experiment.run_output)
         raise Exception('Not working', experiment.run_output)
