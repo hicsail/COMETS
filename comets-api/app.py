@@ -23,7 +23,7 @@ app = Flask(__name__)
 
 # 136 unique metabolites
 rich_medium_metabolites = [
-    'MNXM730135_e',
+ 'MNXM730135_e',
  'MNXM9_e',
  'MNXM726711_e',
  'MNXM731166_e',
@@ -372,7 +372,7 @@ def home():
 def process():
     print('Started Processing!')
 
-    os.environ['COMETS_GLOP'] = '/Users/zimlim/Desktop/comets-project/comets_glop'
+    os.environ['COMETS_GLOP'] = './comets_glop'
     """
     Files needed to save (8 files in total)
     * biomasslog
@@ -520,6 +520,7 @@ def process():
         comets_model_arr.append(comets_model)
         comets_model_id_arr.append(model_info_obj)
 
+
     # Create layout
     comets_layout.grid = [101,101] # constant?
     initi_population =[]
@@ -542,7 +543,7 @@ def process():
         number_of_innoculates=100
         upper_bound = comets_layout.grid[0] - 1
 
-        for i in range(np.int(number_of_innoculates*1.28)):
+        for i in range(int(number_of_innoculates*1.28)):
             x=int(upper_bound*np.random.random())
             y=int(upper_bound*np.random.random())
             if (x-(upper_bound/2))**2+(y-(upper_bound/2))**2<((upper_bound/2)-1)**2:
@@ -597,7 +598,9 @@ def process():
 
         }
     req = requests.post(f'{url}/job/create', json=body)
+    
     job_obj = json.loads(req.content)
+    print(job_obj)
     job_id = job_obj["id"]
     # Run the simulation
     try:
