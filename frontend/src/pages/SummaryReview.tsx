@@ -83,8 +83,10 @@ export function SummaryReviewPage() {
     body['models'] = models;
     console.log('models: ',models)
     console.log("body: ", body.models)
-
-    axios.post(`${import.meta.env.VITE_COMETS_BACKEND}/comets-request`, (body)).then((ret) => {console.log(ret)})
+    // const headers = {
+    //   'content-type': 'application/json'
+    // }
+    axios.post(`${import.meta.env.VITE_COMETS_BACKEND}/comets-request`, body ).then((ret) => {console.log(ret)})
     // console.log(res)
   }
 

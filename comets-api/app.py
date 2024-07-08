@@ -589,7 +589,7 @@ def process():
     comets_params.set_param('writeMediaLog', True)
     comets_params.set_param('comets_optimizer', 'GLOP')
     # Create the experiment
-    experiment = c.comets(comets_layout, comets_params)
+    experiment = c.comets(comets_layout, comets_params, './sim_files/')
     body = {
             # filepath should be a signed URL made by S3
             "filepath": '',
