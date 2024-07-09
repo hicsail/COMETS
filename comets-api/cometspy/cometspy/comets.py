@@ -156,7 +156,7 @@ class comets:
         """
         self.classpath_pieces = {}
 
-        self.classpath_pieces['junit1'] = glob.glob(self.COMETS_GLOP +
+        self.classpath_pieces['junit12'] = glob.glob(self.COMETS_GLOP +
                                                    '/lib/junit' + '/**/*junit*',
                                                    recursive=True)[0]
         self.classpath_pieces['hamcrest'] = glob.glob(self.COMETS_GLOP +
@@ -220,7 +220,7 @@ class comets:
         print('yes')
         self.classpath_pieces['glop_lib'] = ":".join(glob.glob(self.COMETS_GLOP + '/comets_glop_lib/*.jar'))
         self.classpath_pieces['or-tools'] = ":".join(glob.glob(self.COMETS_GLOP + '/lib/or-tools/**/*jar'))
-        self.classpath_pieces['or-tools-arm64'] = ":".join(glob.glob(self.COMETS_GLOP + '/or-tools/arm64/*jar'))
+        self.classpath_pieces['or-tools-arm64'] = ":".join(glob.glob(self.COMETS_GLOP + '/lib/or-tools/arm64/*jar'))
 
 
     def __build_and_set_classpath(self):
