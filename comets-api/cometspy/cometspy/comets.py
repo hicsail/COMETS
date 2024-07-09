@@ -156,7 +156,7 @@ class comets:
         """
         self.classpath_pieces = {}
 
-        self.classpath_pieces['junit12'] = glob.glob(self.COMETS_GLOP +
+        self.classpath_pieces['junit'] = glob.glob(self.COMETS_GLOP +
                                                    '/lib/junit' + '/**/*junit*',
                                                    recursive=True)[0]
         self.classpath_pieces['hamcrest'] = glob.glob(self.COMETS_GLOP +
