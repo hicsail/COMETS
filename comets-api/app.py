@@ -182,10 +182,7 @@ def get_result(id, source):
     
     if source == 'biomass':
         model_id = req_data['model_id']
-        model_name = req_data['model_name']
-        
-        print(model_id)
-        print(model_name)
+        model_name = req_data['model_name']   
         png_file_name = f'biomass_{model_id}.png'
 
         my_cmap = matplotlib.cm.get_cmap("magma")
@@ -373,6 +370,8 @@ def process():
     print('Started Processing!')
 
     os.environ['COMETS_GLOP'] = './comets_glop'
+    print(os.environ['COMETS_GLOP'])
+    
     """
     Files needed to save (8 files in total)
     * biomasslog
@@ -590,6 +589,9 @@ def process():
     comets_params.set_param('comets_optimizer', 'GLOP')
     # Create the experiment
     experiment = c.comets(comets_layout, comets_params, './sim_files/')
+    experiment.set_classpath('bin', './comets_glop/bin/comets_scr.jar')
+    
+    print(experiment.classpath_pieces)
     body = {
             # filepath should be a signed URL made by S3
             "filepath": '',
@@ -604,7 +606,7 @@ def process():
     job_id = job_obj["id"]
     # Run the simulation
     try:
-        experiment.run(False)
+        experiment.run()
         fileName = f'{job_id}.pkl'
         with open(fileName, 'wb') as file:
             dill.dump(experiment, file)
@@ -635,7 +637,7 @@ def process():
         uploadToS3(files_to_upload, job_id, requester_email)
 
     except:
-        sendEmail(requester_email, '01234fxxdvxfaaow', 'failure')
+        # sendEmail(requester_email, '01234fxxdvxfaaow', 'failure')
         print(experiment.run_output)
         raise Exception('Not working', experiment.run_output)
 

@@ -128,6 +128,7 @@ class comets:
         #                                            '/bin')[0])[0]
         self.VERSION = 'comets_scr'
 
+        print("first print: ", self.VERSION)
         # set default classpaths, which users may change
         self.__build_default_classpath_pieces()
         self.__build_and_set_classpath()
@@ -155,7 +156,7 @@ class comets:
         """
         self.classpath_pieces = {}
 
-        self.classpath_pieces['junit'] = glob.glob(self.COMETS_GLOP +
+        self.classpath_pieces['junit1'] = glob.glob(self.COMETS_GLOP +
                                                    '/lib/junit' + '/**/*junit*',
                                                    recursive=True)[0]
         self.classpath_pieces['hamcrest'] = glob.glob(self.COMETS_GLOP +
@@ -214,8 +215,7 @@ class comets:
         self.classpath_pieces['bin'] = (self.COMETS_GLOP +
                                         '/bin/' + self.VERSION + '.jar')
 
-        print(self.VERSION)
-
+        print('bin: ', self.classpath_pieces['bin'])
         # building classpath pieces for COMETS Glop
         print('yes')
         self.classpath_pieces['glop_lib'] = ":".join(glob.glob(self.COMETS_GLOP + '/comets_glop_lib/*.jar'))
@@ -236,7 +236,7 @@ class comets:
             classpath = ':'.join(paths)
 
         self.JAVA_CLASSPATH = classpath
-        print(classpath)
+        print('classpath: ',classpath)
 
     def __test_classpath_pieces(self):
         ''' checks to see if there is a file at each location in classpath
