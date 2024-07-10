@@ -370,7 +370,7 @@ def process():
     print('Started Processing!')
 
     os.environ['COMETS_GLOP'] = './comets_glop'
-    print(os.environ['COMETS_GLOP'])
+    
     
     """
     Files needed to save (8 files in total)
@@ -588,10 +588,13 @@ def process():
     comets_params.set_param('writeMediaLog', True)
     comets_params.set_param('comets_optimizer', 'GLOP')
     # Create the experiment
-    experiment = c.comets(comets_layout, comets_params, './sim_files/')
+    experiment = c.comets(comets_layout, comets_params)
     experiment.set_classpath('bin', './comets_glop/bin/comets_scr.jar')
     
+    print()
+    print('from app.py')
     print(experiment.classpath_pieces)
+    print()
     body = {
             # filepath should be a signed URL made by S3
             "filepath": '',
@@ -602,7 +605,7 @@ def process():
     req = requests.post(f'{url}/job/create', json=body)
     
     job_obj = json.loads(req.content)
-    print(job_obj)
+    # print(job_obj)
     job_id = job_obj["id"]
     # Run the simulation
     try:

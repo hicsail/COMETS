@@ -215,9 +215,7 @@ class comets:
         self.classpath_pieces['bin'] = (self.COMETS_GLOP +
                                         '/bin/' + self.VERSION + '.jar')
 
-        print('bin: ', self.classpath_pieces['bin'])
         # building classpath pieces for COMETS Glop
-        print('yes')
         self.classpath_pieces['glop_lib'] = ":".join(glob.glob(self.COMETS_GLOP + '/comets_glop_lib/*.jar'))
         self.classpath_pieces['or-tools'] = ":".join(glob.glob(self.COMETS_GLOP + '/lib/or-tools/**/*jar'))
         self.classpath_pieces['or-tools-arm64'] = ":".join(glob.glob(self.COMETS_GLOP + '/lib/or-tools/arm64/*jar'))
@@ -234,7 +232,8 @@ class comets:
 
         else:
             classpath = ':'.join(paths)
-
+        print()
+        print('from ./comets_glop/comets.py \n')
         self.JAVA_CLASSPATH = classpath
         print('classpath: ',classpath)
 
