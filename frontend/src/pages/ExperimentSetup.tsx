@@ -275,6 +275,7 @@ export function ExperimentSetupPage() {
         if (numOfModel <= 0) {
           setNumOfModel(0);
           setIsModelPicked(false);
+          console.log(isModelPicked)
         }
         break;
       case "Media":
@@ -343,6 +344,7 @@ export function ExperimentSetupPage() {
         setNumOfModel((prevCount) => prevCount + 1);
         if (numOfModel > 0) {
           setIsModelPicked(true);
+
         }
         break;
       case "Media":
