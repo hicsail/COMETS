@@ -119,16 +119,12 @@ class comets:
 
     def __init__(self, layout,
                  parameters, relative_dir : str =''):
-
         # define instance variables
         self.working_dir = os.getcwd() + '/' + relative_dir
-        self.COMETS_GLOP = os.environ['COMETS_GLOP']
         self.COMETS_GLOP = os.environ['COMETS_GLOP']
         # self.VERSION = os.path.splitext(os.listdir(os.environ['COMETS_GLOP'] +
         #                                            '/bin')[0])[0]
         self.VERSION = 'comets_scr'
-
-        print("first print: ", self.VERSION)
         # set default classpaths, which users may change
         self.__build_default_classpath_pieces()
         self.__build_and_set_classpath()
@@ -142,13 +138,13 @@ class comets:
         # dealing with output files
         self.parameters.set_param("useLogNameTimeStamp", False)
         self.parameters.set_param("TotalBiomassLogName",
-                                  "totalbiomasslog" + '_' + hex(id(self)))
+                                  f"{relative_dir}totalbiomasslog" + '_' + hex(id(self)))
         self.parameters.set_param("BiomassLogName",
-                                  "biomasslog" + '_' + hex(id(self)))
+                                  f"{relative_dir}biomasslog" + '_' + hex(id(self)))
         self.parameters.set_param("FluxLogName",
-                                  "fluxlog" + '_' + hex(id(self)))
+                                  f"{relative_dir}fluxlog" + '_' + hex(id(self)))
         self.parameters.set_param("MediaLogName",
-                                  "medialog" + '_' + hex(id(self)))
+                                  f"{relative_dir}medialog" + '_' + hex(id(self)))
 
     def __build_default_classpath_pieces(self):
         """
@@ -219,7 +215,7 @@ class comets:
         self.classpath_pieces['glop_lib'] = ":".join(glob.glob(self.COMETS_GLOP + '/comets_glop_lib/*.jar'))
         self.classpath_pieces['or-tools'] = ":".join(glob.glob(self.COMETS_GLOP + '/lib/or-tools/**/*jar'))
         self.classpath_pieces['or-tools-arm64'] = ":".join(glob.glob(self.COMETS_GLOP + '/lib/or-tools/arm64/*jar'))
-
+        
 
     def __build_and_set_classpath(self):
         ''' builds the JAVA_CLASSPATH from the pieces currently in
@@ -232,10 +228,8 @@ class comets:
 
         else:
             classpath = ':'.join(paths)
-        print()
-        print('from ./comets_glop/comets.py \n')
+
         self.JAVA_CLASSPATH = classpath
-        print('classpath: ',classpath)
 
     def __test_classpath_pieces(self):
         ''' checks to see if there is a file at each location in classpath
@@ -350,18 +344,16 @@ class comets:
         c_global = self.working_dir + '.current_global' + to_append
         c_package = self.working_dir + '.current_package' + to_append
         c_script = self.working_dir + '.current_script' + to_append
-
         self.layout.write_necessary_files(self.working_dir, to_append)
 
         # self.layout.write_layout(self.working_dir + '.current_layout')
         self.parameters.write_params(c_global, c_package)
-
         if os.path.isfile(c_script):
             os.remove(c_script)
         with open(c_script, 'a') as f:
-            f.write('load_comets_parameters ' + '.current_global' + to_append + '\n')
-            f.writelines('load_package_parameters ' + '.current_package' + to_append + '\n')
-            f.writelines('load_layout ' + '.current_layout' + to_append)
+            f.write('load_comets_parameters ' + f'{self.working_dir}.current_global' + to_append + '\n')
+            f.writelines('load_package_parameters ' + f'{self.working_dir}.current_package' + to_append + '\n')
+            f.writelines('load_layout ' + f'{self.working_dir}.current_layout' + to_append)
 
         if platform.system() == 'Windows':
             self.cmd = ('\"' + self.COMETS_GLOP +
@@ -370,7 +362,6 @@ class comets:
                         '\"')
         else:
             # simulate
-            print(self.JAVA_CLASSPATH)
             self.cmd = ('java -classpath ' + self.JAVA_CLASSPATH +
                         # ' -Djava.library.path=' + self.D_JAVA_LIB_PATH +
                         ' edu.bu.segrelab.comets.Comets -loader' +
@@ -378,7 +369,7 @@ class comets:
                         ' -script "' + c_script + '"')
 
         p = sp.Popen(self.cmd,
-                     cwd = self.working_dir,
+                     cwd = self.working_dir + '/..',
                      shell=True, stdout=sp.PIPE, stderr=sp.STDOUT)
 
         self.run_output, self.run_errors = p.communicate()
@@ -396,7 +387,7 @@ class comets:
         # Read total biomass output
         if self.parameters.all_params['writeTotalBiomassLog']:
             tbmf = _readlines_file(
-                self.working_dir + self.parameters.all_params['TotalBiomassLogName'])
+                self.working_dir + '../'+ self.parameters.all_params['TotalBiomassLogName'])
             tbmf = [x.replace(",",".") for x in tbmf] # for systems that use commas as decimal place
             self.total_biomass = pd.DataFrame([re.split(r'\t+', x.strip())
                                                for x in tbmf],
@@ -405,51 +396,51 @@ class comets:
             self.total_biomass = self.total_biomass.astype('float')
             self.total_biomass.cycle = self.total_biomass.cycle.astype('int')
             if delete_files:
-                os.remove(self.working_dir + self.parameters.all_params['TotalBiomassLogName'])
+                os.remove(self.working_dir + '../' + self.parameters.all_params['TotalBiomassLogName'])
 
         # Read flux
         if self.parameters.all_params['writeFluxLog']:
 
             max_rows = 4 + max([len(m.reactions) for m in self.layout.models])
 
-            self.fluxes = pd.read_csv(self.working_dir + self.parameters.all_params['FluxLogName'],
+            self.fluxes = pd.read_csv(self.working_dir + '../' + self.parameters.all_params['FluxLogName'],
                                       delim_whitespace=True,
                                       header=None, names=range(max_rows))
             # deal with commas-as-decimals
             if any([isinstance(self.fluxes.iloc[0,i], str) for i in range(self.fluxes.shape[1])]):
-                self.fluxes = pd.read_csv(self.working_dir + self.parameters.all_params['FluxLogName'],
+                self.fluxes = pd.read_csv(self.working_dir + '../' + self.parameters.all_params['FluxLogName'],
                                       decimal = ",", delim_whitespace=True,
                                       header=None, names=range(max_rows))
             if delete_files:
-                os.remove(self.working_dir + self.parameters.all_params['FluxLogName'])
+                os.remove(self.working_dir + '../' + self.parameters.all_params['FluxLogName'])
             self.__build_readable_flux_object()
 
         # Read media logs
         if self.parameters.all_params['writeMediaLog']:
-            self.media = pd.read_csv(self.working_dir + self.parameters.all_params[
+            self.media = pd.read_csv(self.working_dir + '../' + self.parameters.all_params[
                 'MediaLogName'], delim_whitespace=True, names=('metabolite',
                                                                'cycle', 'x',
                                                                'y',
                                                                'conc_mmol'))
             # deal with commas-as-decimals
             if isinstance(self.media.loc[0, "conc_mmol"], str):
-                self.media = pd.read_csv(self.working_dir + self.parameters.all_params[
+                self.media = pd.read_csv(self.working_dir + '../' + self.parameters.all_params[
                 'MediaLogName'],
                     decimal = ",", delim_whitespace=True, names=('metabolite',
                                                                'cycle', 'x',
                                                                'y',
                                                                'conc_mmol'))
             if delete_files:
-                os.remove(self.working_dir + self.parameters.all_params['MediaLogName'])
+                os.remove(self.working_dir + '../' + self.parameters.all_params['MediaLogName'])
 
         # Read spatial biomass log
         if self.parameters.all_params['writeBiomassLog']:
-            self.biomass = pd.read_csv(self.working_dir + self.parameters.all_params[
+            self.biomass = pd.read_csv(self.working_dir + '../' + self.parameters.all_params[
                 'BiomassLogName'], header=None, delimiter=r'\s+', names=['cycle', 'x', 'y',
                                                                          'species', 'biomass'])
             # deal with commas-as-decimals
             if isinstance(self.biomass.loc[0,"biomass"], str):
-                self.biomass = pd.read_csv(self.working_dir + self.parameters.all_params[
+                self.biomass = pd.read_csv(self.working_dir + '../' + self.parameters.all_params[
                 'BiomassLogName'], header=None,
                     decimal = ",",
                     delimiter=r'\s+', names=['cycle', 'x', 'y','species', 'biomass'])
@@ -458,7 +449,7 @@ class comets:
             self.biomass['species'] = [sp[:-4] if '.cmd' in sp else sp for sp in self.biomass.species]
 
             if delete_files:
-                os.remove(self.working_dir + self.parameters.all_params['BiomassLogName'])
+                os.remove(self.working_dir + '../' + self.parameters.all_params['BiomassLogName'])
 
         # Read evolution-related logs
         if 'evolution' in list(self.parameters.all_params.keys()):
@@ -471,7 +462,7 @@ class comets:
                                                     'Mutation',
                                                     'Species'])
                 if delete_files:
-                    os.remove(self.working_dir + genotypes_out_file)
+                    os.remove(self.working_dir + '../' + genotypes_out_file)
 
         # Read specific media output
         if self.parameters.all_params['writeSpecificMediaLog']:
@@ -482,7 +473,7 @@ class comets:
                 self.specific_media = pd.read_csv(spec_med_file, decimal = ",",delimiter=r'\s+')
 
             if delete_files:
-                os.remove(self.working_dir + self.parameters.all_params['SpecificMediaLogName'])
+                os.remove(self.working_dir + '../' + self.parameters.all_params['SpecificMediaLogName'])
 
         # clean workspace
         if delete_files:

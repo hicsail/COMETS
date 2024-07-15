@@ -110,8 +110,8 @@ def uploadToS3(comets_result, id, email):
     bucket = s3.Bucket(os.getenv('BUCKET_NAME'))
     try:
         for file in comets_result:
-            print(file)
-            fileKey = f'{id}/{file}'
+            print(file[12:])
+            fileKey = f'{id}/{file[12:]}'
             upload = bucket.put_object(Body=open(file, 'rb'), Key=fileKey)
             os.remove(file)
         # Update job state and send email
@@ -387,7 +387,7 @@ def process():
     * .current_global
     """
     # Listing all files currently in current directory to check against
-    current_files = os.listdir()
+    current_files = os.listdir('./sim_files')
     url = os.getenv('BASE_HOST_URL')
     # Creating the Job document on MongoDB
     
@@ -588,13 +588,9 @@ def process():
     comets_params.set_param('writeMediaLog', True)
     comets_params.set_param('comets_optimizer', 'GLOP')
     # Create the experiment
-    experiment = c.comets(comets_layout, comets_params)
+    experiment = c.comets(comets_layout, comets_params, 'sim_files/')
     experiment.set_classpath('bin', './comets_glop/bin/comets_scr.jar')
-    
-    print()
-    print('from app.py')
-    print(experiment.classpath_pieces)
-    print()
+
     body = {
             # filepath should be a signed URL made by S3
             "filepath": '',
@@ -609,8 +605,8 @@ def process():
     job_id = job_obj["id"]
     # Run the simulation
     try:
-        experiment.run()
-        fileName = f'{job_id}.pkl'
+        experiment.run(False)
+        fileName = f'./sim_files/{job_id}.pkl'
         with open(fileName, 'wb') as file:
             dill.dump(experiment, file)
              
@@ -631,12 +627,13 @@ def process():
             "fluxes": fluxes
         }
         req = requests.patch(f'{url}/job/{job_id}', json=update_body)
-        updated_files_list = os.listdir()
+        updated_files_list = os.listdir('./sim_files')
 
         files_to_upload = []
         for file in updated_files_list:
             if file not in current_files:
-                files_to_upload.append(file)
+                files_to_upload.append(f'./sim_files/{file}')
+        print('files to upload: ', files_to_upload)
         uploadToS3(files_to_upload, job_id, requester_email)
 
     except:
