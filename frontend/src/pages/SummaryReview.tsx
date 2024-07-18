@@ -81,19 +81,14 @@ export function SummaryReviewPage() {
 
     })
     body['models'] = models;
-    console.log('models: ',models)
-    console.log("body: ", body.models)
-    // const headers = {
-    //   'content-type': 'application/json'
-    // }
+    console.log(`${import.meta.env.VITE_COMETS_BACKEND}`)
     axios.post(`${import.meta.env.VITE_COMETS_BACKEND}/comets-request`, body ).then((ret) => {console.log(ret)})
-    // console.log(res)
+    
   }
 
   const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target) {
       if (/\S+@\S+\.\S+/.test(event.target.value)) {
-        console.log(event.target.value);
         setEmail(event.target.value);
       } else {
         setTextfieldError(true);
