@@ -9,7 +9,7 @@ async function bootstrap() {
   app.use(bodyParser.urlencoded({ limit: '500mb', extended: true })); // For URL-encoded payloads
   app.enableCors({
     'origin': configService.getOrThrow<string>('cors.allowedOrigin'),
-    'methods': ['GET', 'POST'],
+    'methods': ['GET', 'POST', 'OPTIONS'],
     'credentials': true,
     'preflightContinue': true
   });
