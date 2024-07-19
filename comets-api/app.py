@@ -168,16 +168,17 @@ def get_result(id, source):
     prefix = id
 
     for object in bucket.objects.filter(Prefix = id):
-        if not os.path.exists(prefix):
-            os.makedirs(os.path.dirname(object.key), exist_ok=True)
-        bucket.download_file(object.key, object.key)
+        print(os.path.exists(f'./sim_files/{prefix}'))
+        if not os.path.exists(f'./sim_files/{prefix}'):
+            os.makedirs(os.path.dirname(f'./sim_files/{object.key}'), exist_ok=True)
+        bucket.download_file(object.key, f'./sim_files/{object.key}')
     
     """
     TODO 
     Need to replace the image_index with calculations of percentages of the max timeSteps
     """
     image_index = [20,40,60,80,100] 
-    with open(f'{id}/{id}.pkl', 'rb') as file:
+    with open(f'./sim_files/{id}/{id}.pkl', 'rb') as file:
         data = dill.load(file)
     
     if source == 'biomass':
@@ -214,7 +215,7 @@ def get_result(id, source):
         ax.axis('off')
         ax.set_title('grams/pixel')
         fig.colorbar(cax, ax=ax)
-        fig.savefig(f'{id}/{png_file_name}', format='png', bbox_inches='tight')
+        fig.savefig(f'./sim_files/{id}/{png_file_name}', format='png', bbox_inches='tight')
 
     elif source == 'metabolite':
         metabolite_name = req_data['metabolite_name'] # ud for title of graph
@@ -256,7 +257,7 @@ def get_result(id, source):
         ax.set_title('mmol/pixel')
         fig.colorbar(cax, ax=ax)
 
-        fig.savefig(f'{id}/{png_file_name}', format='png', bbox_inches='tight')
+        fig.savefig(f'./sim_files/{id}/{png_file_name}', format='png', bbox_inches='tight')
         
     elif source == 'flux':
         
@@ -299,7 +300,7 @@ def get_result(id, source):
         ax.set_title('mmol/gh')
         fig.colorbar(cax, ax=ax)
 
-        fig.savefig(f'{id}/{png_file_name}', format='png', bbox_inches='tight')
+        fig.savefig(f'./sim_files/{id}/{png_file_name}', format='png', bbox_inches='tight')
         # value is .25 of maxCycles
 
 
@@ -320,7 +321,7 @@ def get_result(id, source):
     """
 
     try:
-        response = send_from_directory(f'./{id}', png_file_name, as_attachment=True)
+        response = send_from_directory(f'./sim_files/{id}', png_file_name, as_attachment=True)
         response.headers['Allow-Control-Access-Origin'] = '*'
         return response
     except:
@@ -331,7 +332,7 @@ def get_result(id, source):
 @app.route('/result/graph/<id>/<graph_type>', methods=['GET'])
 @cross_origin()
 def create_plot(graph_type, id):
-    with open(f'{id}/{id}.pkl', 'rb') as file:
+    with open(f'./sim_files/{id}/{id}.pkl', 'rb') as file:
         experiment = dill.load(file)
     image = None
     file_name = None
@@ -355,7 +356,7 @@ def create_plot(graph_type, id):
         plt.savefig(f'{id}/metabolite_time_series.png', format='png', bbox_inches='tight')
         plt.close(fig)
     try:
-        response = send_from_directory(f'./{id}', file_name, as_attachment=True)
+        response = send_from_directory(f'./sim_files/{id}', file_name, as_attachment=True)
         response.headers['Allow-Control-Access-Origin'] = '*'
         return response
     except:
