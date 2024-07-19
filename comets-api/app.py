@@ -110,7 +110,6 @@ def uploadToS3(comets_result, id, email):
     bucket = s3.Bucket(os.getenv('BUCKET_NAME'))
     try:
         for file in comets_result:
-            print(file[12:])
             fileKey = f'{id}/{file[12:]}'
             upload = bucket.put_object(Body=open(file, 'rb'), Key=fileKey)
             os.remove(file)
@@ -124,8 +123,6 @@ def uploadToS3(comets_result, id, email):
 @app.route('/result/<id>/<source>', methods=['POST'])
 @cross_origin()
 def get_result(id, source):
-    print('hit get_result func')
-    print(request)
     if not request.is_json:
         raise Exception ('No body detected with this request. Include a body to call this endpoint')
 
@@ -168,7 +165,6 @@ def get_result(id, source):
     prefix = id
 
     for object in bucket.objects.filter(Prefix = id):
-        print(os.path.exists(f'./sim_files/{prefix}'))
         if not os.path.exists(f'./sim_files/{prefix}'):
             os.makedirs(os.path.dirname(f'./sim_files/{object.key}'), exist_ok=True)
         bucket.download_file(object.key, f'./sim_files/{object.key}')
@@ -602,7 +598,6 @@ def process():
     req = requests.post(f'{url}/job/create', json=body)
     
     job_obj = json.loads(req.content)
-    # print(job_obj)
     job_id = job_obj["id"]
     # Run the simulation
     try:
@@ -634,7 +629,6 @@ def process():
         for file in updated_files_list:
             if file not in current_files:
                 files_to_upload.append(f'./sim_files/{file}')
-        print('files to upload: ', files_to_upload)
         uploadToS3(files_to_upload, job_id, requester_email)
 
     except:
