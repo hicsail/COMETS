@@ -126,13 +126,11 @@ export function ResultsPage() {
     setImageLoading(true);
     fetch(builtUrl, {
       method: "POST",
-      mode: "cors",
       cache: "default",
       headers: {
         "Content-Type": "application/json",
       },
       redirect: "follow",
-      referrerPolicy: "origin-when-cross-origin",
       body: JSON.stringify(builtBody)
     })
     .then(response => {
@@ -156,13 +154,11 @@ export function ResultsPage() {
     setGraphLoading(true);
     fetch(builtUrl, {
       method: "GET",
-      mode: "cors",
       cache: "default",
       headers: {
         "Content-Type": "application/json",
       },
       redirect: "follow",
-      referrerPolicy: "origin-when-cross-origin"
     })
     .then(response => {
       if(!response.ok){
@@ -194,13 +190,11 @@ export function ResultsPage() {
     fetch(url,
       {
         method: "GET", // *GET, POST, PUT, DELETE, etc.
-        mode: "cors", // no-cors, *cors, same-origin
         cache: "default", // *default, no-cache, reload, force-cache, only-if-cached
         headers: {
           "Content-Type": "application/json",
         },
         redirect: "follow", // manual, *follow, error
-        referrerPolicy: "origin-when-cross-origin",
       }
     )
     .then((response) => {
@@ -226,13 +220,11 @@ export function ResultsPage() {
       fetch(urls, 
         {
           method: "POST", // *GET, POST, PUT, DELETE, etc.
-          mode: "cors", // no-cors, *cors, same-origin
           cache: "default", // *default, no-cache, reload, force-cache, only-if-cached
           headers: {
             "Content-Type": "application/json",
           },
-          redirect: "follow", // manual, *follow, error
-          referrerPolicy: "origin-when-cross-origin", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+          redirect: "follow", // manual, *follow, errorc
           body: JSON.stringify(req_body), // body data type must match "Content-Type" header
         })
         .then(response => {
@@ -265,13 +257,11 @@ export function ResultsPage() {
     fetch(graphUrl, 
       {
         method: "GET", // *GET, POST, PUT, DELETE, etc.
-        mode: "cors", // no-cors, *cors, same-origin
         cache: "default", // *default, no-cache, reload, force-cache, only-if-cached
         headers: {
           "Content-Type": "application/json",
         },
         redirect: "follow", // manual, *follow, error
-        referrerPolicy: "origin-when-cross-origin", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
       })
       .then(response => {
         if(!response.ok){
