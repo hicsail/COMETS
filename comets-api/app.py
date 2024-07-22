@@ -339,7 +339,7 @@ def create_plot(graph_type, id):
         ax = experiment.total_biomass.plot(x='cycle', ax=ax)
         ax.set_ylabel("Biomass (gr.)")
 
-        plt.savefig(f'{id}/{file_name}', format='png', bbox_inches='tight')
+        plt.savefig(f'./sim_files/{id}/{file_name}', format='png', bbox_inches='tight')
         plt.close(fig)
 
     elif graph_type == 'metabolite_time_series':
@@ -349,7 +349,7 @@ def create_plot(graph_type, id):
         fig, ax = plt.subplots()
         ax = experiment.get_metabolite_time_series().plot(x='cycle', ax=ax)
         ax.set_ylabel("Metabolite time series (gr.)")
-        plt.savefig(f'{id}/metabolite_time_series.png', format='png', bbox_inches='tight')
+        plt.savefig(f'./sim_files/{id}/metabolite_time_series.png', format='png', bbox_inches='tight')
         plt.close(fig)
     try:
         response = send_from_directory(f'./sim_files/{id}', file_name, as_attachment=True)
