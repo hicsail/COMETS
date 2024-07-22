@@ -11,7 +11,8 @@ async function bootstrap() {
     'origin': configService.getOrThrow<string>('cors.allowedOrigin'),
     'methods': ['GET', 'POST', 'OPTIONS'],
     'credentials': true,
-    'preflightContinue': true
+    'preflightContinue': true,
+    'optionsSuccessStatus': 200
   });
   await app.listen(3000);
 

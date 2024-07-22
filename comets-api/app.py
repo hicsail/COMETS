@@ -326,7 +326,7 @@ def get_result(id, source):
 
 # add a route for only getting a graph
 @app.route('/result/graph/<id>/<graph_type>', methods=['GET'])
-@cross_origin()
+@cross_origin(origins='*')
 def create_plot(graph_type, id):
     with open(f'./sim_files/{id}/{id}.pkl', 'rb') as file:
         experiment = dill.load(file)
@@ -354,6 +354,7 @@ def create_plot(graph_type, id):
     try:
         response = send_from_directory(f'./sim_files/{id}', file_name, as_attachment=True)
         response.headers['Allow-Control-Access-Origin'] = '*'
+        response.headers['Access-Control-Allow-Origin'] =  '*'
         return response
     except:
         raise Exception('Failed in making graph lol')
@@ -362,7 +363,7 @@ def create_plot(graph_type, id):
 def home():
     return "Server is up and running"
 
-@app.route('/process', methods=['POST'])
+@app.route('/process', methods=['POST', 'OPTIONS'])
 def process():
     print('Started Processing!')
 
