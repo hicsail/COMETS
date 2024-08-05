@@ -329,6 +329,7 @@ export function ExperimentSetupPage() {
     if (item === null) {
       return;
     }
+    console.log('comets type: ',cometsType(item))
     // make a shallow copy to pass by value
     const i = { ...item };
     const sidebarItem: SummaryCard = {

@@ -18,6 +18,8 @@ from matplotlib import pyplot as plt
 import matplotlib.colors, matplotlib.cm
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from flask_cors import CORS, cross_origin
+import time
+from boto3.s3.transfer import TransferConfig
 
 app = Flask(__name__)
 
@@ -106,12 +108,26 @@ def uploadToS3(comets_result, id, email):
         aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
         endpoint_url=os.getenv('ENDPOINT_URL')
     )
+    s3_client = boto3.client('s3',
+        aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+        aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
+        endpoint_url=os.getenv('ENDPOINT_URL'))
     # Initiate specific bucket on OpenStack
     bucket = s3.Bucket(os.getenv('BUCKET_NAME'))
+    GB = 1024 ** 3
+    config = TransferConfig(multipart_threshold=5*GB)
+
+    print('all files to upload: ',comets_result)
     try:
         for file in comets_result:
             fileKey = f'{id}/{file[12:]}'
+            if 'pkl' in file:
+
+                print('pkl file size: ',os.path.getsize(file))
+                s3_client.upload_file(file, os.getenv('BUCKET_NAME'), os.getenv('AWS_ACCESS_KEY_ID'), Config=config)
+                
             upload = bucket.put_object(Body=open(file, 'rb'), Key=fileKey)
+            print(f'file {file} uploaded: ', upload)
             os.remove(file)
         # Update job state and send email
         sendEmail(email, id, "success")
@@ -167,7 +183,8 @@ def get_result(id, source):
     for object in bucket.objects.filter(Prefix = id):
         if not os.path.exists(f'./sim_files/{prefix}'):
             os.makedirs(os.path.dirname(f'./sim_files/{object.key}'), exist_ok=True)
-        bucket.download_file(object.key, f'./sim_files/{object.key}')
+        if not os.path.exists(f'./sim_files/{object.key}'):
+            bucket.download_file(object.key, f'./sim_files/{object.key}')
     
     """
     TODO 
@@ -401,64 +418,6 @@ def process():
     global_params = data['global_params']
     # {'global_params': {'simulatedTime': 1, 'timeSteps': 2, 'nutrientDiffusivity': 0, 'logFrequency': 0}, 'layout': {'name': '9cm Petri Dish Random Lawn', 'volume': 0}, 'models': [{'name': 'Escherichia coli Core', 'demographicNoise': False, 'demographicNoiseAmp': 0, 'vMax': 20, 'Km': 0, 'deathRate': 0, 'linearDiffusivity': 0, 'nonLinearDiffusivity': 0}], 'media': {'name': 'M9 Minimal Glucose', 'concentration': 12}, 'email': 'zimlim@bu.edu'}
 
-    # Set all media metabolites constant for now (mmol)
-    # Dimensions of petri dish and test tube is different
-    """
-    Petri Dish 
-    9 cm
-    Grid = 100x100
-    User gives concentration (mmol/cm3) and volume (ml)
-    Formula for glucose
-        "4.5**2" because 4.5 is the radius for a 9 cm Petri Dish
-        using formula: volume = pi*(r^2)*height 
-        height = volume / (3.14 * (4.5**2))
-        glucose or acetate = (spaceWidth**2) * height * concentration
-
-    Test Tube
-        glucose or acetate = concentration * volume
-
-        have to change Km (will be set at Global parameter level)
-            Km = concentration
-    """
-    mediaVolume = data['layout']['volume']
-    mediaConcentration = data['media']['concentration']
-    
-
-    # metabolite and its concentration comes from "Choose Media"
-    
-    # Accounting for geometry of different layout types
-    if "Petri Dish" in layout['name']:
-        height = mediaVolume / (3.14 * (4.5**2))
-        metabolite_amount = 0.09 * height * mediaConcentration
-    elif "Test Tube" in layout['name']:
-        metabolite_amount = mediaConcentration * mediaVolume
-    
-    metabolites_used = []
-    if "Minimal" in media['name']:
-
-        metabolite_lists = minimal_core_metabolites
-        if "Glucose" in media['name']:
-            metabolite_used = 'glc__D_e'
-            comets_layout.set_specific_metabolite('ac_e', 1000)
-        elif "Acetate" in media['name']:
-            metabolite_used = 'ac_e'
-            comets_layout.set_specific_metabolite('glc__D_e', 1000)
-        comets_layout.set_specific_metabolite(metabolite_used, metabolite_amount)
-
-    elif "Rich" in media['name']:
-        metabolite_lists = rich_medium_metabolites
-
-    for metabolite in metabolite_lists:
-        comets_layout.set_specific_metabolite(metabolite, 1000)
-        # When Rich Media Metabolite dictionary is available, name can be passed thru "translation()"
-        metabolites_used.append({
-            "name": metabolite,
-            "id": metabolite
-        })
-
-    
-
-
     # Load all models
     
     comets_model_arr = []
@@ -514,6 +473,69 @@ def process():
         }
         comets_model_arr.append(comets_model)
         comets_model_id_arr.append(model_info_obj)
+
+
+     # Set all media metabolites constant for now (mmol)
+    # Dimensions of petri dish and test tube is different
+    """
+    Petri Dish 
+    9 cm
+    Grid = 100x100
+    User gives concentration (mmol/cm3) and volume (ml)
+    Formula for glucose
+        "4.5**2" because 4.5 is the radius for a 9 cm Petri Dish
+        using formula: volume = pi*(r^2)*height 
+        height = volume / (3.14 * (4.5**2))
+        glucose or acetate = (spaceWidth**2) * height * concentration
+
+    Test Tube
+        glucose or acetate = concentration * volume
+
+        have to change Km (will be set at Global parameter level)
+            Km = concentration
+    """
+    mediaVolume = data['layout']['volume']
+    mediaConcentration = data['media']['concentration']
+    
+
+    # metabolite and its concentration comes from "Choose Media"
+    
+    # Accounting for geometry of different layout types
+    if "Petri Dish" in layout['name']:
+        height = mediaVolume / (3.14 * (4.5**2))
+        metabolite_amount = 0.09 * height * mediaConcentration
+    elif "Test Tube" in layout['name']:
+        metabolite_amount = mediaConcentration * mediaVolume
+    
+
+
+    metabolites_used = []
+    metabolite_lists = []
+
+    if "Minimal" in media['name']:
+
+        metabolite_lists = minimal_core_metabolites
+        if "Glucose" in media['name']:
+            metabolite_used = 'glc__D_e'
+            comets_layout.set_specific_metabolite('ac_e', 1000)
+        elif "Acetate" in media['name']:
+            metabolite_used = 'ac_e'
+            comets_layout.set_specific_metabolite('glc__D_e', 1000)
+        comets_layout.set_specific_metabolite(metabolite_used, metabolite_amount)
+
+    elif "Rich" in media['name']:
+        temp_layout = c.layout(comets_model_arr)
+
+        metabolite_lists = temp_layout.media.metabolite
+        print('rich medium metabolite: ', metabolite_lists)
+
+    for metabolite in metabolite_lists:
+        comets_layout.set_specific_metabolite(metabolite, 1000)
+        # When Rich Media Metabolite dictionary is available, name can be passed thru "translation()"
+        metabolites_used.append({
+            "name": metabolite,
+            "id": metabolite
+        })
 
 
     # Create layout

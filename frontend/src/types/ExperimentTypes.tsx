@@ -101,5 +101,5 @@ const media = [
   "Minimal Core Acetate",
   "M9 Minimal Glucose",
   "M9 Minimal Acetate",
-  "LB Rich",
+  "Rich Media",
 ];
