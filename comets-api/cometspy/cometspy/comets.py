@@ -122,8 +122,6 @@ class comets:
         # define instance variables
         self.working_dir = os.getcwd() + '/' + relative_dir
         self.COMETS_GLOP = os.environ['COMETS_GLOP']
-        # self.VERSION = os.path.splitext(os.listdir(os.environ['COMETS_GLOP'] +
-        #                                            '/bin')[0])[0]
         self.VERSION = 'comets_scr'
         # set default classpaths, which users may change
         self.__build_default_classpath_pieces()
