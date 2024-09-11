@@ -18,8 +18,64 @@ from matplotlib import pyplot as plt
 import matplotlib.colors, matplotlib.cm
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from flask_cors import CORS, cross_origin
+import time
+from boto3.s3.transfer import TransferConfig
 
 app = Flask(__name__)
+
+# 136 unique metabolites
+rich_medium_metabolites = [
+ 'MNXM730135_e',
+ 'MNXM9_e',
+ 'MNXM726711_e',
+ 'MNXM731166_e',
+ 'MNXM1630_e',
+ 'MNXM107_e',
+ 'MNXM729302_e',
+ 'MNXM282_e',
+ 'MNXM731962_e',
+ 'cpd00110x_e',
+ 'MNXM730561_e',
+ 'MNXM7343_e',
+ 'MNXM60_e',
+ 'MNXM1_e',
+ 'MNXM1485_e',
+ 'BIOMASS_e',
+ 'MNXM732398_e',
+ 'MNXM729215_e',
+ 'MNXM735438_e',
+ 'MNXM95_e',
+ 'MNXM118_e',
+ 'MNXM117_e',
+ 'WATER_e',
+ 'MNXM1105684_e',
+ 'MNXM733186_e',
+ 'MNXM1562_e',
+ 'MNXM27_e',
+ 'MNXM58_e',
+ 'MNXM653_e',
+ 'MNXM90960_e',
+ 'MNXM13_e',
+ 'MNXM1949_e',
+ 'MNXM734847_e',
+ 'MNXM2255_e',
+ 'MNXM731953_e',
+ 'cpd00109x_e',
+ 'MNXM124_e',
+ 'MNXM735978_e',
+ 'MNXM39_e',
+ 'MNXM726712_e',
+ 'MNXM713_e',
+ 'MNXM128_e',
+ 'MNXM733435_e',
+ 'MNXM19009_e',
+ 'MNXM11814_e',
+ 'MNXM1107903_e'
+]
+
+minimal_core_metabolites = [
+    'o2_e', 'nh4_e', 'h2o_e', 'h_e', 'pi_e', 'glc__D_e', 'ac_e'
+]
 
 def translation(name):
     dict = {
@@ -35,10 +91,10 @@ def translation(name):
     }
     return dict[name]
 
-def sendEmail(email, id):
+def sendEmail(email, id, status):
     url = os.getenv('BASE_HOST_URL')
     try:
-        req = requests.get(f'{url}/job/email/{email}/{id}')
+        req = requests.get(f'{url}/job/email/{email}/{id}/{status}')
         print('Email sent with code: ',req.status_code)
     except:
         raise Exception('Could not send email')
@@ -52,16 +108,29 @@ def uploadToS3(comets_result, id, email):
         aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
         endpoint_url=os.getenv('ENDPOINT_URL')
     )
+    s3_client = boto3.client('s3',
+        aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+        aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
+        endpoint_url=os.getenv('ENDPOINT_URL'))
     # Initiate specific bucket on OpenStack
     bucket = s3.Bucket(os.getenv('BUCKET_NAME'))
+    GB = 1024 ** 3
+    config = TransferConfig(multipart_threshold=5*GB)
+
+    print('all files to upload: ',comets_result)
     try:
         for file in comets_result:
-            print(file)
-            fileKey = f'{id}/{file}'
+            fileKey = f'{id}/{file[12:]}'
+            if 'pkl' in file:
+
+                print('pkl file size: ',os.path.getsize(file))
+                s3_client.upload_file(file, os.getenv('BUCKET_NAME'), os.getenv('AWS_ACCESS_KEY_ID'), Config=config)
+                
             upload = bucket.put_object(Body=open(file, 'rb'), Key=fileKey)
+            print(f'file {file} uploaded: ', upload)
             os.remove(file)
         # Update job state and send email
-        sendEmail(email, id)
+        sendEmail(email, id, "success")
         # Delete all uploaded file
     except Exception as error:
         print(f's3 upload failed: {error}')
@@ -70,8 +139,6 @@ def uploadToS3(comets_result, id, email):
 @app.route('/result/<id>/<source>', methods=['POST'])
 @cross_origin()
 def get_result(id, source):
-    print('hit get_result func')
-    print(request)
     if not request.is_json:
         raise Exception ('No body detected with this request. Include a body to call this endpoint')
 
@@ -114,29 +181,23 @@ def get_result(id, source):
     prefix = id
 
     for object in bucket.objects.filter(Prefix = id):
-        if not os.path.exists(prefix):
-            os.makedirs(os.path.dirname(object.key), exist_ok=True)
-        bucket.download_file(object.key, object.key)
+        if not os.path.exists(f'./sim_files/{prefix}'):
+            os.makedirs(os.path.dirname(f'./sim_files/{object.key}'), exist_ok=True)
+        if not os.path.exists(f'./sim_files/{object.key}'):
+            bucket.download_file(object.key, f'./sim_files/{object.key}')
     
     """
     TODO 
     Need to replace the image_index with calculations of percentages of the max timeSteps
     """
-    print('after bucket download')
     image_index = [20,40,60,80,100] 
-    with open(f'{id}/{id}.pkl', 'rb') as file:
+    with open(f'./sim_files/{id}/{id}.pkl', 'rb') as file:
         data = dill.load(file)
     
-    print('before if statement biomass')
     if source == 'biomass':
-        print(req_data)
         model_id = req_data['model_id']
-        model_name = req_data['model_name']
-        
-        print(model_id)
-        print(model_name)
+        model_name = req_data['model_name']   
         png_file_name = f'biomass_{model_id}.png'
-        # png_file_name = f'biomass.png'
 
         my_cmap = matplotlib.cm.get_cmap("magma")
         my_cmap.set_bad((0,0,0))
@@ -167,19 +228,10 @@ def get_result(id, source):
         ax.axis('off')
         ax.set_title('grams/pixel')
         fig.colorbar(cax, ax=ax)
-
-        # Now use the remaining space to show the biomass plot
-        # plot = create_plot(data, 'total_biomass')
-        # print("biomass plot type: ", type(plot))
-        # ax = fig.add_subplot(gs[1:, :])
-        # ax.set_title(f'Total Biomass ({model_name})')
-        # ax.imshow(plot, cmap='viridis')
-        # ax.axis('off')
-
-        fig.savefig(f'{id}/{png_file_name}', format='png', bbox_inches='tight')
+        fig.savefig(f'./sim_files/{id}/{png_file_name}', format='png', bbox_inches='tight')
 
     elif source == 'metabolite':
-        metabolite_name = req_data['metabolite_name'] # used for title of graph
+        metabolite_name = req_data['metabolite_name'] # ud for title of graph
         metabolite_id = req_data['metabolite_id']       
        
         
@@ -218,7 +270,7 @@ def get_result(id, source):
         ax.set_title('mmol/pixel')
         fig.colorbar(cax, ax=ax)
 
-        fig.savefig(f'{id}/{png_file_name}', format='png', bbox_inches='tight')
+        fig.savefig(f'./sim_files/{id}/{png_file_name}', format='png', bbox_inches='tight')
         
     elif source == 'flux':
         
@@ -261,7 +313,7 @@ def get_result(id, source):
         ax.set_title('mmol/gh')
         fig.colorbar(cax, ax=ax)
 
-        fig.savefig(f'{id}/{png_file_name}', format='png', bbox_inches='tight')
+        fig.savefig(f'./sim_files/{id}/{png_file_name}', format='png', bbox_inches='tight')
         # value is .25 of maxCycles
 
 
@@ -282,8 +334,7 @@ def get_result(id, source):
     """
 
     try:
-        response = send_from_directory(f'./{id}', png_file_name, as_attachment=True)
-        response.headers['Allow-Control-Access-Origin'] = '*'
+        response = send_from_directory(f'./sim_files/{id}', png_file_name, as_attachment=True)
         return response
     except:
         raise Exception('Failed lol')
@@ -293,22 +344,18 @@ def get_result(id, source):
 @app.route('/result/graph/<id>/<graph_type>', methods=['GET'])
 @cross_origin()
 def create_plot(graph_type, id):
-    print('hit thing thing')
-    with open(f'{id}/{id}.pkl', 'rb') as file:
+    with open(f'./sim_files/{id}/{id}.pkl', 'rb') as file:
         experiment = dill.load(file)
     image = None
     file_name = None
-    print('metabolite time series: ',experiment.get_metabolite_time_series())
-    print('total_biomass: ', experiment.total_biomass)
     if graph_type == 'total_biomass':
         file_name = 'total_biomass.png'
         plt.switch_backend('Agg')
         fig, ax = plt.subplots()
         ax = experiment.total_biomass.plot(x='cycle', ax=ax)
-        print('type for total_biomass: ', type(experiment.total_biomass))
         ax.set_ylabel("Biomass (gr.)")
 
-        plt.savefig(f'{id}/{file_name}', format='png', bbox_inches='tight')
+        plt.savefig(f'./sim_files/{id}/{file_name}', format='png', bbox_inches='tight')
         plt.close(fig)
 
     elif graph_type == 'metabolite_time_series':
@@ -318,14 +365,11 @@ def create_plot(graph_type, id):
         fig, ax = plt.subplots()
         ax = experiment.get_metabolite_time_series().plot(x='cycle', ax=ax)
         ax.set_ylabel("Metabolite time series (gr.)")
-        plt.savefig(f'{id}/metabolite_time_series.png', format='png', bbox_inches='tight')
+        plt.savefig(f'./sim_files/{id}/metabolite_time_series.png', format='png', bbox_inches='tight')
         plt.close(fig)
-        print('done making the plot')
     try:
-        print(file_name)
-        print(id)
-        response = send_from_directory(f'./{id}', file_name, as_attachment=True)
-        response.headers['Allow-Control-Access-Origin'] = '*'
+        response = send_from_directory(f'./sim_files/{id}', file_name, as_attachment=True)
+        
         return response
     except:
         raise Exception('Failed in making graph lol')
@@ -334,11 +378,13 @@ def create_plot(graph_type, id):
 def home():
     return "Server is up and running"
 
-@app.route('/process', methods=['POST'])
+@app.route('/process', methods=['POST', 'OPTIONS'])
 def process():
     print('Started Processing!')
 
-    os.environ['COMETS_GLOP'] = '/Users/zimlim/Desktop/comets-project/comets_glop'
+    os.environ['COMETS_GLOP'] = './comets_glop'
+    
+    
     """
     Files needed to save (8 files in total)
     * biomasslog
@@ -354,14 +400,13 @@ def process():
     * .current_global
     """
     # Listing all files currently in current directory to check against
-    current_files = os.listdir()
+    current_files = os.listdir('./sim_files')
     url = os.getenv('BASE_HOST_URL')
     # Creating the Job document on MongoDB
     
 
 
     data = json.loads(request.data.decode('utf-8').replace("'",'"'))
-    print("data", data)
     requester_email = data['email']
     comets_layout = c.layout()
     comets_params = c.params()
@@ -373,7 +418,64 @@ def process():
     global_params = data['global_params']
     # {'global_params': {'simulatedTime': 1, 'timeSteps': 2, 'nutrientDiffusivity': 0, 'logFrequency': 0}, 'layout': {'name': '9cm Petri Dish Random Lawn', 'volume': 0}, 'models': [{'name': 'Escherichia coli Core', 'demographicNoise': False, 'demographicNoiseAmp': 0, 'vMax': 20, 'Km': 0, 'deathRate': 0, 'linearDiffusivity': 0, 'nonLinearDiffusivity': 0}], 'media': {'name': 'M9 Minimal Glucose', 'concentration': 12}, 'email': 'zimlim@bu.edu'}
 
-    # Set all media metabolites constant for now (mmol)
+    # Load all models
+    
+    comets_model_arr = []
+    comets_model_id_arr = []
+    # E.Coli model is using different path than other models
+    for model in models:
+        load_model = None
+        model_name = model['name'].strip().lower()
+        # Load each model from either XML file or Cobra
+        """
+        TODO
+        Replace load_model with appropriate models once model files are received from Ilija
+        """
+        if model_name == 'escherichia coli core':
+            load_model = cobra.io.load_model("textbook")
+        elif model_name == 'escherichia coli':
+            load_model = cobra.io.load_model("textbook")
+        elif model_name == 'nitrosomonas europaea':
+            load_model = cobra.io.read_sbml_model("./iGC535_modified_cobra.xml") 
+        elif model_name == 'nitrobacter winogradskyi':
+            load_model = cobra.io.read_sbml_model('./iFC579_modified_cobra.xml')
+        else:
+            sendEmail(requester_email, "000000000", "failure")
+            raise Exception(f'No model found with name: {model_name}')
+        
+        comets_model = c.model(load_model)
+        # Set each model parameters
+        comets_model.neutral_drift_flag = bool(model['demographicNoise'])
+        if bool(model['demographicNoise']):
+            # if demographicNoise is false, dont set the next parameter
+            comets_model.add_neutral_drift_parameter(float(model['demographicNoiseAmp']))
+        else:
+            # parameter can't be 0.0 or else an error is raised
+            comets_model.add_neutral_drift_parameter(0.001)
+        comets_model.add_nonlinear_diffusion_parameters(float(model['linearDiffusivity']), float(model['nonLinearDiffusivity']), 1.0, 1.0, 0.0)
+
+        # All models share same value
+        comets_model.change_bounds('EX_glc__D_e', -1000, 1000)
+        comets_model.change_bounds('EX_ac_e', -1000, 1000)
+        
+        # Changing model Id if there's the same model added before
+        model_id = comets_model.id
+        iteration = 1
+        while comets_model.id in [model['model_id'] for model in comets_model_id_arr]:
+            comets_model.id = f'{model_id}_{iteration}'
+            iteration += 1
+            
+    
+        # Add models to array and to comets layout
+        model_info_obj = {
+            "name": model_name,
+            "model_id": comets_model.id
+        }
+        comets_model_arr.append(comets_model)
+        comets_model_id_arr.append(model_info_obj)
+
+
+     # Set all media metabolites constant for now (mmol)
     # Dimensions of petri dish and test tube is different
     """
     Petri Dish 
@@ -405,114 +507,41 @@ def process():
     elif "Test Tube" in layout['name']:
         metabolite_amount = mediaConcentration * mediaVolume
     
-    if "Glucose" in media['name']:
-        metabolite_used = 'glc__D_e'
-    elif "Acetate" in media['name']:
-        metabolite_used = 'ac_e'
-
-    comets_layout.set_specific_metabolite(metabolite_used, metabolite_amount)
-    # Everything else set constant at 1000
-    # Specific metabolite and value will be given by Ilija
-    metabolites_used = [
-        {
-            "name": translation('o2_e'),
-            "id": 'o2_e'
-        },
-        {
-            "name": translation('nh4_e'),
-            "id": 'nh4_e'
-        },
-        {
-            "name": translation('h2o_e'),
-            "id": 'h2o_e'
-        },
-        {
-            "name": translation('h_e'),
-            "id": 'h_e'
-        },
-        {
-            "name": translation('pi_e'),
-            "id": 'pi_e'
-        },
-        {
-            "name": translation('glc__D_e'),
-            "id": 'glc__D_e'
-        },
-        {
-            "name": translation('ac_e'),
-            "id": 'ac_e'
-        }
-    ]
-    # Rich Medium from Zoey
-
-    # Minimal Core 
-    comets_layout.set_specific_metabolite('o2_e', 1000)
-    comets_layout.set_specific_metabolite('nh4_e', 1000)
-    comets_layout.set_specific_metabolite('h2o_e', 1000)
-    comets_layout.set_specific_metabolite('h_e', 1000)
-    comets_layout.set_specific_metabolite('pi_e', 1000)
 
 
-    # Load all models
-    
-    comets_model_arr = []
-    comets_model_id_arr = []
-    # E.Coli model is using different path than other models
-    for model in models:
-        load_model = None
-        model_name = model['name'].strip().lower()
-        # Load each model from either XML file or Cobra
-        """
-        TODO
-        Replace load_model with appropriate models once model files are received from Ilija
-        """
-        if model_name == 'escherichia coli core':
-            load_model = cobra.io.load_model("textbook")
-        elif model_name == 'escherichia coli':
-            load_model = cobra.io.load_model("textbook")
-        elif model_name == 'nitrosomonas europaea':
-            load_model = cobra.io.load_model("textbook")
-        elif model_name == 'nitrobacter winogradskyi':
-            load_model = cobra.io.load_model("textbook")
-        else:
-            raise Exception(f'No model found with name: {model_name}')
-        
-        comets_model = c.model(load_model)
-        # Set each model parameters
-        comets_model.neutral_drift_flag = model['demographicNoise']
-        # if demographicNoise is false, dont set the next parameter
-        comets_model.add_neutral_drift_parameter(model['demographicNoiseAmp'])
-        comets_model.add_nonlinear_diffusion_parameters(float(model['linearDiffusivity']), float(model['nonLinearDiffusivity']), 1.0, 1.0, 0.0)
-        # comets_model.change_km('some sort of string',model['Km'])
-        # comets_model.change_vmax('some sort of string',model['vMax'])
+    metabolites_used = []
+    metabolite_lists = []
 
-        # All models share same value
-        comets_model.change_bounds('EX_glc__D_e', -1000, 1000)
-        comets_model.change_bounds('EX_ac_e', -1000, 1000)
-        
-        # Changing model Id if there's the same model added before
-        model_id = comets_model.id
-        iteration = 1
-        while comets_model.id in [model['model_id'] for model in comets_model_id_arr]:
-            comets_model.id = f'{model_id}_{iteration}'
-            iteration += 1
-            
-    
-        # Add models to array and to comets layout
-        model_info_obj = {
-            "name": model_name,
-            "model_id": comets_model.id
-        }
-        print(model_info_obj)
-        comets_model_arr.append(comets_model)
-        comets_model_id_arr.append(model_info_obj)
+    if "Minimal" in media['name']:
 
-    # print('model_id_arr: ', comets_model_id_arr)
+        metabolite_lists = minimal_core_metabolites
+        if "Glucose" in media['name']:
+            metabolite_used = 'glc__D_e'
+            comets_layout.set_specific_metabolite('ac_e', 1000)
+        elif "Acetate" in media['name']:
+            metabolite_used = 'ac_e'
+            comets_layout.set_specific_metabolite('glc__D_e', 1000)
+        comets_layout.set_specific_metabolite(metabolite_used, metabolite_amount)
+
+    elif "Rich" in media['name']:
+        temp_layout = c.layout(comets_model_arr)
+
+        metabolite_lists = temp_layout.media.metabolite
+        print('rich medium metabolite: ', metabolite_lists)
+
+    for metabolite in metabolite_lists:
+        comets_layout.set_specific_metabolite(metabolite, 1000)
+        # When Rich Media Metabolite dictionary is available, name can be passed thru "translation()"
+        metabolites_used.append({
+            "name": metabolite,
+            "id": metabolite
+        })
+
+
     # Create layout
     comets_layout.grid = [101,101] # constant?
     initi_population =[]
     layout_name = layout['name'].lower().replace('(','').replace(')','').replace(" ", "")
-    # print("layout_name", layout_name)
     if  layout_name == '9cmpetridishcentercolony':
 
         upper_bound = comets_layout.grid[0] - 1
@@ -531,7 +560,7 @@ def process():
         number_of_innoculates=100
         upper_bound = comets_layout.grid[0] - 1
 
-        for i in range(np.int(number_of_innoculates*1.28)):
+        for i in range(int(number_of_innoculates*1.28)):
             x=int(upper_bound*np.random.random())
             y=int(upper_bound*np.random.random())
             if (x-(upper_bound/2))**2+(y-(upper_bound/2))**2<((upper_bound/2)-1)**2:
@@ -547,8 +576,8 @@ def process():
             comets_layout.add_model(model)
     else:
         raise Exception(f"No layout found with associated name {layout['name']}")
-    # Create media
     
+
     comets_params.set_param('numRunThreads', 1)
     comets_params.set_param('timeStep', floor(global_params['simulatedTime']/global_params['timeSteps'])) # timeStep = simulatedTime / maxCycles (number of steps) //might want to change variable name for timeSteps to maxCycles
     comets_params.set_param('maxCycles', global_params['timeSteps']) 
@@ -561,8 +590,8 @@ def process():
     TODO 
     take input from request body 
     """
-    comets_params.set_param('Vmax', 10)
-    comets_params.set_param('Km', 1e-7)
+    comets_params.set_param('defaultVmax', global_params['vMax'])
+    comets_params.set_param('defaultKm', global_params['km'])
     
     comets_params.set_param('BiomassLogRate', global_params['logFrequency'])
     comets_params.set_param('MediaLogRate', global_params['logFrequency'])
@@ -577,12 +606,9 @@ def process():
     comets_params.set_param('writeMediaLog', True)
     comets_params.set_param('comets_optimizer', 'GLOP')
     # Create the experiment
-    experiment = c.comets(comets_layout, comets_params)
-    # print("fluxes: ", experiment.fluxes) #list of all fluxes. Filter them by the ones that start with "EX" and visualize (image not graph)
-    # experiment.total_biomass #
-    # experiment.biomass # not using
-    # experiment.get_metabolite_time_series() # like total_biomass but for metabolite
-    # print("comets model ID arr ",comets_model_id_arr)
+    experiment = c.comets(comets_layout, comets_params, 'sim_files/')
+    experiment.set_classpath('bin', './comets_glop/bin/comets_scr.jar')
+
     body = {
             # filepath should be a signed URL made by S3
             "filepath": '',
@@ -590,20 +616,17 @@ def process():
             "metabolites": metabolites_used
 
         }
-    print(url)
     req = requests.post(f'{url}/job/create', json=body)
+    
     job_obj = json.loads(req.content)
     job_id = job_obj["id"]
     # Run the simulation
     try:
         experiment.run(False)
-        fileName = f'{job_id}.pkl'
+        fileName = f'./sim_files/{job_id}.pkl'
         with open(fileName, 'wb') as file:
             dill.dump(experiment, file)
-
-        # fluxes = experiment.fluxes
-        # print('fluxes: ', fluxes)
-        # print('flux by species',experiment.fluxes_by_species)
+             
         # Dictionary comprehension to filter keys
         fluxes = []
         for i in experiment.fluxes_by_species:
@@ -621,17 +644,16 @@ def process():
             "fluxes": fluxes
         }
         req = requests.patch(f'{url}/job/{job_id}', json=update_body)
-        print(req)
-        updated_files_list = os.listdir()
+        updated_files_list = os.listdir('./sim_files')
 
         files_to_upload = []
         for file in updated_files_list:
             if file not in current_files:
-                files_to_upload.append(file)
-        # print(files_to_upload)
+                files_to_upload.append(f'./sim_files/{file}')
         uploadToS3(files_to_upload, job_id, requester_email)
 
     except:
+        # sendEmail(requester_email, '01234fxxdvxfaaow', 'failure')
         print(experiment.run_output)
         raise Exception('Not working', experiment.run_output)
 
@@ -646,7 +668,6 @@ def process():
 
 if __name__ == '__main__':
     matplotlib.use('Agg')
-    # os.environ['COMETS_GLOP'] = '/Users/zimlim/Desktop/comets-project/comets_glop'
     warnings.simplefilter(action='ignore', category=FutureWarning)
     cors = CORS(app)
     app.config['CORS_HEADERS'] = 'Content-Type'

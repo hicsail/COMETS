@@ -7,15 +7,7 @@ import { UpdateJobDto } from './dto/update-job.dto';
 import * as nodemailer from 'nodemailer'
 import { ConfigService } from '@nestjs/config';
 
-const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
-    auth: {
-        user: "cometssmartinterface@gmail.com",
-        pass: "gvzabudgxiglufki"
-    }
-})
+
 
 
 @Injectable()
@@ -27,6 +19,7 @@ export class JobService {
         private configService: ConfigService
     ) {}
 
+    
     async create(createJobDto: CreateJobDto) : Promise<Job> {
 
         const res = await this.jobModel.create(createJobDto);
@@ -42,12 +35,32 @@ export class JobService {
         await this.jobModel.deleteMany({});
     }
 
-    async sendEmail(email: string, id: string): Promise<void>{
+    async sendEmail(email: string, id: string, status: string): Promise<void>{
+        const transporter = nodemailer.createTransport({
+            host: "smtp.mailgun.org",
+            port: 465,
+            secure: true,
+            auth: {
+                user: this.configService.getOrThrow<string>('email.username'),
+                pass: this.configService.getOrThrow<string>('email.password')
+            }
+        })
+        console.log(this.configService.getOrThrow<string>('email.username'))
+        let email_message;
+        let email_title;
+        if(status === 'success'){
+            email_title = "Your COMETS SI simulation has been completed successfully"
+            email_message = `Click here to view the results of your simulation: ${this.frontendURL}/results/${id}`
+        }else if(status === 'failure'){
+            email_title = "COMETS SI simluation you requested has failed"
+            email_message = `Unfortunately, the simulation you requested has failed. Please try again on ${this.frontendURL}`
+        }
+
         const mailOptions = {
-            from: "cometssmartinterface@gmail.com",
+            from: "comets_si@mail.sail.codes",
             to: email,
-            subject: "Your COMETS SI simulation has been completed",
-            text: `Click here to view the results of your simulation: ${this.frontendURL}/results/${id}`
+            subject: email_title,
+            text: email_message
         }
 
         transporter.sendMail(mailOptions, (error, info) => {
@@ -60,13 +73,11 @@ export class JobService {
     }
 
     async update(updateBody: UpdateJobDto): Promise<Job> {
-        console.log(updateBody)
         const update = { 
             $set: {"fluxes": updateBody.fluxes },
             
         }
         const updatedJob = this.jobModel.findOneAndUpdate({id:updateBody.id}, update)
-        console.log(updatedJob)
         return updatedJob;
     }
 

@@ -56,6 +56,8 @@ export type GlobalParameters = {
     timeSteps: number;
     nutrientDiffusivity: number;
     logFrequency: number;
+    vMax: number;
+    km: number;
   };
 };
 
@@ -99,5 +101,5 @@ const media = [
   "Minimal Core Acetate",
   "M9 Minimal Glucose",
   "M9 Minimal Acetate",
-  "LB Rich",
+  "Rich Media",
 ];

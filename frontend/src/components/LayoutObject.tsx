@@ -51,12 +51,11 @@ export const LayoutComponent: FC<LayoutComponentProps> = (props) => {
     }
   };
   return (
-    <>
       <Box component="form" noValidate autoComplete="off" width={"100%"}>
         <FormGroup>
           {props.layoutOptions.map((option, index) => {
             return (
-              <>
+              <Box key={index} display={"flex"} flexDirection={'column'}> 
                 <FormControlLabel
                   sx={{ marginTop: 2 }}
                   key={index}
@@ -96,11 +95,10 @@ export const LayoutComponent: FC<LayoutComponentProps> = (props) => {
                   />
                 )}
                 <Divider />
-              </>
+              </Box>
             );
           })}
         </FormGroup>
       </Box>
-    </>
   );
 };

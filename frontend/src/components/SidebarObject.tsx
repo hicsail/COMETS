@@ -26,9 +26,11 @@ const textPairing: { [key: string]: string } = {
   biomassLinearDiffusivity: "Biomass Linear Diffusivity",
   biomassNonlinearDiffusivity: "Biomass Non-Linear Diffusivity",
   simulatedTime: "Simulated Time",
-  timeSteps: "Time Steps",
+  timeSteps: "No. of steps",
   nutrientDiffusivity: "Nutrient Diffusivity",
-  logFrequency: "Log Frequency",
+  logFrequency: "Save Frequency",
+  vMax: "Vmax",
+  km: "Km"
 };
 
 export const SidebarCard: FC<SidebarcardProps> = (props) => {
@@ -48,17 +50,17 @@ export const SidebarCard: FC<SidebarcardProps> = (props) => {
         <AccordionDetails>
           <List>
             <ListItemText>
-              {Object.keys(props.item.info.params).map((key) => {
+              {Object.keys(props.item.info.params).map((key, index) => {
                 let ret;
                 if (typeof props.item.info.params[key] === "boolean") {
                   ret = (
-                    <Typography textAlign={"left"} textOverflow={"wrap"}>
+                    <Typography textAlign={"left"} textOverflow={"wrap"} key={index}>
                       {textPairing[key]}: {String(props.item.info.params[key])}
                     </Typography>
                   );
                 } else {
                   ret = (
-                    <Typography textAlign={"left"} textOverflow={"wrap"}>
+                    <Typography textAlign={"left"} textOverflow={"wrap"} key={index}>
                       {textPairing[key]}: {props.item.info.params[key]}
                     </Typography>
                   );

@@ -49,18 +49,20 @@ export function SummaryReviewPage() {
     const models:any = []
     data.map((item: any) =>{
       console.log(item)
+      
       const param: any = item.info.params
       if(item.info.type === 'model'){
+        console.log('model params', item)
         models.push(
           {
             name: item.label,
             demographicNoise: param["demographicNoise"],
-            demographicNoiseAmp: param["demographicNoiseAmp"],
+            demographicNoiseAmp: param["demographicNoiseAmplitude"],
             vMax: param["uptakeVMax"],
             Km: param["uptakeKm"],
             deathRate: param["deathRate"],
             linearDiffusivity: param["biomassLinearDiffusivity"],
-            nonLinearDiffusivity: param["biomassNonLinearDiffusivity"]
+            nonLinearDiffusivity: param["biomassNonlinearDiffusivity"]
           }
         )
       }else if(item.info.type === 'layout'){
@@ -78,17 +80,15 @@ export function SummaryReviewPage() {
       }
 
     })
-    body.models = models;
-    console.log(body)
-
-    axios.post(`${import.meta.env.VITE_COMETS_BACKEND}/comets-request`, (body)).then((ret) => {console.log(ret)})
-    // console.log(res)
+    body['models'] = models;
+    console.log(`${import.meta.env.VITE_COMETS_BACKEND}`)
+    axios.post(`${import.meta.env.VITE_COMETS_BACKEND}/comets-request`, body ).then((ret) => {console.log(ret)})
+    
   }
 
   const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target) {
       if (/\S+@\S+\.\S+/.test(event.target.value)) {
-        console.log(event.target.value);
         setEmail(event.target.value);
       } else {
         setTextfieldError(true);

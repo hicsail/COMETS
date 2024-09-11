@@ -8,6 +8,7 @@ COPY ./cometspy .
 RUN cd cometspy
 RUN pip3 install .
 
+VOLUME ["/.cache"]
 
 WORKDIR /app
 

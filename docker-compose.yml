@@ -33,3 +33,5 @@ services:
       context: ./frontend/
     ports:
       - 3015:80
+    env_file:
+      - ./frontend/.env

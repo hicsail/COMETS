@@ -11,8 +11,7 @@ import {  Box,
           FormControlLabel,
           FormControl,
           FormLabel,
-          Button,
-          InputLabel
+          Button
         } from "@mui/material";
 import { useParams } from 'react-router-dom';
 import React, { useState, useEffect } from "react";
@@ -127,13 +126,11 @@ export function ResultsPage() {
     setImageLoading(true);
     fetch(builtUrl, {
       method: "POST",
-      mode: "cors",
       cache: "default",
       headers: {
         "Content-Type": "application/json",
       },
       redirect: "follow",
-      referrerPolicy: "origin-when-cross-origin",
       body: JSON.stringify(builtBody)
     })
     .then(response => {
@@ -157,13 +154,11 @@ export function ResultsPage() {
     setGraphLoading(true);
     fetch(builtUrl, {
       method: "GET",
-      mode: "cors",
       cache: "default",
       headers: {
         "Content-Type": "application/json",
       },
       redirect: "follow",
-      referrerPolicy: "origin-when-cross-origin"
     })
     .then(response => {
       if(!response.ok){
@@ -187,38 +182,72 @@ export function ResultsPage() {
   };
   
   useEffect(() => {
-    const urls = `${import.meta.env.VITE_COMETS_FLASK}/result/${id}/biomass`;
-    const req_body = {
-      model_name: 'Escherichia Coli Core',
-      model_id: 'e_coli_core'
-    }
-    // Fetching default image
-    fetch(urls, 
+
+    const url = `${import.meta.env.VITE_COMETS_BACKEND}/job/${id}`
+    let models;
+    let metabolites;
+    let req_body;
+    fetch(url,
       {
-        method: "POST", // *GET, POST, PUT, DELETE, etc.
-        mode: "cors", // no-cors, *cors, same-origin
+        method: "GET", // *GET, POST, PUT, DELETE, etc.
         cache: "default", // *default, no-cache, reload, force-cache, only-if-cached
         headers: {
           "Content-Type": "application/json",
         },
         redirect: "follow", // manual, *follow, error
-        referrerPolicy: "origin-when-cross-origin", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-        body: JSON.stringify(req_body), // body data type must match "Content-Type" header
-      })
-      .then(response => {
-        if(!response.ok){
-          throw new Error('Network reponse failed');
-        }
-        return response.blob();
-      })
-      .then(blob => {
-        const imageSrc = URL.createObjectURL(blob);
-        setImageUrl(imageSrc);
-        setImageLoading(false);
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+      }
+    )
+    .then((response) => {
+      if(!response.ok){
+        throw new Error('Network reponse failed');
+      }
+      return response.json();
+    })
+    .then((data) => {
+      models = data.model_info;
+      metabolites = data.metabolites;
+      // console.log(models)
+      const fluxes = data.fluxes;
+      setModelOption(models)
+      setMetaboliteOption(metabolites)
+      setAllFluxes(fluxes)
+      req_body = {
+        model_name: models ? models[0]['name'] : '' ,
+        model_id: models ? models[0]['model_id'] : ''
+      }
+      const urls = `${import.meta.env.VITE_COMETS_FLASK}/result/${id}/biomass`;
+      // Fetching default image
+      fetch(urls, 
+        {
+          method: "POST", // *GET, POST, PUT, DELETE, etc.
+          cache: "default", // *default, no-cache, reload, force-cache, only-if-cached
+          headers: {
+            "Content-Type": "application/json",
+          },
+          redirect: "follow", // manual, *follow, errorc
+          body: JSON.stringify(req_body), // body data type must match "Content-Type" header
+        })
+        .then(response => {
+          if(!response.ok){
+            throw new Error('Network reponse failed');
+          }
+          return response.blob();
+        })
+        .then(blob => {
+          const imageSrc = URL.createObjectURL(blob);
+          setImageUrl(imageSrc);
+          setImageLoading(false);
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+      return;
+    })
+    .catch((err) => {
+      console.log(err)
+    })  
+
+    
       
   },[])
 
@@ -228,13 +257,11 @@ export function ResultsPage() {
     fetch(graphUrl, 
       {
         method: "GET", // *GET, POST, PUT, DELETE, etc.
-        mode: "cors", // no-cors, *cors, same-origin
         cache: "default", // *default, no-cache, reload, force-cache, only-if-cached
         headers: {
           "Content-Type": "application/json",
         },
         redirect: "follow", // manual, *follow, error
-        referrerPolicy: "origin-when-cross-origin", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
       })
       .then(response => {
         if(!response.ok){
@@ -253,38 +280,7 @@ export function ResultsPage() {
   },[])
 
   useEffect(() => {
-    const url = `${import.meta.env.VITE_COMETS_BACKEND}/job/${id}`
-    fetch(url,
-      {
-        method: "GET", // *GET, POST, PUT, DELETE, etc.
-        mode: "cors", // no-cors, *cors, same-origin
-        cache: "default", // *default, no-cache, reload, force-cache, only-if-cached
-        headers: {
-          "Content-Type": "application/json",
-        },
-        redirect: "follow", // manual, *follow, error
-        referrerPolicy: "origin-when-cross-origin",
-      }
-    )
-    .then((response) => {
-      if(!response.ok){
-        throw new Error('Network reponse failed');
-      }
-      return response.json();
-    })
-    .then((data) => {
-      const models = data.model_info;
-      const metabolites = data.metabolites;
-      console.log(metabolites)
-      const fluxes = data.fluxes;
-      setModelOption(models)
-      setMetaboliteOption(metabolites)
-      setAllFluxes(fluxes)
-      return;
-    })
-    .catch((err) => {
-      console.log(err)
-    })  
+    
   }, [])
   
 

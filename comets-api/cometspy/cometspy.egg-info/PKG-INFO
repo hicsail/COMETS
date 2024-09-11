@@ -15,3 +15,6 @@ Classifier: Programming Language :: Python :: 3.6
 Classifier: Programming Language :: Python :: 3.7
 Classifier: Programming Language :: Python :: 3.8
 License-File: LICENSE
+Requires-Dist: numpy
+Requires-Dist: cobra
+Requires-Dist: pandas>=1.0.0

@@ -30,28 +30,26 @@ export const MediaComponent: FC<MediaComponentProps> = (props) => {
     } else {
       setSelectedOption(option);
       props.onChange(option);
-      props.value = option;
+      // props.value = option;
     }
   };
   const handleTextChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target) {
-      if (/^\d*$/.test(event.target.value)) {
-        console.log(event.target.value);
+      if (/^\d*\.?\d*$/.test(event.target.value)) {
         setMediaVol(event.target.value);
         setTextfieldError(false);
-        props.value.params.mediaConcentration = parseInt(event.target.value);
+        props.value.params.mediaConcentration = parseFloat(event.target.value);
       } else {
         setTextfieldError(true);
       }
     }
   };
   return (
-    <>
       <Box component="form" noValidate autoComplete="off" width={"100%"}>
         <FormGroup>
           {props.mediaOptions.map((option, index) => {
             return (
-              <>
+              <Box key={index} display={"flex"} flexDirection={'column'}>
                 <FormControlLabel
                   sx={{ marginTop: 2 }}
                   key={index}
@@ -81,7 +79,7 @@ export const MediaComponent: FC<MediaComponentProps> = (props) => {
                     label={`${props.value.mainMetabolites} concentration (mmol/cm3)`}
                     value={mediaVol}
                     onChange={handleTextChange}
-                    defaultValue={""}
+                    
                     error={textfieldError}
                     helperText={
                       textfieldError ? "Please input numbers only" : ""
@@ -89,11 +87,11 @@ export const MediaComponent: FC<MediaComponentProps> = (props) => {
                   />
                 )}
                 <Divider />
-              </>
+              </Box>
             );
           })}
         </FormGroup>
       </Box>
-    </>
+    
   );
 };

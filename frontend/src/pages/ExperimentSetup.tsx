@@ -37,10 +37,9 @@ const mediaOptions: Media[] = [
     min: 1,
     max: 3,
     params: {
-      mediaConcentration: 0,
+      mediaConcentration: 0.0,
     },
   },
-  /*
   {
     name: "Minimal Core Acetate",
     desc: "Example Desc for core acetate",
@@ -49,43 +48,20 @@ const mediaOptions: Media[] = [
     min: 1,
     max: 3,
     params: {
-      mediaConcentration: 0,
+      mediaConcentration: 0.0,
     },
   },
   {
-    name: "M9 Minimal Glucose",
-    desc: "Example Desc for m9 minimal glucose",
-    type: "media",
-    mainMetabolites: "Glucose",
-    min: 1,
-    max: 3,
-    params: {
-      mediaConcentration: 0,
-    },
-  },
-  {
-    name: "M9 Minimal Acetate",
-    desc: "Example Desc for m9 minimal acetate",
-    type: "media",
-    mainMetabolites: "Acetate",
-    min: 1,
-    max: 3,
-    params: {
-      mediaConcentration: 0,
-    },
-  },
-  {
-    name: "LB Rich",
+    name: "Rich Media",
     desc: "Example Desc for LB Rich",
     type: "media",
-    mainMetabolites: "Acetate",
+    mainMetabolites: "",
     min: 1,
     max: 3,
     params: {
-      mediaConcentration: 0,
+      mediaConcentration: 0.0,
     },
-  },
-  */
+  }
 ];
 
 const layoutOptions: Layout[] = [
@@ -96,7 +72,7 @@ const layoutOptions: Layout[] = [
     min: 1,
     max: 12,
     params: {
-      mediaVolume: 0,
+      mediaVolume: 0.0,
     },
   },
   {
@@ -106,7 +82,7 @@ const layoutOptions: Layout[] = [
     min: 1,
     max: 50,
     params: {
-      mediaVolume: 0,
+      mediaVolume: 0.0,
     },
   },
   {
@@ -116,10 +92,78 @@ const layoutOptions: Layout[] = [
     min: 1,
     max: 50,
     params: {
-      mediaVolume: 0,
+      mediaVolume: 0.0,
     },
   }
 ];
+
+interface _ModelOptions {
+  [key: string]: MetabolicModel[];
+}
+const _modelOptions: _ModelOptions = {
+  "Minimal Core Glucose" : [
+    {
+      name: "Escherichia coli Core",
+      desc: "Example description for E. Coli Core model",
+      type: "model",
+      params: {
+        demographicNoise: false,
+        demographicNoiseAmplitude: 0.001,
+        uptakeVMax: 10,
+        uptakeKm: 10e-5,
+        deathRate: 0.001,
+        biomassLinearDiffusivity: 0.001,
+        biomassNonlinearDiffusivity: 0.6,
+      },
+    },
+  ],
+  "Minimal Core Acetate" : [
+    {
+      name: "Escherichia coli Core",
+      desc: "Example description for E. Coli Core model",
+      type: "model",
+      params: {
+        demographicNoise: false,
+        demographicNoiseAmplitude: 0.001,
+        uptakeVMax: 10,
+        uptakeKm: 10e-5,
+        deathRate: 0.001,
+        biomassLinearDiffusivity: 0.001,
+        biomassNonlinearDiffusivity: 0.6,
+      },
+    },
+  ],
+  "Rich Media" : [
+    {
+      name: "Nitrobacter winogradskyi",
+      desc: "Example description for Nitrobacter winogradskyi model",
+      type: "model",
+      params: {
+        demographicNoise: false,
+        demographicNoiseAmplitude: 0.001,
+        uptakeVMax: 10,
+        uptakeKm: 10e-5,
+        deathRate: 0.001,
+        biomassLinearDiffusivity: 0.001,
+        biomassNonlinearDiffusivity: 0.6,
+      },
+    },
+    {
+      name: "Nitrosomonas europaea",
+      desc: "Example description for Nitrosomonas europaea model",
+      type: "model",
+      params: {
+        demographicNoise: false,
+        demographicNoiseAmplitude: 0.001,
+        uptakeVMax: 10,
+        uptakeKm: 10e-5,
+        deathRate: 0.001,
+        biomassLinearDiffusivity: 0.001,
+        biomassNonlinearDiffusivity: 0.6,
+      },
+    },
+  ]
+}
 
 const modelOptions: MetabolicModel[] = [
   {
@@ -128,58 +172,14 @@ const modelOptions: MetabolicModel[] = [
     type: "model",
     params: {
       demographicNoise: false,
-      demographicNoiseAmplitude: 0,
+      demographicNoiseAmplitude: 0.001,
       uptakeVMax: 10,
       uptakeKm: 10e-5,
-      deathRate: 0,
-      biomassLinearDiffusivity: 0,
+      deathRate: 0.001,
+      biomassLinearDiffusivity: 0.001,
       biomassNonlinearDiffusivity: 0.6,
     },
   },
-  /*
-  {
-    name: "Escherichia coli",
-    desc: "Example description for E. Coli model",
-    type: "model",
-    params: {
-      demographicNoise: false,
-      demographicNoiseAmplitude: 0,
-      uptakeVMax: 0,
-      uptakeKm: 0,
-      deathRate: 0,
-      biomassLinearDiffusivity: 0,
-      biomassNonlinearDiffusivity: 0,
-    },
-  },
-  {
-    name: "Nitrosomonas eurpaea",
-    desc: "Example description for S. Enterica model",
-    type: "model",
-    params: {
-      demographicNoise: false,
-      demographicNoiseAmplitude: 0,
-      uptakeVMax: 0,
-      uptakeKm: 0,
-      deathRate: 0,
-      biomassLinearDiffusivity: 0,
-      biomassNonlinearDiffusivity: 0,
-    },
-  },
-  {
-    name: "Nitrobacter winogradskyi",
-    desc: "Example description for S. Enterica model",
-    type: "model",
-    params: {
-      demographicNoise: false,
-      demographicNoiseAmplitude: 0,
-      uptakeVMax: 0,
-      uptakeKm: 0,
-      deathRate: 0,
-      biomassLinearDiffusivity: 0,
-      biomassNonlinearDiffusivity: 0,
-    },
-  },
-  */
 ];
 
 type chosenOption = {
@@ -227,11 +227,13 @@ export function ExperimentSetupPage() {
       timeSteps: 100,
       nutrientDiffusivity: 6e-6,
       logFrequency: 20,
+      vMax: 10,
+      km: 0.00001
     },
   });
   const [sidebarItems, setSidebarItems] = useState<SummaryCard[]>([]);
   const [modelChoice, setModelChoice] = useState<MetabolicModel>(
-    modelOptions[0],
+    modelOptions[0]
   );
   const [layoutChoice, setLayoutChoice] = useState<Layout>(layoutOptions[0]);
   const [mediaChoice, setMediaChoice] = useState<Media>(mediaOptions[0]);
@@ -239,9 +241,30 @@ export function ExperimentSetupPage() {
   const [isLayoutPicked, setIsLayoutPicked] = useState(false);
   const [isMediaPicked, setIsMediaPicked] = useState(false);
   const [isModelPicked, setIsModelPicked] = useState(false);
+  const [continueDisabled, setContinueDisabled] = useState(false)
   const [isGlobalParametersPicked, setIsGlobalParametersPicked] = useState(false);
   const [numOfModel, setNumOfModel] = useState(0);
   const maxModel = 3;
+
+  function checkRequirements(_sidebarItems:SummaryCard[]){
+    let hasModel = false;
+    let hasMedia = false;
+    let hasLayout = false;
+    let hasGlobalParams = false;    
+    _sidebarItems.forEach((item) => {
+      if(item.type === 'Layout'){
+        hasLayout = true;
+      }else if(item.type === 'MetabolicModel'){
+        hasModel = true;
+      }else if(item.type === 'Media'){
+        hasMedia = true;
+      }else if(item.type === 'Global Parameters'){
+        hasGlobalParams = true
+      }
+    })
+    
+    return hasModel && hasMedia && hasLayout && hasGlobalParams;
+  }
 
   const handleDelete = (index: number) => {
     // Create a shallow copy of the sidebarItems array
@@ -252,6 +275,7 @@ export function ExperimentSetupPage() {
         if (numOfModel <= 0) {
           setNumOfModel(0);
           setIsModelPicked(false);
+          console.log(isModelPicked)
         }
         break;
       case "Media":
@@ -267,18 +291,19 @@ export function ExperimentSetupPage() {
     // Remove the item at the specified index
     updatedSidebarItems.splice(index, 1);
     // Update the state with the modified array
+    setContinueDisabled(checkRequirements(updatedSidebarItems))
     setSidebarItems(updatedSidebarItems);
   };
 
   const handleTextChange = (field: string, value: string) => {
-    if (/^\d*$/.test(value)) {
+    if (/^\d*\.?\d*$/.test(value)) {
       const updatedParams = {
         name: "Global Parameters",
         desc: "Desc of global parameters",
         type: "global_parameters",
         params: {
           ...globalParams["params"],
-          [field]: parseInt(value),
+          [field]: field === 'nutrientDiffusivity' || field === 'km' ?  parseFloat(value) : parseInt(value),
         },
       };
       setGlobalParams(updatedParams);
@@ -304,6 +329,7 @@ export function ExperimentSetupPage() {
     if (item === null) {
       return;
     }
+    console.log('comets type: ',cometsType(item))
     // make a shallow copy to pass by value
     const i = { ...item };
     const sidebarItem: SummaryCard = {
@@ -312,15 +338,14 @@ export function ExperimentSetupPage() {
       info: i,
       type: cometsType(item),
     };
-
+    setContinueDisabled(checkRequirements([...sidebarItems, sidebarItem]))
     setSidebarItems([...sidebarItems, sidebarItem]);
-    console.log("comets type ",cometsType(item))
     switch (cometsType(item)) {
       case "MetabolicModel":
-        console.log(numOfModel)
         setNumOfModel((prevCount) => prevCount + 1);
-        if (numOfModel > 0 && numOfModel >= maxModel) {
+        if (numOfModel > 0) {
           setIsModelPicked(true);
+
         }
         break;
       case "Media":
@@ -333,9 +358,7 @@ export function ExperimentSetupPage() {
         setIsGlobalParametersPicked(true);
         break;
     }
-    console.log(isLayoutPicked)
-    console.log(isMediaPicked)
-    console.log(isModelPicked)
+    
   };
 
   return (
@@ -366,9 +389,14 @@ export function ExperimentSetupPage() {
         sx={{ minWidth: 900, width: 1500, maxWidth: "100%", paddingBottom: 30 }}
       >
         <Grid item xs={7}>
-        <Link to='/summaryReview' state={{data: sidebarItems}}>
-          <Button variant='outlined'sx={{width:'100%', backgroundColor:'white'}}>Next</Button>
-        </Link>
+          <Box>
+            <Link 
+              to= {continueDisabled ? '/summaryReview' : '#'} 
+              state={{data: sidebarItems}}   
+            >
+              Click Here To Continue
+            </Link>
+          </Box>
         </Grid>
         <Grid item xs={7}>
           <Accordion>
@@ -446,7 +474,7 @@ export function ExperimentSetupPage() {
             <AccordionDetails>
               <ModelComponent
                 value={modelChoice}
-                modelOptions={modelOptions}
+                modelOptions={_modelOptions[mediaChoice.name]}
                 modelLimit={3}
                 onChange={setModelChoice}
               />
@@ -578,6 +606,65 @@ export function ExperimentSetupPage() {
               }}
             />
           </Box>
+          <Box
+            display={"flex"}
+            flexDirection={"row"}
+            sx={{paddingRight: "2%", maxWidth: "80%" }}
+          >
+            <Box sx={{ width: "30%", alignSelf: "center", marginRight: 3 }}>
+              <Typography textAlign={"left"} variant="h6" color="black">
+                V<sub>max</sub>
+              </Typography>
+            </Box>
+            <TextField
+              label="Vmax"
+              variant="filled"
+              type="number"
+              fullWidth
+              value={globalParams.params.vMax}
+              onChange={(event) =>
+                handleTextChange("vMax", event.target.value)
+              }
+              error={textfieldError}
+              helperText={textfieldError ? "Please input numbers only" : ""}
+              sx={{
+                height: "5vh",
+              }}
+              inputProps={{
+                step: "1"
+              }}
+            />
+          </Box>
+          <Box
+            display={"flex"}
+            flexDirection={"row"}
+            sx={{paddingRight: "2%", maxWidth: "80%" }}
+          >
+            <Box sx={{ width: "30%", alignSelf: "center", marginRight: 3 }}>
+              <Typography textAlign={"left"} variant="h6" color="black">
+                Km
+              </Typography>
+            </Box>
+            <TextField
+              label="km"
+              variant="filled"
+              type="number"
+              fullWidth
+              value={globalParams.params.km}
+              onChange={(event) =>
+                handleTextChange("km", event.target.value)
+              }
+              error={textfieldError}
+              helperText={textfieldError ? "Please input numbers only" : ""}
+              sx={{
+                height: "5vh",
+              }}
+              inputProps={{
+                step: "0.0000000001"
+              }}
+            />
+          </Box>
+          
           <Button
             sx={{ margin: 2, maxWidth: "80%", backgroundColor: "#CCCCFF"}}
             variant="outlined"

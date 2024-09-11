@@ -1,0 +1,1 @@
+Adding this file to force a dir for sim_files since it has to exists before any simulations are added
