@@ -11,7 +11,8 @@ import {  Box,
           FormControlLabel,
           FormControl,
           FormLabel,
-          Button
+          Button,
+          TextField
         } from "@mui/material";
 import { useParams } from 'react-router-dom';
 import React, { useState, useEffect } from "react";
@@ -39,52 +40,75 @@ export function ResultsPage() {
   const [graphUrl, setGraphUrl] = useState('');
   const [imageLoading, setImageLoading] = useState(true);
   const [graphLoading, setGraphLoading] = useState(true);
-  const [selection, setSelection] = useState('biomass'); // selection for image (biomass/metabolite/flux)
-  const [radioSelection, setRadioSelection] = useState(''); // holds value for radio button change for biomass model_id or metabolite metabolite_id
-  const [modelSelection, setModelSelection] = useState(''); // holds value for radio button change ONLY for flux model_id
-  const [fluxSelection, setFluxSelection] = useState('')
+
+  // Contains value to make the selection for image results (biomass/metabolite/flux) 
+  const [imageSelection, setImageSelection] = useState('biomass'); 
+
+  // Contains value for the model chose with radio button (for biomass and flux images)
+  const [modelId, setModelId] = useState('')
+  
+  // Contains value to make the selection for graph results (total_biomass/metabolite_time_series) 
   const [graphSelection, setGraphSelection] = useState('total_biomass')
   
-  
+  // Contains ID value of a picked flux
+  const [fluxId, setFluxId] = useState('')
+
+  // Contains all of the possible model-fluxes pairings for a given simulation
   const [allFluxes, setAllFluxes] = useState<{
     model_id: string,
     fluxes: string[]
-  }[]>([])
+  }[]>([]) 
+
+  // Contains a string list of all fluxes of a single models based on value of modelSelection
+  const [fluxOptions, setFluxOptions] = useState<string[]>([])
+
+  // Contains NAME and ID value for a picked metabolite
+  const [metaboliteName, setMetaboliteName] = useState<string | undefined >('')
+  const [metaboliteId, setMetaboliteId] = useState<string | undefined >('')
+  
+  // Contains all the available models in the simulation. Is populated inside useEffect()
   const [modelOption, setModelOption] = useState<{
     name: string,
     model_id: string
   }[]>([]);
+
+  // Contains all available metabolites in the simulation. Is populated inside useEffect()
   const [metaboliteOption, setMetaboliteOption] = useState<{
     name: string,
     id: string
   }[]>([]);
-  const [fluxOptions, setFluxOptions] = useState<string[]>([])
   
+  
+  // Fixed choice of viewing the result graphs
   const graphOption = [
     'metabolite_time_series',
     'total_biomass'
   ]
   
+  // Fixed choice of viewing the result images
   const selectOption = [
     "biomass",
     "metabolite",
     "flux"
   ]
-  // Handlers
-  const handleChange = (event: SelectChangeEvent) => {
-    setSelection(event.target.value as string);
-    console.log(metaboliteOption)
-    setRadioSelection('')
+  
+  // Handdles changes in the result images that the user wants to see
+  const handleImageSelectionChange = (event: SelectChangeEvent) => {
+    setImageSelection(event.target.value as string);
   };
 
+  // Handdles changes in the result graphs that the user wants to see
   const handleGraphChange = (event: SelectChangeEvent) => {
     setGraphSelection(event.target.value as string)
   }
 
-  const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRadioSelection(event.target.value as string)
+  // Handle changes of which model the user wants to see for biomass result images
+  const handleModelRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setModelId(event.target.value as string)
   }
 
+  // Handle changes of which model the user wants to see for flux result images
+  // Also sets the available flux options for a given model
   const handleFluxRadio = (event: React.ChangeEvent<HTMLInputElement>) => {
     const model = event.target.value as string;
     allFluxes.forEach((flux) => {
@@ -93,34 +117,36 @@ export function ResultsPage() {
         setFluxOptions(flux_arr)
       }
     })
-    setModelSelection(event.target.value as string)
-
+    setModelId(event.target.value as string)
   }
 
-  const handleButton = () => {
-    const builtUrl = `${import.meta.env.VITE_COMETS_FLASK}/result/${id}/${selection}` 
+  // Handles actions when the "APPLY" button is clicked for the image results
+  // Action includes building the appopriate request body and fecthing the results from the Flask server
+  const handleImageApplyButton = () => {
+    const builtUrl = `${import.meta.env.VITE_COMETS_FLASK}/result/${id}/${imageSelection}` 
     let builtBody;
     
-    if(selection === 'biomass'){
+    if(imageSelection === 'biomass'){
       builtBody = {
-        model_name: 'Escherichia coli core',
-        model_id: radioSelection
+        model_name: '', // Doesn't help with anything 
+        model_id: modelId
       }
-    }else if(selection === 'metabolite'){
+    }else if(imageSelection === 'metabolite'){
       builtBody = {
-        metabolite_name: 'Glucose',
-        metabolite_id: radioSelection
+        metabolite_name: metaboliteName,
+        metabolite_id: metaboliteId
       }
       
-    }else if(selection === 'flux'){
+    }else if(imageSelection === 'flux'){
       builtBody = {
-        flux_name: 'Glucose',
-        flux_id: fluxSelection,
-        model_name: 'Escherichia coli core',
-        model_id: modelSelection
+        flux_name: fluxId,
+        flux_id: fluxId,
+        model_name: '', // Doesn't help with anything
+        model_id: modelId
       }
     }else{
       console.log('cant find the right selection')
+      // Throw error
     }
     console.log(builtBody)
     setImageLoading(true);
@@ -149,7 +175,10 @@ export function ResultsPage() {
     } )
   }
 
-  const handleGraphButton= () => {
+
+  // Handles actions when the "APPLY" button is clicked for the graph results
+  // Action includes building the appopriate request body and fecthing the results from the Flask server
+  const handleGraphApplyButton= () => {
     const builtUrl = `${import.meta.env.VITE_COMETS_FLASK}/result/graph/${id}/${graphSelection}` 
     setGraphLoading(true);
     fetch(builtUrl, {
@@ -173,28 +202,37 @@ export function ResultsPage() {
     })
     .catch((err) => {
       console.log(err)
+      // Throw error
     } )
-    console.log('builtUrl: ', builtUrl);
   }
 
-  const handleFluxChange = (event: SelectChangeEvent) => {
-    setFluxSelection(event.target.value as string);
+  // Handle changes when a different flux is chosen from the dropdown
+  const handleFluxChange = (event: any) => {
+    setFluxId(event.target.value as string)
+  };
+
+  // Handle changes when a different metabolite is chosen from the dropdown
+  const handleMetaboliteChange = (event: any) => {
+    const met = metaboliteOption.find(metabolite => metabolite.id ===  (event.target.value as string))
+    setMetaboliteId(met?.id)
+    setMetaboliteName(met?.name)
+    
   };
   
   useEffect(() => {
-
     const url = `${import.meta.env.VITE_COMETS_BACKEND}/job/${id}`
     let models;
     let metabolites;
     let req_body;
+    let fluxes;
     fetch(url,
       {
-        method: "GET", // *GET, POST, PUT, DELETE, etc.
-        cache: "default", // *default, no-cache, reload, force-cache, only-if-cached
+        method: "GET", 
+        cache: "default", 
         headers: {
           "Content-Type": "application/json",
         },
-        redirect: "follow", // manual, *follow, error
+        redirect: "follow"
       }
     )
     .then((response) => {
@@ -206,25 +244,28 @@ export function ResultsPage() {
     .then((data) => {
       models = data.model_info;
       metabolites = data.metabolites;
-      // console.log(models)
-      const fluxes = data.fluxes;
+      fluxes = data.fluxes;
+
+      // Setting all values to the options from the simulation
       setModelOption(models)
       setMetaboliteOption(metabolites)
       setAllFluxes(fluxes)
+
       req_body = {
         model_name: models ? models[0]['name'] : '' ,
         model_id: models ? models[0]['model_id'] : ''
       }
       const urls = `${import.meta.env.VITE_COMETS_FLASK}/result/${id}/biomass`;
-      // Fetching default image
+      
+      // Fetching default result iamge which is the biomass image
       fetch(urls, 
         {
-          method: "POST", // *GET, POST, PUT, DELETE, etc.
-          cache: "default", // *default, no-cache, reload, force-cache, only-if-cached
+          method: "POST", 
+          cache: "default",
           headers: {
             "Content-Type": "application/json",
           },
-          redirect: "follow", // manual, *follow, errorc
+          redirect: "follow",
           body: JSON.stringify(req_body), // body data type must match "Content-Type" header
         })
         .then(response => {
@@ -251,17 +292,18 @@ export function ResultsPage() {
       
   },[])
 
+  // Getting the default graph  which is the total_biomass graph 
   useEffect(() => {
     const graphUrl = `${import.meta.env.VITE_COMETS_FLASK}/result/graph/${id}/total_biomass` 
     //Fetch default graph
     fetch(graphUrl, 
       {
-        method: "GET", // *GET, POST, PUT, DELETE, etc.
-        cache: "default", // *default, no-cache, reload, force-cache, only-if-cached
+        method: "GET", 
+        cache: "default",
         headers: {
           "Content-Type": "application/json",
         },
-        redirect: "follow", // manual, *follow, error
+        redirect: "follow"
       })
       .then(response => {
         if(!response.ok){
@@ -332,8 +374,8 @@ export function ResultsPage() {
                 <Select 
                   labelId="select-id"
                   id="simple-select-id"
-                  value={selection}
-                  onChange={handleChange}
+                  value={imageSelection}
+                  onChange={handleImageSelectionChange}
                   sx={{width:'70%', textAlign:'left'}}
                 >
                   {selectOption.map((option, index) => (
@@ -342,7 +384,7 @@ export function ResultsPage() {
                   )}
                 </Select>
                 <Button 
-                    onClick={handleButton}
+                    onClick={handleImageApplyButton}
                     variant='outlined'
                     sx={{minWidth:'15%', maxWidth:'20%'}}
                 >
@@ -350,14 +392,14 @@ export function ResultsPage() {
                 </Button>
               </Box>
               { 
-                selection === 'biomass' &&
+                imageSelection === 'biomass' &&
                 <Box sx={{textAlign:'left', padding:2.5}}>
                   <FormControl>
                     <FormLabel>Which Model Do You Want To See?</FormLabel>
                     <RadioGroup name="model-radio-group">
                       {
                         modelOption.map((model, index) => (
-                          <FormControlLabel key={index} value={model.model_id} label={`${model.name} (${model.model_id})`} control={<Radio onChange={handleRadioChange} defaultValue={''}/>} style={{color:'black'}}/>
+                          <FormControlLabel key={index} value={model.model_id} label={`${model.name} (${model.model_id})`} control={<Radio onChange={handleModelRadioChange} defaultValue={''}/>} style={{color:'black'}}/>
                         ))
                       }
                     </RadioGroup>
@@ -365,22 +407,26 @@ export function ResultsPage() {
                 </Box>
               }
               { 
-                selection === 'metabolite' &&
+                imageSelection === 'metabolite' &&
                 <Box sx={{textAlign:'left', padding:2.5}}>
                   <FormControl>
                     <FormLabel>Which Metabolite Do You Want To See?</FormLabel>
-                    <RadioGroup name="metabolite-radio-group">
-                      {
-                        metaboliteOption.map((metabolite, index) => (
-                          <FormControlLabel key={index} value={metabolite.id} label={`${metabolite.name}`} control={<Radio onChange={handleRadioChange} defaultValue={''}/>} style={{color:'black'}}/>
-                        ))
-                      }
-                    </RadioGroup>
+                    <TextField
+                      select
+                      onChange={handleMetaboliteChange}
+                      value={metaboliteId}
+                      sx={{width:'100%', textAlign:'left'}}
+                    >
+                        {metaboliteOption.map((option, index) => (
+                          <MenuItem value={option.id} key={index}>{option.name}</MenuItem>
+                          )
+                        )}
+                    </TextField>
                   </FormControl>
                 </Box>
               }
               { 
-                selection === 'flux' &&
+                imageSelection === 'flux' &&
                 <Box sx={{textAlign:'left', padding:2.5, display:'flex', justifyContent:'flex-start', gap: '5%'}}>
                   <FormControl>
                     <FormLabel>Which Model Do You Want To See?</FormLabel>
@@ -394,18 +440,18 @@ export function ResultsPage() {
                   </FormControl>
                   <FormControl>
                     <FormLabel>Which Flux Do You Want To See?</FormLabel>
-                    <Select 
-                      labelId="select-id"
-                      id="simple-select-id"
-                      value={radioSelection}
+                    <TextField
+                      select
                       onChange={handleFluxChange}
+                      value={fluxId}
                       sx={{width:'100%', textAlign:'left'}}
                     >
-                      {fluxOptions.map((option, index) => (
-                        <MenuItem value={option} key={index}>{option}</MenuItem>
-                        )
-                      )}
-                    </Select>
+                        {fluxOptions.map((option, index) => (
+                          // Value and display name not same as Metabolite because there is too much flux and no dictionary was given
+                          <MenuItem value={option} key={index}>{option}</MenuItem> 
+                          )
+                        )}
+                    </TextField>
                   </FormControl>
                 </Box>
               }
@@ -447,7 +493,7 @@ export function ResultsPage() {
                 )}
               </Select>
               <Button 
-                    onClick={handleGraphButton}
+                    onClick={handleGraphApplyButton}
                     variant='outlined'
                     sx={{minWidth:'15%', maxWidth:'20%'}}
                 >
