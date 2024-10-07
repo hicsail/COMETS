@@ -115,7 +115,7 @@ def uploadToS3(comets_result, id, email):
     # Initiate specific bucket on OpenStack
     bucket = s3.Bucket(os.getenv('BUCKET_NAME'))
     GB = 1024 ** 3
-    config = TransferConfig(multipart_threshold=5*GB)
+    config = TransferConfig(multipart_threshold=15*GB)
 
     print('all files to upload: ',comets_result)
     try:
