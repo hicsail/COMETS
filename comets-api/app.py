@@ -125,7 +125,7 @@ def uploadToS3(comets_result, id, email):
 
                 print('pkl file size: ',os.path.getsize(file))
                 s3_client.upload_file(file, os.getenv('BUCKET_NAME'), os.getenv('AWS_ACCESS_KEY_ID'), Config=config)
-                
+
             upload = bucket.put_object(Body=open(file, 'rb'), Key=fileKey)
             print(f'file {file} uploaded: ', upload)
             os.remove(file)
@@ -167,7 +167,7 @@ def get_result(id, source):
         metabolite_id: string,
         time_step: num (not yet implemented)
     }
-    
+
     """
 
     s3 = boto3.resource(
@@ -185,18 +185,18 @@ def get_result(id, source):
             os.makedirs(os.path.dirname(f'./sim_files/{object.key}'), exist_ok=True)
         if not os.path.exists(f'./sim_files/{object.key}'):
             bucket.download_file(object.key, f'./sim_files/{object.key}')
-    
+
     """
-    TODO 
+    TODO
     Need to replace the image_index with calculations of percentages of the max timeSteps
     """
-    image_index = [20,40,60,80,100] 
+    image_index = [20,40,60,80,100]
     with open(f'./sim_files/{id}/{id}.pkl', 'rb') as file:
         data = dill.load(file)
-    
+
     if source == 'biomass':
         model_id = req_data['model_id']
-        model_name = req_data['model_name']   
+        model_name = req_data['model_name']
         png_file_name = f'biomass_{model_id}.png'
 
         my_cmap = matplotlib.cm.get_cmap("magma")
@@ -232,9 +232,9 @@ def get_result(id, source):
 
     elif source == 'metabolite':
         metabolite_name = req_data['metabolite_name'] # ud for title of graph
-        metabolite_id = req_data['metabolite_id']       
-       
-        
+        metabolite_id = req_data['metabolite_id']
+
+
         png_file_name = f'metabolite_{metabolite_id.lower()}.png'
 
         my_cmap = matplotlib.cm.get_cmap("magma")
@@ -271,15 +271,15 @@ def get_result(id, source):
         fig.colorbar(cax, ax=ax)
 
         fig.savefig(f'./sim_files/{id}/{png_file_name}', format='png', bbox_inches='tight')
-        
+
     elif source == 'flux':
-        
+
         model_id = req_data['model_id']
         model_name = req_data['model_name']
         flux_name = req_data['flux_name']
         flux_id = req_data['flux_id']
-        
-        
+
+
         png_file_name = f'flux_{model_id}_{flux_id}.png'
 
         my_cmap = matplotlib.cm.get_cmap("magma")
@@ -360,16 +360,16 @@ def create_plot(graph_type, id):
 
     elif graph_type == 'metabolite_time_series':
         file_name = 'metabolite_time_series.png'
-        
+
         plt.switch_backend('Agg')
         fig, ax = plt.subplots()
-        ax = experiment.get_metabolite_time_series().plot(x='cycle', ax=ax)
+        ax = experiment.get_metabolite_time_series().plot(ax=ax)
         ax.set_ylabel("Metabolite time series (gr.)")
         plt.savefig(f'./sim_files/{id}/metabolite_time_series.png', format='png', bbox_inches='tight')
         plt.close(fig)
     try:
         response = send_from_directory(f'./sim_files/{id}', file_name, as_attachment=True)
-        
+
         return response
     except:
         raise Exception('Failed in making graph lol')
@@ -383,8 +383,8 @@ def process():
     print('Started Processing!')
 
     os.environ['COMETS_GLOP'] = './comets_glop'
-    
-    
+
+
     """
     Files needed to save (8 files in total)
     * biomasslog
@@ -403,7 +403,7 @@ def process():
     current_files = os.listdir('./sim_files')
     url = os.getenv('BASE_HOST_URL')
     # Creating the Job document on MongoDB
-    
+
 
 
     data = json.loads(request.data.decode('utf-8').replace("'",'"'))
@@ -419,7 +419,7 @@ def process():
     # {'global_params': {'simulatedTime': 1, 'timeSteps': 2, 'nutrientDiffusivity': 0, 'logFrequency': 0}, 'layout': {'name': '9cm Petri Dish Random Lawn', 'volume': 0}, 'models': [{'name': 'Escherichia coli Core', 'demographicNoise': False, 'demographicNoiseAmp': 0, 'vMax': 20, 'Km': 0, 'deathRate': 0, 'linearDiffusivity': 0, 'nonLinearDiffusivity': 0}], 'media': {'name': 'M9 Minimal Glucose', 'concentration': 12}, 'email': 'zimlim@bu.edu'}
 
     # Load all models
-    
+
     comets_model_arr = []
     comets_model_id_arr = []
     # E.Coli model is using different path than other models
@@ -436,13 +436,13 @@ def process():
         elif model_name == 'escherichia coli':
             load_model = cobra.io.load_model("textbook")
         elif model_name == 'nitrosomonas europaea':
-            load_model = cobra.io.read_sbml_model("./iGC535_modified_cobra.xml") 
+            load_model = cobra.io.read_sbml_model("./iGC535_modified_cobra.xml")
         elif model_name == 'nitrobacter winogradskyi':
             load_model = cobra.io.read_sbml_model('./iFC579_modified_cobra.xml')
         else:
             sendEmail(requester_email, "000000000", "failure")
             raise Exception(f'No model found with name: {model_name}')
-        
+
         comets_model = c.model(load_model)
         # Set each model parameters
         comets_model.neutral_drift_flag = bool(model['demographicNoise'])
@@ -457,15 +457,15 @@ def process():
         # All models share same value
         comets_model.change_bounds('EX_glc__D_e', -1000, 1000)
         comets_model.change_bounds('EX_ac_e', -1000, 1000)
-        
+
         # Changing model Id if there's the same model added before
         model_id = comets_model.id
         iteration = 1
         while comets_model.id in [model['model_id'] for model in comets_model_id_arr]:
             comets_model.id = f'{model_id}_{iteration}'
             iteration += 1
-            
-    
+
+
         # Add models to array and to comets layout
         model_info_obj = {
             "name": model_name,
@@ -478,13 +478,13 @@ def process():
      # Set all media metabolites constant for now (mmol)
     # Dimensions of petri dish and test tube is different
     """
-    Petri Dish 
+    Petri Dish
     9 cm
     Grid = 100x100
     User gives concentration (mmol/cm3) and volume (ml)
     Formula for glucose
         "4.5**2" because 4.5 is the radius for a 9 cm Petri Dish
-        using formula: volume = pi*(r^2)*height 
+        using formula: volume = pi*(r^2)*height
         height = volume / (3.14 * (4.5**2))
         glucose or acetate = (spaceWidth**2) * height * concentration
 
@@ -496,17 +496,17 @@ def process():
     """
     mediaVolume = data['layout']['volume']
     mediaConcentration = data['media']['concentration']
-    
+
 
     # metabolite and its concentration comes from "Choose Media"
-    
+
     # Accounting for geometry of different layout types
     if "Petri Dish" in layout['name']:
         height = mediaVolume / (3.14 * (4.5**2))
         metabolite_amount = 0.09 * height * mediaConcentration
     elif "Test Tube" in layout['name']:
         metabolite_amount = mediaConcentration * mediaVolume
-    
+
 
 
     metabolites_used = []
@@ -576,23 +576,23 @@ def process():
             comets_layout.add_model(model)
     else:
         raise Exception(f"No layout found with associated name {layout['name']}")
-    
+
 
     comets_params.set_param('numRunThreads', 1)
     comets_params.set_param('timeStep', floor(global_params['simulatedTime']/global_params['timeSteps'])) # timeStep = simulatedTime / maxCycles (number of steps) //might want to change variable name for timeSteps to maxCycles
-    comets_params.set_param('maxCycles', global_params['timeSteps']) 
+    comets_params.set_param('maxCycles', global_params['timeSteps'])
     if(layout_name == 'testtube'): # 0.09 for petri dish, 0.05 for test tube
-        comets_params.set_param('spaceWidth',0.05) 
+        comets_params.set_param('spaceWidth',0.05)
     else:
         comets_params.set_param('spaceWidth',0.09)
     comets_params.set_param('maxSpaceBiomass', 100)
     """
-    TODO 
-    take input from request body 
+    TODO
+    take input from request body
     """
     comets_params.set_param('defaultVmax', global_params['vMax'])
     comets_params.set_param('defaultKm', global_params['km'])
-    
+
     comets_params.set_param('BiomassLogRate', global_params['logFrequency'])
     comets_params.set_param('MediaLogRate', global_params['logFrequency'])
     comets_params.set_param("FluxLogRate", global_params['logFrequency'])
@@ -617,7 +617,7 @@ def process():
 
         }
     req = requests.post(f'{url}/job/create', json=body)
-    
+
     job_obj = json.loads(req.content)
     job_id = job_obj["id"]
     # Run the simulation
@@ -626,7 +626,7 @@ def process():
         fileName = f'./sim_files/{job_id}.pkl'
         with open(fileName, 'wb') as file:
             dill.dump(experiment, file)
-             
+
         # Dictionary comprehension to filter keys
         fluxes = []
         for i in experiment.fluxes_by_species:
