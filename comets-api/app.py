@@ -20,6 +20,7 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from flask_cors import CORS, cross_origin
 import time
 from boto3.s3.transfer import TransferConfig
+import math
 
 app = Flask(__name__)
 
@@ -363,8 +364,14 @@ def create_plot(graph_type, id):
 
         plt.switch_backend('Agg')
         fig, ax = plt.subplots()
-        ax = experiment.get_metabolite_time_series().plot(ax=ax)
-        ax.set_ylabel("Metabolite time series (gr.)")
+
+        ax.set(ylim=(0, 10))
+
+        metabolite = experiment.get_metabolite_time_series(upper_threshold=math.inf)
+        print(metabolite)
+
+        ax = metabolite.plot(x='cycle', ax=ax)
+        ax.set_ylabel("Metabolite time series (mmol)")
         plt.savefig(f'./sim_files/{id}/metabolite_time_series.png', format='png', bbox_inches='tight')
         plt.close(fig)
     try:
@@ -529,6 +536,7 @@ def process():
         metabolite_lists = temp_layout.media.metabolite
         print('rich medium metabolite: ', metabolite_lists)
 
+    '''
     for metabolite in metabolite_lists:
         comets_layout.set_specific_metabolite(metabolite, 1000)
         # When Rich Media Metabolite dictionary is available, name can be passed thru "translation()"
@@ -536,6 +544,7 @@ def process():
             "name": metabolite,
             "id": metabolite
         })
+    '''
 
 
     # Create layout
