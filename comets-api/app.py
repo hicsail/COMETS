@@ -579,6 +579,7 @@ def process():
             comets_layout.add_model(model)
 
     elif layout_name == 'testtube':
+        comets_layout.grid = [1,1]
         initi_population.append([0,0,1e-6])
         for model in comets_model_arr:
             model.initial_pop = initi_population
