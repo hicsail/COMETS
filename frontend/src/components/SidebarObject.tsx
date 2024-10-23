@@ -12,7 +12,6 @@ import { SummaryCard } from "../types/ExperimentTypes";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 export interface SidebarcardProps {
   item: SummaryCard;
-  key: number;
 }
 
 const textPairing: { [key: string]: string } = {
@@ -37,7 +36,6 @@ export const SidebarCard: FC<SidebarcardProps> = (props) => {
   return (
     <Box
       sx={{ width: "95%", marginLeft: 1, paddingBottom: "0.5vh" }}
-      key={props.key}
     >
       <Accordion>
         <AccordionSummary

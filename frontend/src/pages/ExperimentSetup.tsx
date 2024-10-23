@@ -250,7 +250,7 @@ export function ExperimentSetupPage() {
     let hasModel = false;
     let hasMedia = false;
     let hasLayout = false;
-    let hasGlobalParams = false;    
+    let hasGlobalParams = false;
     _sidebarItems.forEach((item) => {
       if(item.type === 'Layout'){
         hasLayout = true;
@@ -262,7 +262,7 @@ export function ExperimentSetupPage() {
         hasGlobalParams = true
       }
     })
-    
+
     return hasModel && hasMedia && hasLayout && hasGlobalParams;
   }
 
@@ -275,7 +275,6 @@ export function ExperimentSetupPage() {
         if (numOfModel <= 0) {
           setNumOfModel(0);
           setIsModelPicked(false);
-          console.log(isModelPicked)
         }
         break;
       case "Media":
@@ -329,7 +328,6 @@ export function ExperimentSetupPage() {
     if (item === null) {
       return;
     }
-    console.log('comets type: ',cometsType(item))
     // make a shallow copy to pass by value
     const i = { ...item };
     const sidebarItem: SummaryCard = {
@@ -338,8 +336,10 @@ export function ExperimentSetupPage() {
       info: i,
       type: cometsType(item),
     };
+
     setContinueDisabled(checkRequirements([...sidebarItems, sidebarItem]))
     setSidebarItems([...sidebarItems, sidebarItem]);
+
     switch (cometsType(item)) {
       case "MetabolicModel":
         setNumOfModel((prevCount) => prevCount + 1);
@@ -358,7 +358,7 @@ export function ExperimentSetupPage() {
         setIsGlobalParametersPicked(true);
         break;
     }
-    
+
   };
 
   return (
@@ -390,9 +390,9 @@ export function ExperimentSetupPage() {
       >
         <Grid item xs={7}>
           <Box>
-            <Link 
-              to= {continueDisabled ? '/summaryReview' : '#'} 
-              state={{data: sidebarItems}}   
+            <Link
+              to= {continueDisabled ? '/summaryReview' : '#'}
+              state={{data: sidebarItems}}
             >
               Click Here To Continue
             </Link>
@@ -664,7 +664,7 @@ export function ExperimentSetupPage() {
               }}
             />
           </Box>
-          
+
           <Button
             sx={{ margin: 2, maxWidth: "80%", backgroundColor: "#CCCCFF"}}
             variant="outlined"
@@ -703,6 +703,7 @@ export function ExperimentSetupPage() {
               display={"flex"}
               flexDirection={"row"}
               sx={{ paddingRight: "0.5vw" }}
+              key={index}
             >
               <Button
                 variant={"text"}
@@ -710,7 +711,7 @@ export function ExperimentSetupPage() {
                 sx={{ width: "10%" }}
                 onClick={() => handleDelete(index)}
               />
-              <SidebarCard item={item} key={index} />
+              <SidebarCard item={item} />
             </Box>
           ))}
         </Box>

@@ -41,7 +41,7 @@ export const LayoutComponent: FC<LayoutComponentProps> = (props) => {
         setMediaVol(event.target.value);
         setTextfieldError(false);
         props.value.params.mediaVolume = parseFloat(event.target.value);
-        
+
         // }else{
         //   setTextfieldError(true);
         // }
@@ -55,7 +55,7 @@ export const LayoutComponent: FC<LayoutComponentProps> = (props) => {
         <FormGroup>
           {props.layoutOptions.map((option, index) => {
             return (
-              <Box key={index} display={"flex"} flexDirection={'column'}> 
+              <Box key={index} display={"flex"} flexDirection={'column'}>
                 <FormControlLabel
                   sx={{ marginTop: 2 }}
                   key={index}
@@ -87,7 +87,6 @@ export const LayoutComponent: FC<LayoutComponentProps> = (props) => {
                     onChange={(e) =>
                       handleTextChange(e, option.min, option.max)
                     }
-                    defaultValue={""}
                     error={textfieldError}
                     helperText={
                       textfieldError ? "Please input numbers only" : ""

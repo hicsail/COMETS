@@ -67,7 +67,6 @@ export interface SummaryCardArray extends Array<SummaryCard> {
 }
 
 export function cometsType(obj: any): string {
-
   if (metabolicModels.includes(obj.name)) {
     return "MetabolicModel";
   } else if (media.includes(obj.name)) {
@@ -86,14 +85,14 @@ const metabolicModels = [
   "Escherichia coli",
   "Nitrosomonas europaea",
   "Nitrobacter winogradskyi",
-  "E. Coli Core", 
-  "E. Coli", 
+  "E. Coli Core",
+  "E. Coli",
   "S. Enterica"
 ];
 const layout = [
   "9 cm Petri Dish (Center Colony)",
   "9 cm Petri Dish (Random Lawn)",
-  "10 ml Test Tube",
+  "Test Tube",
   "EcoFab",
 ];
 const media = [
