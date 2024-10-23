@@ -444,14 +444,16 @@ def process():
             raise Exception(f'No model found with name: {model_name}')
 
         comets_model = c.model(load_model)
-        # Set each model parameters
-        comets_model.neutral_drift_flag = bool(model['demographicNoise'])
+
         if bool(model['demographicNoise']):
             # if demographicNoise is false, dont set the next parameter
             comets_model.add_neutral_drift_parameter(float(model['demographicNoiseAmp']))
         else:
             # parameter can't be 0.0 or else an error is raised
             comets_model.add_neutral_drift_parameter(0.001)
+
+        # Set each model parameters
+        comets_model.neutral_drift_flag = bool(model['demographicNoise'])
         comets_model.add_nonlinear_diffusion_parameters(float(model['linearDiffusivity']), float(model['nonLinearDiffusivity']), 1.0, 1.0, 0.0)
 
         # All models share same value
@@ -570,6 +572,7 @@ def process():
             comets_layout.add_model(model)
 
     elif layout_name == 'testtube':
+        comets_layout.grid = [1,1]
         initi_population.append([0,0,1e-6])
         for model in comets_model_arr:
             model.initial_pop = initi_population
